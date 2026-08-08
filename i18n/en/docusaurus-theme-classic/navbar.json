@@ -1,0 +1,26 @@
+{
+  "title": {
+    "message": "BeeCount",
+    "description": "The title in the navbar"
+  },
+  "item.label.文档": {
+    "message": "Docs",
+    "description": "Navbar item with label 文档"
+  },
+  "item.label.MCP": {
+    "message": "MCP",
+    "description": "Navbar item with label MCP"
+  },
+  "item.label.博客": {
+    "message": "Blog",
+    "description": "Navbar item with label 博客"
+  },
+  "item.label.捐赠": {
+    "message": "Donate",
+    "description": "Navbar item with label 捐赠"
+  },
+  "item.label.GitHub": {
+    "message": "GitHub",
+    "description": "Navbar item with label GitHub"
+  }
+}

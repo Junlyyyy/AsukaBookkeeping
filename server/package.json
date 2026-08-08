@@ -1,0 +1,19 @@
+{
+  "name": "just-track-server",
+  "version": "1.0.0",
+  "description": "JUST TRACK 本地记账后端 — 接口设计对齐 BeeCount Cloud MCP（18 tools），本地 SQLite 存储，离线可用",
+  "type": "module",
+  "main": "src/index.js",
+  "scripts": {
+    "start": "node src/index.js",
+    "dev": "node --watch src/index.js",
+    "reset": "node src/reset.js"
+  },
+  "engines": {
+    "node": ">=22.5.0"
+  },
+  "dependencies": {
+    "cors": "^2.8.5",
+    "express": "^4.19.2"
+  }
+}

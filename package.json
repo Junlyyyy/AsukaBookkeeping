@@ -1,0 +1,13 @@
+{
+  "name": "beecount-local",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "description": "BEECOUNT — Nike 风格本地记账（前后端分离，离线可用）",
+  "scripts": {
+    "start": "node start.js",
+    "server": "npm --prefix server run dev",
+    "web": "npm --prefix web run dev",
+    "build": "npm --prefix web run build"
+  }
+}

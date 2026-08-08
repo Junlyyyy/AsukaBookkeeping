@@ -1,0 +1,135 @@
+// 设置页 — Bento × EVA-02 明日香：账本管理 + 关于 + 数据操作
+
+import { useState } from 'react';
+import { api } from '../api';
+import { useApp } from '../store';
+import { Modal, toast } from '../components/ui';
+import NERVBadge from '../components/NERVBadge';
+
+export default function Settings() {
+  const { ledger, ledgers, setLedger, refresh, bump } = useApp();
+  const [adding, setAdding] = useState(false);
+  const [name, setName] = useState('');
+
+  const create = async () => {
+    if (!name.trim()) return toast('请输入账本名', 'err');
+    try {
+      const l = await api.createLedger(name.trim());
+      await setLedger(l.id);
+      toast('账本已创建并切换');
+      setAdding(false);
+      setName('');
+      refresh();
+    } catch (e) { toast(String((e as Error).message), 'err'); }
+  };
+
+  return (
+    <div className="nike-in stack gap-6">
+
+      <header className="card" style={{ padding: '26px 30px' }}>
+        <div className="eyebrow eyebrow--black">SETTINGS / 设置 · EVA-02</div>
+        <h1 className="hero-title" style={{ marginTop: 6, fontSize: 'clamp(1.6rem, 3vw, 2.4rem)' }}>
+          偏好与账本
+        </h1>
+      </header>
+
+      {/* 账本管理 */}
+      <div className="card">
+        <div className="row-between" style={{ marginBottom: 14 }}>
+          <div>
+            <div className="eyebrow eyebrow--black">LEDGERS / 账本管理 · EVA-02</div>
+            <h3 className="section-title" style={{ marginTop: 4 }}>{ledgers.length} 个</h3>
+          </div>
+          <button className="btn btn--primary" onClick={() => setAdding(true)}>+ 新建账本</button>
+        </div>
+        <div className="stack gap-3">
+          {ledgers.map((l) => (
+            <div
+              key={l.id}
+              style={{
+                display: 'flex', alignItems: 'center', gap: 12,
+                padding: '14px 18px',
+                borderRadius: 'var(--radius-md)',
+                background: l.id === ledger?.id ? 'var(--primary)' : 'var(--surface)',
+                color: l.id === ledger?.id ? '#fff' : 'var(--text)',
+                boxShadow: l.id === ledger?.id ? 'var(--shadow-xs)' : 'var(--shadow-xs)',
+              }}
+            >
+              <span style={{ fontSize: 20 }}>{l.id === ledger?.id ? '✓' : '○'}</span>
+              <div style={{ flex: 1, minWidth: 0 }}>
+                <div style={{ fontWeight: 700, fontSize: 14 }}>{l.name}</div>
+                <div style={{ fontSize: 12, color: l.id === ledger?.id ? 'rgba(255,255,255,0.8)' : 'var(--text-secondary)', fontWeight: 500 }}>
+                  {l.tx_count ?? 0} 笔交易 · {l.account_count ?? 0} 账户 · {l.category_count ?? 0} 分类
+                </div>
+              </div>
+              {l.id !== ledger?.id && (
+                <button className="btn btn--sm" style={{ background: '#fff', color: 'var(--text)' }} onClick={() => setLedger(l.id).then(bump)}>
+                  切换
+                </button>
+              )}
+            </div>
+          ))}
+        </div>
+      </div>
+
+      {/* 关于 */}
+      <div className="card card--black">
+        <div className="row gap-3" style={{ marginBottom: 14, alignItems: 'center' }}>
+          <NERVBadge size={48} />
+          <div>
+            <div className="eyebrow eyebrow--white">SPEC / 机体档案 · EVA-02</div>
+            <h3 className="section-title" style={{ marginTop: 4 }}>Asuka记账 v1.2</h3>
+          </div>
+        </div>
+
+        {/* 机体数据行（机体系仪表装饰） */}
+        <div className="row gap-3" style={{ flexWrap: 'wrap', marginBottom: 14, fontSize: 11, fontWeight: 700, letterSpacing: '0.06em' }}>
+          <span className="chip chip--volt">MAGI 在线</span>
+          <span className="chip chip--volt">AT 力场 稳定</span>
+          <span className="chip chip--volt">同步率 100%</span>
+          <span className="chip chip--volt">LCL 正常</span>
+          <span className="chip" style={{ background: 'rgba(255,255,255,0.12)', color: '#fff' }}>A.T. FIELD · ACTIVE</span>
+        </div>
+
+        <div className="stack gap-2" style={{ fontSize: 13, color: 'rgba(255,255,255,0.8)', fontWeight: 500 }}>
+          <Info>Asuka记账 — 明日香主题本地记账应用（Bento × EVA-02 红橙配色）</Info>
+          <Info>驾驶员：惣流・アスカ・ラングレー（EVA-02 PILOT · SYNC RATE 100%）</Info>
+          <Info>前端：React + TypeScript + Vite · 数字 JetBrains Mono</Info>
+          <Info>后端：本地 SQLite（asuka.db）· 金额以分存储 · 数据完全本地</Info>
+          <Info>支持：账本切换 / MAGI 自动抓取消费记录 / 二次确认删除 / 千问语音识别 / DeepSeek 解析</Info>
+        </div>
+      </div>
+
+      {adding && (
+        <Modal title="+ 新建账本 · EVA-02" onClose={() => setAdding(false)}>
+          <div className="stack gap-3">
+            <div>
+              <label className="label">账本名称</label>
+              <input
+                className="input"
+                autoFocus
+                placeholder="例如：2026 年度账本"
+                value={name}
+                onChange={(e) => setName(e.target.value)}
+                onKeyDown={(e) => e.key === 'Enter' && create()}
+              />
+            </div>
+            <div className="row" style={{ justifyContent: 'flex-end', gap: 10 }}>
+              <button className="btn btn--ghost" onClick={() => setAdding(false)}>取消</button>
+              <button className="btn btn--primary" onClick={create}>创建</button>
+            </div>
+          </div>
+        </Modal>
+      )}
+    </div>
+  );
+}
+
+function Info({ children }: { children: React.ReactNode }) {
+  return (
+    <div style={{ display: 'flex', alignItems: 'baseline', gap: 8 }}>
+      <span style={{ width: 6, height: 6, background: 'var(--primary)', display: 'inline-block', flexShrink: 0, borderRadius: '50%' }} />
+      <span>{children}</span>
+    </div>
+  );
+}

@@ -1,0 +1,51 @@
+# 依赖
+node_modules/
+
+# 构建产物
+web/dist/
+
+# 本地数据库（运行时生成）
+server/data/*.db
+server/data/*.db-wal
+server/data/*.db-shm
+
+# 日志 / 系统
+*.log
+.DS_Store
+Thumbs.db
+
+# 原站 RAG 产物（克隆自上游，体积大且由 CI 重建）
+data/docs-index.*.sqlite
+data/docs-index.hash
+
+# ── 安全：环境变量（含 API Key，严禁提交） ──
+.env
+*.env
+!.env.example
+server/.env
+server/.env.local
+
+# ── 密钥 / 凭证 ──
+*.pem
+*.key
+*.p12
+credentials.json
+
+# ── 测试残留 / 临时文件 ──
+.batch.json
+.cand.json
+*_test.*
+tmp/
+temp/
+*.timestamp-*.mjs
+
+# ── 大体积构建产物（APK 等，用 Release 发布而非入库） ──
+*.apk
+*.aab
+web/android/app/build/
+web/android/build/
+web/android/.gradle/
+web/android/capacitor-cordova-android-plugins/
+
+# ── 截图（个人查看用，按需单独管理） ──
+screenshots/

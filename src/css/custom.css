@@ -1,0 +1,236 @@
+/**
+ * BeeCount Website Custom Styles
+ */
+
+:root {
+  /* BeeCount 蜜蜂黄 #F8C91C */
+  --ifm-color-primary: #F8C91C;
+  --ifm-color-primary-dark: #e5b80d;
+  --ifm-color-primary-darker: #d9ae0c;
+  --ifm-color-primary-darkest: #b28f0a;
+  --ifm-color-primary-light: #f9d039;
+  --ifm-color-primary-lighter: #f9d44a;
+  --ifm-color-primary-lightest: #fbe07a;
+  --ifm-code-font-size: 95%;
+  --docusaurus-highlighted-code-line-bg: rgba(0, 0, 0, 0.1);
+}
+
+[data-theme='dark'] {
+  /* BeeCount 蜜蜂黄 #F8C91C */
+  --ifm-color-primary: #F8C91C;
+  --ifm-color-primary-dark: #e5b80d;
+  --ifm-color-primary-darker: #d9ae0c;
+  --ifm-color-primary-darkest: #b28f0a;
+  --ifm-color-primary-light: #f9d039;
+  --ifm-color-primary-lighter: #f9d44a;
+  --ifm-color-primary-lightest: #fbe07a;
+  --docusaurus-highlighted-code-line-bg: rgba(0, 0, 0, 0.3);
+}
+
+/* Hero Section */
+.hero {
+  padding: 4rem 0;
+}
+
+.hero__title {
+  font-size: 3rem;
+  font-weight: 700;
+}
+
+.hero__subtitle {
+  font-size: 1.5rem;
+  color: var(--ifm-color-emphasis-700);
+}
+
+[data-theme='dark'] .hero__subtitle {
+  color: var(--ifm-color-emphasis-500);
+}
+
+/* Feature Cards */
+.feature-card {
+  padding: 2rem;
+  border-radius: 12px;
+  background: var(--ifm-card-background-color);
+  box-shadow: 0 2px 12px rgba(0, 0, 0, 0.08);
+  transition: transform 0.2s, box-shadow 0.2s;
+}
+
+.feature-card:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.12);
+}
+
+/* Screenshot Gallery */
+.screenshot-gallery {
+  display: flex;
+  gap: 1rem;
+  overflow-x: auto;
+  padding: 1rem 0;
+  scroll-snap-type: x mandatory;
+}
+
+.screenshot-gallery img {
+  height: 400px;
+  width: auto;
+  border-radius: 16px;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
+  scroll-snap-align: start;
+}
+
+/* Download Buttons */
+.download-buttons {
+  display: flex;
+  gap: 1rem;
+  flex-wrap: wrap;
+  justify-content: center;
+  margin: 2rem 0;
+}
+
+.download-button {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.75rem 1.5rem;
+  border-radius: 8px;
+  font-weight: 600;
+  text-decoration: none;
+  transition: all 0.2s;
+}
+
+.download-button--primary {
+  background: var(--ifm-color-primary);
+  color: white;
+}
+
+.download-button--primary:hover {
+  background: var(--ifm-color-primary-dark);
+  color: white;
+  text-decoration: none;
+}
+
+.download-button--secondary {
+  background: var(--ifm-color-emphasis-200);
+  color: var(--ifm-color-emphasis-900);
+}
+
+.download-button--secondary:hover {
+  background: var(--ifm-color-emphasis-300);
+  text-decoration: none;
+}
+
+/* Section Styles */
+.section {
+  padding: 4rem 0;
+}
+
+.section--alt {
+  background: var(--ifm-color-emphasis-100);
+}
+
+[data-theme='dark'] .section--alt {
+  background: var(--ifm-color-emphasis-100);
+}
+
+.section__title {
+  text-align: center;
+  font-size: 2.5rem;
+  margin-bottom: 1rem;
+}
+
+.section__subtitle {
+  text-align: center;
+  font-size: 1.2rem;
+  color: var(--ifm-color-emphasis-700);
+  margin-bottom: 3rem;
+}
+
+/* Mobile Responsive */
+@media (max-width: 768px) {
+  .hero__title {
+    font-size: 2rem;
+  }
+
+  .hero__subtitle {
+    font-size: 1.2rem;
+  }
+
+  .screenshot-gallery img {
+    height: 300px;
+  }
+}
+
+/* ===========================================
+   Embed Mode - 用于 App 内嵌
+   使用方式: 在 URL 添加 ?embed=true
+   示例: https://count.beejz.com/docs/intro?embed=true&mode=dark
+   =========================================== */
+body.embed-mode .navbar {
+  display: none !important;
+}
+
+body.embed-mode .footer {
+  display: none !important;
+}
+
+body.embed-mode .theme-doc-breadcrumbs {
+  display: none !important;
+}
+
+body.embed-mode .pagination-nav {
+  display: none !important;
+}
+
+/* 调整内嵌模式下的内容区域 */
+body.embed-mode .main-wrapper {
+  padding-top: 0 !important;
+}
+
+body.embed-mode article {
+  padding: 1rem;
+}
+
+/* 隐藏 footer 外部链接的箭头图标 */
+.footer__links a[href^="http"] svg,
+.footer__links a[href^="https"] svg,
+.footer__link-item svg[class*="external"] {
+  display: none !important;
+}
+
+/* 备用方案：隐藏所有 footer 链接的外部图标 */
+.footer a[target="_blank"] svg,
+.footer__link-item::after {
+  display: none !important;
+}
+
+/* ========== App 内嵌(embed)模式 ==========
+ * App「使用帮助」WebView 带 ?embed=1 打开时,<html> 会带上 data-bee-embed 属性
+ * (不用 class:Docusaurus hydration 会整体重写 html className,data 属性才能存活)
+ * (注入逻辑见 docusaurus.config.ts 的 bee-embed-mode 插件)。
+ * 隐藏所有带外部链接/下载入口的 chrome,避免应用商店审核风险。 */
+/* navbar 保留 —— 搜索与汉堡目录是文档站的核心入口;只隐藏带外链/跳出
+ * 风险的项(捐赠、GitHub、语言切换)与冗余的 logo/标题(App 自己的标题栏
+ * 已写「使用帮助」),手机侧栏里的同款项一并隐藏 */
+html[data-bee-embed] .navbar__brand,
+html[data-bee-embed] .navbar a[href*='github.com'],
+html[data-bee-embed] .navbar a[href$='/donate'],
+html[data-bee-embed] .navbar .dropdown,
+html[data-bee-embed] .navbar-sidebar a[href*='github.com'],
+html[data-bee-embed] .navbar-sidebar a[href$='/donate'],
+html[data-bee-embed] .navbar-sidebar .dropdown {
+  display: none !important;
+}
+/* 面包屑第一项是「回官网首页」的小房子,embed 下隐藏(回文档首页走汉堡菜单) */
+html[data-bee-embed] .theme-doc-breadcrumbs .breadcrumbs__item:first-child {
+  display: none !important;
+}
+html[data-bee-embed] footer.footer {
+  display: none !important;
+}
+html[data-bee-embed] div[class^='announcementBar'] {
+  display: none !important;
+}
+html[data-bee-embed] .theme-edit-this-page,
+html[data-bee-embed] .theme-doc-version-badge,
+html[data-bee-embed] .theme-last-updated {
+  display: none !important;
+}
