@@ -79,23 +79,45 @@ export function Modal({ title, onClose, children, wide }: {
           borderRadius: 'var(--radius-lg)',
           boxShadow: 'var(--shadow-lg)',
           border: '1px solid rgba(255,255,255,0.7)',
-          width: '100%', maxWidth: wide ? 760 : 520, padding: 28,
+          width: '100%', maxWidth: wide ? 760 : 520, padding: 28, position: 'relative',
         }}
       >
-        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 20 }}>
-          <h2 className="display-md" style={{ fontSize: 20, fontWeight: 700, color: 'var(--text)', letterSpacing: '-0.01em' }}>{title}</h2>
+        {title && (
+          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 20 }}>
+            <h2 className="display-md" style={{ fontSize: 20, fontWeight: 700, color: 'var(--text)', letterSpacing: '-0.01em' }}>{title}</h2>
+            <button
+              onClick={onClose}
+              style={{
+                background: 'rgba(255,255,255,0.85)', color: 'var(--text-secondary)', border: '1px solid rgba(0,0,0,0.06)',
+                cursor: 'pointer', padding: 0, flexShrink: 0,
+                width: 36, height: 36, fontSize: 16, fontWeight: 600, lineHeight: 1,
+                borderRadius: '50%', boxShadow: '0 2px 6px rgba(0,0,0,0.06)',
+                display: 'inline-flex', alignItems: 'center', justifyContent: 'center',
+                transition: 'background 0.15s ease',
+              }}
+              onMouseEnter={(e) => { e.currentTarget.style.background = 'rgba(255,255,255,1)'; }}
+              onMouseLeave={(e) => { e.currentTarget.style.background = 'rgba(255,255,255,0.85)'; }}
+              aria-label="关闭"
+            >✕</button>
+          </div>
+        )}
+        {!title && (
           <button
             onClick={onClose}
             style={{
-              background: 'rgba(255,255,255,0.6)', color: 'var(--text-secondary)', border: 'none', cursor: 'pointer',
-              width: 30, height: 30, fontSize: 13, fontWeight: 600, borderRadius: '50%',
+              position: 'absolute', top: 14, right: 14,
+              background: 'rgba(255,255,255,0.85)', color: 'var(--text-secondary)', border: '1px solid rgba(0,0,0,0.06)',
+              cursor: 'pointer', padding: 0, flexShrink: 0,
+              width: 36, height: 36, fontSize: 16, fontWeight: 600, lineHeight: 1,
+              borderRadius: '50%', boxShadow: '0 2px 6px rgba(0,0,0,0.06)',
+              display: 'inline-flex', alignItems: 'center', justifyContent: 'center',
               transition: 'background 0.15s ease',
             }}
-            onMouseEnter={(e) => { e.currentTarget.style.background = 'rgba(255,255,255,0.9)'; }}
-            onMouseLeave={(e) => { e.currentTarget.style.background = 'rgba(255,255,255,0.6)'; }}
+            onMouseEnter={(e) => { e.currentTarget.style.background = 'rgba(255,255,255,1)'; }}
+            onMouseLeave={(e) => { e.currentTarget.style.background = 'rgba(255,255,255,0.85)'; }}
             aria-label="关闭"
           >✕</button>
-        </div>
+        )}
         {children}
       </div>
     </div>

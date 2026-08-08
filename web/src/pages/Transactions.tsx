@@ -131,9 +131,6 @@ export default function Transactions() {
             <button className="btn btn--ghost" onClick={() => setFetchOpen(true)}>
               📥 自动抓取
             </button>
-            <button className="btn btn--primary" onClick={() => setEditing('new')}>
-              + 记一笔
-            </button>
           </div>
         </div>
       </header>
@@ -184,8 +181,7 @@ export default function Transactions() {
             <span className="eva-quote eva-quote--jp" style={{ display: 'block', fontSize: 18, marginBottom: 8 }}>
               あんたバカ？一条流水都没有！
             </span>
-            换个筛选条件，或用「📥 自动抓取」导入，或
-            <button className="btn btn--sm btn--primary" style={{ marginLeft: 8 }} onClick={() => setEditing('new')}>记一笔</button>
+            换个筛选条件，或用「📥 自动抓取」导入
           </div>
         ) : (
           <div className="list">
@@ -234,9 +230,9 @@ export default function Transactions() {
         )}
       </div>
 
-      {editing && (
+      {editing && editing !== 'new' && (
         <TxForm
-          tx={editing === 'new' ? null : editing}
+          tx={editing}
           cats={cats} accts={accts} tags={tags} ledgerId={ledger.id}
           onClose={() => setEditing(null)}
           onSaved={() => { setEditing(null); bump(); }}
@@ -250,10 +246,6 @@ export default function Transactions() {
           </div>
           <p style={{ marginBottom: 12, fontSize: 13, color: 'var(--text-secondary)', fontWeight: 500 }}>
             粘贴微信/支付宝支付短信或银行交易详情，可多行；MAGI 自动识别金额、商家、时间与分类，确认后批量入账。
-          </p>
-          <p style={{ marginBottom: 12, fontSize: 12, color: 'var(--text-tertiary)' }}>
-            示例：「【微信支付】你于08月06日08:32在星巴克(北京朝阳店)消费38.00元」<br />
-            「【支付宝】08月05日12:10 转账给 王小明 收款 200元」「滴滴出行支付25.5元」
           </p>
           <textarea
             className="textarea"
@@ -398,7 +390,11 @@ function TxForm({ tx, cats, accts, tags, ledgerId, onClose, onSaved }: {
   const [categoryId, setCategoryId] = useState(tx?.category?.id ? String(tx.category.id) : '');
   const [accountId, setAccountId] = useState(tx?.account?.id ? String(tx.account.id) : '');
   const [note, setNote] = useState(tx?.note ?? '');
-  const [date, setDate] = useState(tx ? tx.occurred_at.slice(0, 10) : new Date().toISOString().slice(0, 10));
+  const [date, setDate] = useState(tx ? tx.occurred_at.slice(0, 10) : (() => {
+    // 本地日期（不能用 toISOString 的 UTC 日期，否则凌晨记账跨天）
+    const d = new Date();
+    return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`;
+  })());
   const [time, setTime] = useState(tx ? tx.occurred_at.slice(11, 16) : new Date().toTimeString().slice(0, 5));
   const [tagIds, setTagIds] = useState<number[]>(tx?.tags.map((t) => t.id) ?? []);
   const [saving, setSaving] = useState(false);

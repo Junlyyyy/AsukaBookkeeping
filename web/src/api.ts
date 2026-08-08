@@ -32,7 +32,10 @@ async function probeRemote() {
     const timer = setTimeout(() => ctrl.abort(), 1500);
     const res = await fetch(`${BASE}/health`, { signal: ctrl.signal });
     clearTimeout(timer);
-    if (res.ok) mode = 'remote';
+    // 关键：必须确认返回的是 JSON —— Capacitor WebView 对未知路径返回 200 + index.html（SPA fallback），
+    // 若仅按 res.ok 判断会误判"有后端"，随后所有 res.json() 解析 HTML 崩溃
+    const ct = (res.headers.get('content-type') || '').toLowerCase();
+    if (res.ok && ct.includes('application/json')) mode = 'remote';
   } catch {
     /* stay local */
   }
@@ -42,6 +45,13 @@ export function setMode(m: 'remote' | 'local') { mode = m; probeInFlight = false
 export function getMode() { return mode; }
 
 // ---- 远端实现 ----
+/** 标记"后端不可达"的错误（非业务错误），用于触发本地降级 */
+function unreachable(msg: string): Error & { unreachable: boolean } {
+  const e = new Error(msg) as Error & { unreachable: boolean };
+  e.unreachable = true;
+  return e;
+}
+
 async function req<T>(path: string, options?: RequestInit): Promise<T> {
   const res = await fetch(`${BASE}${path}`, {
     headers: { 'Content-Type': 'application/json' },
@@ -53,9 +63,17 @@ async function req<T>(path: string, options?: RequestInit): Promise<T> {
       const body = await res.json();
       if (body?.error) msg = body.error;
     } catch { /* ignore */ }
+    // 5xx 视为后端不可达（服务端挂/网关错误），允许降级；4xx 业务错误不降级
+    if (res.status >= 500) throw unreachable(msg);
     throw new Error(msg);
   }
-  return res.json() as Promise<T>;
+  const ct = (res.headers.get('content-type') || '').toLowerCase();
+  if (!ct.includes('application/json')) throw unreachable('后端不可达（响应非 JSON）');
+  try {
+    return await res.json() as T;
+  } catch {
+    throw unreachable('后端不可达（响应解析失败）');
+  }
 }
 
 const qs = (params: Record<string, string | number | undefined>) => {
@@ -147,36 +165,60 @@ function pick() {
   return ensureMode() === 'remote' ? remoteApi : localApi;
 }
 
+/**
+ * 远端调用包装：网络错误 / 非 JSON 响应 / 5xx（后端不可达）时
+ * 自动降级为本地数据层并重试一次；业务错误（4xx）原样抛出。
+ * 这样即使后端中途挂掉，前端也能无缝回退离线模式。
+ */
+async function call<T>(name: keyof typeof localApi, args: unknown[]): Promise<T> {
+  const impl = pick();
+  try {
+    return await (impl as any)[name](...args);
+  } catch (e) {
+    const err = e as Error & { unreachable?: boolean };
+    const fatal =
+      err?.unreachable === true ||
+      err instanceof TypeError || // fetch 网络层错误（连接拒绝等）
+      /failed to fetch|network error|load failed|abort/i.test(err?.message || '');
+    if (fatal && mode === 'remote') {
+      mode = 'local'; // 后端不可达 → 永久降级本地（直到显式 setMode）
+      const localFn = (localApi as any)[name];
+      if (typeof localFn === 'function') return localFn(...args);
+    }
+    throw e;
+  }
+}
+
 export const api = {
-  ledgers() { return pick().ledgers(); },
-  activeLedger() { return pick().activeLedger(); },
-  createLedger(name: string, currency = 'CNY') { return pick().createLedger(name, currency); },
-  setActiveLedger(id: number) { return pick().setActiveLedger(id); },
-  ledgerStats(id: number) { return pick().ledgerStats(id); },
+  ledgers() { return call<Ledger[]>('ledgers', []); },
+  activeLedger() { return call<Ledger>('activeLedger', []); },
+  createLedger(name: string, currency = 'CNY') { return call<Ledger>('createLedger', [name, currency]); },
+  setActiveLedger(id: number) { return call<{ ok: boolean }>('setActiveLedger', [id]); },
+  ledgerStats(id: number) { return call<LedgerStats>('ledgerStats', [id]); },
 
-  listTransactions(params: Record<string, string | number | undefined>) { return pick().listTransactions(params); },
-  getTransaction(id: number) { return pick().getTransaction(id); },
-  createTransaction(body: Record<string, unknown>) { return pick().createTransaction(body); },
-  createTransactions(items: Record<string, unknown>[]) { return pick().createTransactions(items); },
-  updateTransaction(id: number, body: Record<string, unknown>) { return pick().updateTransaction(id, body); },
-  deleteTransaction(id: number, confirm = false) { return pick().deleteTransaction(id, confirm); },
-  parseTransaction(text: string, ledger_id: number) { return pick().parseTransaction(text, ledger_id); },
-  fetchTransactionCandidates(text: string, ledger_id: number) { return pick().fetchTransactionCandidates(text, ledger_id); },
+  listTransactions(params: Record<string, string | number | undefined>) { return call<TxListResponse>('listTransactions', [params]); },
+  getTransaction(id: number) { return call<Transaction>('getTransaction', [id]); },
+  createTransaction(body: Record<string, unknown>) { return call<Transaction>('createTransaction', [body]); },
+  createTransactions(items: Record<string, unknown>[]) { return call<{ created: number; items: Transaction[] }>('createTransactions', [items]); },
+  updateTransaction(id: number, body: Record<string, unknown>) { return call<Transaction>('updateTransaction', [id, body]); },
+  deleteTransaction(id: number, confirm = false) { return call<unknown>('deleteTransaction', [id, confirm]); },
+  parseTransaction(text: string, ledger_id: number) { return call<Transaction & { parsed?: unknown }>('parseTransaction', [text, ledger_id]); },
+  fetchTransactionCandidates(text: string, ledger_id: number) { return call<{ count: number; items: TxCandidate[] }>('fetchTransactionCandidates', [text, ledger_id]); },
 
-  categories(params?: Record<string, string | number>) { return pick().categories(params); },
-  createCategory(body: Record<string, unknown>) { return pick().createCategory(body); },
-  accounts(params?: Record<string, string | number>) { return pick().accounts(params); },
-  createAccount(body: Record<string, unknown>) { return pick().createAccount(body); },
-  tags(ledger_id?: number) { return pick().tags(ledger_id); },
-  createTag(ledger_id: number, name: string) { return pick().createTag(ledger_id, name); },
+  categories(params?: Record<string, string | number>) { return call<Category[]>('categories', [params]); },
+  createCategory(body: Record<string, unknown>) { return call<Category>('createCategory', [body]); },
+  accounts(params?: Record<string, string | number>) { return call<Account[]>('accounts', [params]); },
+  createAccount(body: Record<string, unknown>) { return call<Account>('createAccount', [body]); },
+  tags(ledger_id?: number) { return call<Tag[]>('tags', [ledger_id]); },
+  createTag(ledger_id: number, name: string) { return call<Tag>('createTag', [ledger_id, name]); },
 
-  budgets(ledger_id?: number) { return pick().budgets(ledger_id); },
-  updateBudget(id: number, body: Record<string, unknown>) { return pick().updateBudget(id, body); },
-  createBudget(body: Record<string, unknown>) { return pick().createBudget(body); },
-  deleteBudget(id: number) { return pick().deleteBudget(id); },
+  budgets(ledger_id?: number) { return call<{ year: number; month: number; items: Budget[] }>('budgets', [ledger_id]); },
+  updateBudget(id: number, body: Record<string, unknown>) { return call<Budget>('updateBudget', [id, body]); },
+  createBudget(body: Record<string, unknown>) { return call<Budget>('createBudget', [body]); },
+  deleteBudget(id: number) { return call<{ ok: boolean }>('deleteBudget', [id]); },
 
-  analytics(params: Record<string, string | number | undefined>) { return pick().analytics(params); },
-  search(q: string, ledger_id?: number) { return pick().search(q, ledger_id); },
+  analytics(params: Record<string, string | number | undefined>) { return call<AnalyticsSummary>('analytics', [params]); },
+  search(q: string, ledger_id?: number) { return call<{ query: string; count: number; items: Transaction[] }>('search', [q, ledger_id]); },
 
   // 语音识别：仅远端（本地 server + ASR 微服务）可用，离线/APK 模式返回不可用
   async speechHealth() {

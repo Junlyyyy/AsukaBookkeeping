@@ -7,7 +7,7 @@ import type {
   Tag, Transaction, TxCandidate, TxListResponse,
 } from './types';
 
-const DB_KEY = 'jt_db_v1';
+const DB_KEY = 'asuka_db_v1';
 
 interface DB {
   ledgers: any[];
@@ -21,7 +21,12 @@ interface DB {
 }
 
 let _db: DB | null = null;
-const now = () => new Date().toISOString().slice(0, 19).replace('T', ' ');
+// 本地时间字符串（YYYY-MM-DD HH:mm:ss）—— 与后端 SQLite datetime('now','localtime') 一致；
+// 不能用 toISOString()（UTC），否则时间显示差 8 小时、凌晨记账跨天
+const now = () => {
+  const d = new Date();
+  return new Date(d.getTime() - d.getTimezoneOffset() * 60000).toISOString().slice(0, 19).replace('T', ' ');
+};
 
 function load(): DB {
   if (_db) return _db;
@@ -41,11 +46,10 @@ const yuan = (cents: number) => Number((cents / 100).toFixed(2));
 const cents = (y: number) => Math.round(Number(y) * 100);
 const txSqlDate = (d: string) => d.replace('T', ' ');
 
-// ---- 首次使用写入演示数据（与后端 seed 一致的结构）----
+// ---- 首次使用写入基础骨架（账本 + 12 个分类 + 4 个账户，无交易/预算/标签示例）----
 function seed(db: DB) {
   const ledgerId = nextId(db);
-  db.ledgers.push({ id: ledgerId, name: '我的日常账本', currency: 'CNY', is_active: 1, created_at: now(), updated_at: now() });
-  db.ledgers.push({ id: nextId(db), name: '旅行基金', currency: 'CNY', is_active: 0, created_at: now(), updated_at: now() });
+  db.ledgers.push({ id: ledgerId, name: '我的账本', currency: 'CNY', is_active: 1, created_at: now(), updated_at: now() });
 
   const catDefs: [string, string, string, number][] = [
     ['餐饮', '🍜', 'expense', 0], ['交通', '🚌', 'expense', 1], ['购物', '🛍️', 'expense', 2],
@@ -61,62 +65,13 @@ function seed(db: DB) {
   });
 
   const acctDefs: [string, string, number][] = [
-    ['现金', 'cash', 186500], ['招商银行', 'bank', 2580000], ['信用卡', 'credit_card', 0], ['支付宝', 'e_wallet', 684300],
+    ['现金', 'cash', 0], ['招商银行', 'bank', 0], ['信用卡', 'credit_card', 0], ['支付宝', 'e_wallet', 0],
   ];
   const acctId: Record<string, number> = {};
   acctDefs.forEach(([n, t, b]) => {
     const id = nextId(db);
     db.accounts.push({ id, ledger_id: ledgerId, name: n, type: t, balance: b, created_at: now() });
     acctId[n] = id;
-  });
-
-  const tagDefs = ['咖啡', '通勤', '旅行', '数码', '健身'];
-  const tagId: Record<string, number> = {};
-  tagDefs.forEach((n) => { const id = nextId(db); db.tags.push({ id, ledger_id: ledgerId, name: n, created_at: now() }); tagId[n] = id; });
-
-  const budgetDefs: [string, number][] = [
-    ['餐饮', 200000], ['交通', 30000], ['购物', 150000], ['娱乐', 80000], ['居住', 350000], ['医疗', 50000],
-  ];
-  const y = new Date().getFullYear();
-  const m = new Date().getMonth() + 1;
-  budgetDefs.forEach(([n, amt]) => {
-    const id = nextId(db);
-    db.budgets.push({ id, ledger_id: ledgerId, category_id: catId[n], amount: amt, period: 'monthly', year: y, month: m, created_at: now(), updated_at: now() });
-  });
-
-  // 近 30 天演示交易
-  const specs: [string, [number, number], string[]][] = [
-    ['餐饮', [800, 3800], ['午餐', '晚餐', '咖啡', '外卖', '奶茶']],
-    ['交通', [200, 1500], ['地铁', '打车', '公交']],
-    ['购物', [3000, 30000], ['日用品', '衣服', '超市采购']],
-    ['娱乐', [1500, 12000], ['电影', '游戏', 'KTV']],
-    ['医疗', [1000, 8000], ['感冒药', '体检']],
-    ['人情', [5000, 50000], ['红包', '礼物']],
-  ];
-  const pick = <T,>(a: T[]): T => a[Math.floor(Math.random() * a.length)];
-  const rint = (a: number, b: number) => Math.floor(Math.random() * (b - a + 1)) + a;
-  for (let i = 0; i < 30; i++) {
-    const d = new Date(Date.now() - i * 86400000);
-    const n = rint(2, 4);
-    for (let k = 0; k < n; k++) {
-      const [cat, [lo, hi], notes] = pick(specs);
-      d.setHours(rint(8, 22), rint(0, 59), 0, 0);
-      const id = nextId(db);
-      db.transactions.push({
-        id, ledger_id: ledgerId, account_id: pick([acctId['支付宝'], acctId['招商银行'], acctId['现金']]),
-        category_id: catId[cat], type: 'expense', amount: rint(lo, hi),
-        note: pick(notes), occurred_at: d.toISOString().slice(0, 16).replace('T', ' '),
-        status: 'active', created_at: now(), updated_at: now(),
-      });
-      if (cat === '餐饮' && Math.random() < 0.3) db.transaction_tags.push({ transaction_id: id, tag_id: tagId['咖啡'] });
-    }
-  }
-  const pay = new Date(y, m - 1, 10, 9, 0, 0);
-  const id2 = nextId(db);
-  db.transactions.push({
-    id: id2, ledger_id: ledgerId, account_id: acctId['招商银行'], category_id: catId['工资'],
-    type: 'income', amount: 2500000, note: '月度工资',
-    occurred_at: pay.toISOString().slice(0, 16).replace('T', ' '), status: 'active', created_at: now(), updated_at: now(),
   });
 }
 
@@ -576,11 +531,10 @@ function parseCandidate(s: string, now: Date): Omit<TxCandidate, 'category'> | n
   }
   note = (note || '自动抓取').slice(0, 50);
 
-  let occurredAt = new Date(now.getTime()).toISOString().slice(0, 16).replace('T', ' ');
-  const rel = (days: number) => {
-    const d = new Date(now.getTime() - days * 86400000);
-    return d.toISOString().slice(0, 16).replace('T', ' ');
-  };
+  // 默认「今天」；相对/绝对日期统一按本地时间存储（与带日期分支一致）
+  const toLocal = (d: Date) => new Date(d.getTime() - d.getTimezoneOffset() * 60000).toISOString().slice(0, 16).replace('T', ' ');
+  let occurredAt = toLocal(now);
+  const rel = (days: number) => toLocal(new Date(now.getTime() - days * 86400000));
   const mDate = s.match(/(\d{1,2})月(\d{1,2})日\s*(\d{1,2})[时:：](\d{1,2})分?/);
   const mDateOnly = s.match(/(\d{1,2})月(\d{1,2})日/);
   const mTime = s.match(/(\d{1,2})[时:：](\d{1,2})分?/);

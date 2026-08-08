@@ -49,3 +49,6 @@ web/android/capacitor-cordova-android-plugins/
 
 # ── 截图（个人查看用，按需单独管理） ──
 screenshots/
+
+# 本地截图/预览
+shots/

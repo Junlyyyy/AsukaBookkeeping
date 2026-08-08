@@ -656,15 +656,20 @@ body::after {
   }
   .hide-mobile { display: none !important; }
   .container { padding: 0 16px; }
+  /* 竖屏 header 紧凑：避免 logo/导航/账本按钮互相挤压重叠 */
+  header.glass > .container { gap: 10px !important; }
+  /* 顶栏避让状态栏（Android 15+ edge-to-edge；配合 viewport-fit=cover 生效） */
+  header.glass { padding-top: max(10px, env(safe-area-inset-top)) !important; }
   /* nav-btn 紧凑：7 个按钮在窄屏也能显示 */
   .nav-btn { padding: 6px 10px; font-size: 12px; flex-shrink: 0; white-space: nowrap; }
-  .nav-wrap { gap: 4px !important; -webkit-overflow-scrolling: touch; }
+  .nav-wrap { gap: 4px !important; -webkit-overflow-scrolling: touch; justify-content: flex-start !important; }
+  .nav-wrap::-webkit-scrollbar { display: none; }
   /* 主区与底部安全区（小米15 虚拟按键） */
   main.container { padding-bottom: max(60px, calc(60px + env(safe-area-inset-bottom))) !important; }
 }
 /* 小屏手机 (< 480px, 含小米15 400 CSS 宽) */
 @media (max-width: 480px) {
-  .nav-btn { padding: 4px 5px; font-size: 10px; letter-spacing: 0; }
+  .nav-btn { padding: 4px 4px; font-size: 10px; letter-spacing: 0; }
   .nav-wrap { gap: 2px !important; }
   .container { padding: 0 12px; }
   /* Hero 数字进一步缩小 */

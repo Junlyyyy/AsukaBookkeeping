@@ -1,7 +1,9 @@
-// 语音识别工具 — 只保留联网大模型方式：豆包流式语音识别大模型（火山引擎）
-// 流程：AudioContext 16kHz 单声道 PCM 采集 → WAV → POST /api/v1/speech/transcribe
-//      → 后端调用豆包大模型识别（wss://openspeech.bytedance.com）→ 文本 → 复用 /transactions/parse（豆包/规则）→ 记账
-// 注意：语音识别依赖后端已配置 DASHSCOPE_API_KEY（千问百炼）；未配置时给出明确提示
+// 语音识别工具 — 只保留联网大模型方式：千问语音识别大模型（阿里云百炼 Paraformer）
+// 流程：AudioContext 16kHz 单声道 PCM 采集 → WAV → 直连千问转写（设置页配置的 Key，仅语音识别时联网）
+//      无 Key 时回退本地后端 POST /api/v1/speech/transcribe（PC 模式）
+// 注意：应用仅在语音识别时联网；其余（记账/解析/抓取）全部本地完成
+
+import { transcribeQwenDirect, getDashScopeKey } from './qwenAsr';
 
 export interface VoiceState {
   supported: boolean;
@@ -28,7 +30,7 @@ let sourceNode: MediaStreamAudioSourceNode | null = null;
 let scriptNode: ScriptProcessorNode | null = null;
 let pcmChunks: Float32Array[] = [];
 
-/** 当前引擎（只支持联网豆包大模型） */
+/** 当前引擎（只支持联网千问语音识别大模型） */
 export let mode: 'cloud-asr' | 'none' = 'none';
 
 function emit() {
@@ -43,8 +45,11 @@ function emit() {
   listeners.forEach((h) => h(state));
 }
 
-/** 探测：后端千问语音识别（DASHSCOPE_API_KEY）是否已配置可用 */
+/** 探测：千问语音识别是否可用 —— 优先本地配置的 Key（直连），其次后端（PC 模式） */
 export async function detectMode(): Promise<'cloud-asr' | 'none'> {
+  // 1) 设置页配置了 Key → 前端直连千问（APK/离线可用，仅语音识别联网）
+  if (getDashScopeKey()) { mode = 'cloud-asr'; return mode; }
+  // 2) 后端已配置（PC 模式）→ 走 /api/v1/speech/transcribe
   try {
     const { api } = await import('../api');
     const h = await api.speechHealth();
@@ -140,24 +145,38 @@ async function transcribeCloud(): Promise<void> {
   for (const a of pcmChunks) { samples.set(a, idx); idx += a.length; }
   pcmChunks = [];
   try {
-    const { api } = await import('../api');
     const blob = encodeWav(samples, 16000);
+    const key = getDashScopeKey();
+    if (key) {
+      // 直连千问（设置页配置的 Key；仅此一步联网）
+      try {
+        const text = await transcribeQwenDirect(blob, key);
+        if (!text) { errorMsg = '千问大模型未识别到语音内容，请重试'; }
+        else { finalBuf = text; errorMsg = null; }
+        emit();
+        return;
+      } catch (e) {
+        console.warn('[voice] 直连千问失败，尝试后端:', (e as Error).message);
+      }
+    }
+    // 回退后端（PC 模式 /api/v1/speech/transcribe）
+    const { api } = await import('../api');
     const r = await api.speechTranscribe(blob);
     if (!r.text) {
-      errorMsg = '豆包大模型未识别到语音内容，请重试';
+      errorMsg = '千问大模型未识别到语音内容，请重试';
     } else {
       finalBuf = r.text;
       errorMsg = null;
     }
   } catch (e) {
-    errorMsg = `千问语音识别失败：${(e as Error).message}`;
+    errorMsg = `语音识别失败：${(e as Error).message}`;
   }
   emit();
 }
 
 // ===================== 对外接口 =====================
 
-/** 启动语音识别（录音后上传豆包大模型识别；最长 15s 自动结束） */
+/** 启动语音识别（录音后上传千问大模型识别；最长 15s 自动结束） */
 export async function startVoice(): Promise<boolean> {
   if (listening) return true;
   if (mode !== 'cloud-asr') {
@@ -176,7 +195,7 @@ export async function startVoice(): Promise<boolean> {
   return true;
 }
 
-/** 停止识别并返回文本（自动上传豆包大模型转写） */
+/** 停止识别并返回文本（自动上传千问大模型转写） */
 export async function stopVoice(): Promise<string> {
   if (autoStopTimer) { clearTimeout(autoStopTimer); autoStopTimer = null; }
   if (listening) await transcribeCloud();

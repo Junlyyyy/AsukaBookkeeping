@@ -50,15 +50,54 @@ export default function Accounts() {
       {accts.length === 0 ? (
         <div className="card" style={{ textAlign: 'center', color: 'var(--text-tertiary)', padding: 40 }}>暂无账户</div>
       ) : (
-        <div className="grid-3">
+        <div className="stack gap-3">
           {accts.map((a) => (
-            <div key={a.id} className="card card--hover" style={{ display: 'flex', flexDirection: 'column', gap: 10 }}>
-              <div className="row-between">
-                <span style={{ fontSize: 30 }}>{TYPE_ICON[a.type] ?? '🏷️'}</span>
-                <span className="chip">{ACCOUNT_TYPE_LABEL[a.type] ?? a.type}</span>
+            <div
+              key={a.id}
+              className="card card--hover"
+              style={{
+                display: 'flex', alignItems: 'center', gap: 14,
+                padding: '16px 20px',
+              }}
+            >
+              {/* 图标方块 */}
+              <div
+                style={{
+                  width: 48, height: 48, borderRadius: 12, flexShrink: 0,
+                  display: 'flex', alignItems: 'center', justifyContent: 'center',
+                  background: 'var(--surface)', boxShadow: 'var(--shadow-xs)',
+                  fontSize: 24,
+                }}
+                aria-hidden="true"
+              >
+                {TYPE_ICON[a.type] ?? '🏷️'}
               </div>
-              <div style={{ fontWeight: 700, fontSize: 16 }}>{a.name}</div>
-              <div className="num-display" style={{ fontSize: 22 }}>{fmtMoney(a.balance)}</div>
+              {/* 中间：账户名 + 类型 */}
+              <div style={{ flex: 1, minWidth: 0 }}>
+                <div
+                  style={{
+                    fontWeight: 700, fontSize: 16, color: 'var(--text)',
+                    overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap',
+                  }}
+                >
+                  {a.name}
+                </div>
+                <div
+                  style={{
+                    marginTop: 3, fontSize: 11, fontWeight: 600,
+                    letterSpacing: '0.06em', color: 'var(--text-secondary)',
+                    textTransform: 'uppercase',
+                  }}
+                >
+                  {ACCOUNT_TYPE_LABEL[a.type] ?? a.type}
+                </div>
+              </div>
+              {/* 右：余额 */}
+              <div style={{ textAlign: 'right', flexShrink: 0 }}>
+                <div className="num-display" style={{ fontSize: 22, fontWeight: 700, color: 'var(--text)' }}>
+                  {fmtMoney(a.balance)}
+                </div>
+              </div>
             </div>
           ))}
         </div>

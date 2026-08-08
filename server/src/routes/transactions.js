@@ -1,16 +1,18 @@
 // BeeCount 本地后端 — 交易路由
 // 对齐 MCP tools: list_transactions / get_transaction / create_transaction / create_transactions
 //                  update_transaction / delete_transaction(二次确认) / parse_and_create_from_text
-// parse 支持三引擎：DeepSeek 大模型（配置 DEEPSEEK_API_KEY 时）→ 豆包大模型（配置 ARK_API_KEY 时）→ 规则解析（降级）
+// parse 仅本地规则引擎（离线）；语音识别走千问 ASR（联网）
 
 import { Router } from 'express';
 import { db, TX_SELECT, serializeTransaction, yuanToCents } from '../db.js';
-import { parseWithDoubao, isDoubaoConfigured } from '../ai/doubao.js';
-import { parseWithDeepSeek, isDeepSeekConfigured } from '../ai/deepseek.js';
 
 export const txRouter = Router();
 
-const NOW = () => new Date().toISOString().slice(0, 19).replace('T', ' ');
+// 本地时间字符串 —— 与 SQLite datetime('now','localtime') 一致；不能用 toISOString()（UTC 差 8 小时）
+const NOW = () => {
+  const d = new Date();
+  return new Date(d.getTime() - d.getTimezoneOffset() * 60000).toISOString().slice(0, 19).replace('T', ' ');
+};
 
 /** list_transactions — 支持日期/分类/账户/关键词/金额范围/类型/标签筛选 */
 txRouter.get('/transactions', (req, res) => {
@@ -278,12 +280,10 @@ function parseSingle(s, now) {
   }
   note = (note || '自动抓取').slice(0, 50);
 
-  // 日期：今天/昨天/前天/「X月X日X时X分」/「X月X日」
-  let occurredAt = new Date(now.getTime()).toISOString().slice(0, 16).replace('T', ' ');
-  const rel = (days) => {
-    const d = new Date(now.getTime() - days * 86400000);
-    return d.toISOString().slice(0, 16).replace('T', ' ');
-  };
+  // 日期：今天/昨天/前天/「X月X日X时X分」/「X月X日」（统一本地时间存储，与带日期分支一致）
+  const toLocal = (d) => new Date(d.getTime() - d.getTimezoneOffset() * 60000).toISOString().slice(0, 16).replace('T', ' ');
+  let occurredAt = toLocal(now);
+  const rel = (days) => toLocal(new Date(now.getTime() - days * 86400000));
   const mDate = s.match(/(\d{1,2})月(\d{1,2})日\s*(\d{1,2})[时:：](\d{1,2})分?/);
   const mDateOnly = s.match(/(\d{1,2})月(\d{1,2})日/);
   const mTime = s.match(/(\d{1,2})[时:：](\d{1,2})分?/);
@@ -333,9 +333,7 @@ function classifyCategory(text, ledgerId) {
 }
 
 /** parse_and_create_from_text — 自然语言记账
- *  引擎 1：DeepSeek 大模型（DEEPSEEK_API_KEY 已配置时优先）
- *  引擎 2：豆包大模型（ARK_API_KEY 已配置时）
- *  引擎 3：本地规则解析（均未配置/失败时降级，无需外部依赖） */
+ *  本地规则引擎解析（离线，无需外部依赖；应用整体仅语音识别联网） */
 txRouter.post('/transactions/parse', async (req, res) => {
   const { text, ledger_id } = req.body || {};
   if (!text || !String(text).trim()) return res.status(400).json({ error: 'text required' });
@@ -344,74 +342,7 @@ txRouter.post('/transactions/parse', async (req, res) => {
   const s = String(text).trim();
   const ledgerId = Number(ledger_id);
 
-  // ---- 引擎 1：DeepSeek 大模型解析（可选，未配置自动跳过） ----
-  if (isDeepSeekConfigured()) {
-    try {
-      const ai = await parseWithDeepSeek(s);
-      if (ai) {
-        // 分类匹配账本已有分类
-        let cat = null;
-        if (ai.category) {
-          cat = db.prepare('SELECT * FROM categories WHERE ledger_id = ? AND name = ? AND type = ?')
-            .get(ledgerId, ai.category, ai.type);
-          if (!cat) {
-            cat = db.prepare('SELECT * FROM categories WHERE ledger_id = ? AND type = ? ORDER BY sort_order LIMIT 1')
-              .get(ledgerId, ai.type);
-          }
-        }
-        const defaultCat = db.prepare('SELECT * FROM categories WHERE ledger_id = ? AND type = ? ORDER BY sort_order LIMIT 1')
-          .get(ledgerId, ai.type);
-        const r = db.prepare(`
-          INSERT INTO transactions (ledger_id, category_id, type, amount, note, occurred_at)
-          VALUES (?, ?, ?, ?, ?, ?)
-        `).run(ledgerId, (cat || defaultCat)?.id ?? null, ai.type,
-          Math.round(ai.amount * 100), ai.note, ai.occurred_at);
-        const row = db.prepare(`${TX_SELECT} WHERE t.id = ?`).get(Number(r.lastInsertRowid));
-        return res.status(201).json({
-          ...serializeTransaction(row),
-          parsed: { amount: ai.amount, category: ai.category, engine: 'deepseek' },
-        });
-      }
-    } catch (e) {
-      console.error(`[parse] DeepSeek 解析异常，继续降级: ${e.message}`);
-    }
-  }
-
-  // ---- 引擎 2：豆包大模型解析（可选，未配置自动跳过） ----
-  if (isDoubaoConfigured()) {
-    try {
-      const ai = await parseWithDoubao(s);
-      if (ai) {
-        // 分类匹配账本已有分类
-        let cat = null;
-        if (ai.category) {
-          cat = db.prepare('SELECT * FROM categories WHERE ledger_id = ? AND name = ? AND type = ?')
-            .get(ledgerId, ai.category, ai.type);
-          if (!cat) {
-            // 兜底：任何同类型分类下都尝试匹配
-            cat = db.prepare('SELECT * FROM categories WHERE ledger_id = ? AND type = ? ORDER BY sort_order LIMIT 1')
-              .get(ledgerId, ai.type);
-          }
-        }
-        const defaultCat = db.prepare('SELECT * FROM categories WHERE ledger_id = ? AND type = ? ORDER BY sort_order LIMIT 1')
-          .get(ledgerId, ai.type);
-        const r = db.prepare(`
-          INSERT INTO transactions (ledger_id, category_id, type, amount, note, occurred_at)
-          VALUES (?, ?, ?, ?, ?, ?)
-        `).run(ledgerId, (cat || defaultCat)?.id ?? null, ai.type,
-          Math.round(ai.amount * 100), ai.note, ai.occurred_at);
-        const row = db.prepare(`${TX_SELECT} WHERE t.id = ?`).get(Number(r.lastInsertRowid));
-        return res.status(201).json({
-          ...serializeTransaction(row),
-          parsed: { amount: ai.amount, category: ai.category, engine: 'doubao' },
-        });
-      }
-    } catch (e) {
-      console.error(`[parse] 豆包解析异常，降级规则解析: ${e.message}`);
-    }
-  }
-
-  // ---- 引擎 2：本地规则解析（降级/默认） ----
+  // ---- 引擎 4：本地规则解析（降级/默认） ----
   // 金额：支持 "38" "38块" "38.5元" "3块5" "12块5毛"
   let amountYuan = null;
   const m1 = s.match(/(\d+(?:\.\d+)?)\s*(?:元|块|块钱|¥|￥)/);

@@ -1,19 +1,33 @@
 // 仪表盘 — Bento × EVA-02 明日香：模块 Hero + 大小块卡片 + KPI 三联 + EVA 机体系状态
 
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { api } from '../api';
 import { useApp } from '../store';
 import type { AnalyticsSummary, Budget, LedgerStats } from '../types';
 import { Donut, RankBars, TrendChart } from '../components/charts';
 import { fmtDate, fmtMoney, toast, TypeBadge } from '../components/ui';
 import VoiceRecorder from '../components/VoiceRecorder';
+import { startVoice } from '../lib/voice';
 
 export default function Dashboard({ go }: { go: (page: 'transactions' | 'stats' | 'budgets') => void }) {
-  const { ledger, tick, bump } = useApp();
+  const { ledger, ledgers, setLedger, tick, bump } = useApp();
   const [stats, setStats] = useState<LedgerStats | null>(null);
   const [analytics, setAnalytics] = useState<AnalyticsSummary | null>(null);
   const [budgets, setBudgets] = useState<Budget[]>([]);
   const [voiceOpen, setVoiceOpen] = useState(false);
+
+  // 账本切换下拉
+  const [ledgerOpen, setLedgerOpen] = useState(false);
+  const ledgerRef = useRef<HTMLDivElement>(null);
+  useEffect(() => {
+    function onDocClick(e: MouseEvent) {
+      if (ledgerOpen && ledgerRef.current && !ledgerRef.current.contains(e.target as Node)) {
+        setLedgerOpen(false);
+      }
+    }
+    document.addEventListener('mousedown', onDocClick);
+    return () => document.removeEventListener('mousedown', onDocClick);
+  }, [ledgerOpen]);
 
   useEffect(() => {
     if (!ledger) return;
@@ -38,8 +52,60 @@ export default function Dashboard({ go }: { go: (page: 'transactions' | 'stats' 
         style={{ padding: '30px 32px 34px' }}
       >
         <div className="hero-status-row">
-          <div className="eyebrow eyebrow--black" style={{ minWidth: 0, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
-            {ledger.name} · {analytics?.month ?? ''}月 · 概览
+          <div ref={ledgerRef} style={{ position: 'relative', minWidth: 0, overflow: 'hidden' }}>
+            <button
+              onClick={() => setLedgerOpen((v) => !v)}
+              className="eyebrow eyebrow--black"
+              style={{
+                background: 'transparent', border: 'none', padding: '2px 6px', margin: '-2px -6px',
+                cursor: 'pointer', display: 'inline-flex', alignItems: 'center', gap: 6,
+                color: 'inherit', maxWidth: '100%', minWidth: 0,
+                fontFamily: 'inherit', fontSize: 'inherit', letterSpacing: 'inherit',
+                borderRadius: 6, transition: 'background 0.15s ease',
+              }}
+              onMouseEnter={(e) => { e.currentTarget.style.background = 'rgba(0,0,0,0.04)'; }}
+              onMouseLeave={(e) => { e.currentTarget.style.background = 'transparent'; }}
+              title="切换账本"
+            >
+              <span style={{ overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap', minWidth: 0 }}>
+                {ledger.name} · {analytics?.month ?? ''}月 · 概览
+              </span>
+              <span style={{ fontSize: 10, opacity: 0.6, flexShrink: 0 }}>▼</span>
+            </button>
+            {ledgerOpen && (
+              <div
+                style={{
+                  position: 'absolute', top: 'calc(100% + 8px)', left: 0,
+                  background: 'rgba(255,255,255,0.92)',
+                  WebkitBackdropFilter: 'saturate(180%) blur(24px)',
+                  backdropFilter: 'saturate(180%) blur(24px)',
+                  color: 'var(--text)',
+                  borderRadius: 'var(--radius-lg)',
+                  boxShadow: 'var(--shadow-lg)',
+                  minWidth: 220, zIndex: 60,
+                  overflow: 'hidden',
+                  border: '1px solid rgba(255,255,255,0.7)',
+                }}
+              >
+                <div style={{ padding: '12px 16px 8px', borderBottom: '1px solid rgba(0,0,0,0.06)' }}>
+                  <div className="eyebrow">账本切换</div>
+                </div>
+                {ledgers.map((l) => (
+                  <button
+                    key={l.id}
+                    onClick={async () => { setLedgerOpen(false); await setLedger(l.id); }}
+                    style={{
+                      width: '100%', display: 'flex', alignItems: 'center', justifyContent: 'space-between',
+                      padding: '10px 16px', background: l.id === ledger?.id ? 'rgba(211,41,15,0.08)' : 'transparent',
+                      color: 'var(--text)', border: 'none', textAlign: 'left', cursor: 'pointer', fontSize: 14,
+                    }}
+                  >
+                    <span style={{ overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{l.name}</span>
+                    {l.id === ledger?.id && <span className="text-volt">✓</span>}
+                  </button>
+                ))}
+              </div>
+            )}
           </div>
           <div className="row gap-3 hero-status-mid hide-mobile" style={{ flexWrap: 'nowrap' }}>
             <span className="eva-headband" aria-label="明日香发带" />
@@ -50,27 +116,25 @@ export default function Dashboard({ go }: { go: (page: 'transactions' | 'stats' 
           </div>
         </div>
 
-        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-end', flexWrap: 'wrap', gap: 24 }}>
-          <div>
-            <div className="hero-num" style={{ color: isPositive ? 'var(--eva-red)' : 'var(--danger)' }}>
-              {fmtMoney(net).replace('-', '')}
+        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', gap: 20, flexWrap: 'wrap' }}>
+          {/* 左：余额 + 标签 + 副标 */}
+          <div style={{ flex: '1 1 240px', minWidth: 0 }}>
+            <div style={{ display: 'flex', alignItems: 'baseline', gap: 12, flexWrap: 'wrap' }}>
+              <div className="hero-num" style={{ color: isPositive ? 'var(--eva-red)' : 'var(--danger)' }}>
+                {fmtMoney(net).replace('-', '')}
+              </div>
+              <span className={`chip ${isPositive ? 'chip--volt' : 'chip--orange'}`} style={{ marginBottom: 6 }}>
+                {isPositive ? '保持节奏' : '需要控制'}
+              </span>
             </div>
-            <div className="eyebrow" style={{ marginTop: 8 }}>本月结余 / NET BALANCE</div>
-            {!isPositive && (
-              <div className="chip chip--orange" style={{ marginTop: 8 }}>需要控制支出</div>
-            )}
-            {isPositive && (
-              <div className="chip chip--volt" style={{ marginTop: 8 }}>保持节奏</div>
-            )}
-            <div className="eva-quote" style={{ marginTop: 10 }}>
-              あんたバカ？ — 认真记账才是王道
-            </div>
+            <div className="eyebrow" style={{ marginTop: 6 }}>本月结余 / NET BALANCE</div>
           </div>
-          <div style={{ textAlign: 'right' }}>
-            <div style={{ display: 'flex', gap: 8, justifyContent: 'flex-end', marginBottom: 8 }}>
-              <span className="eyebrow">本月已记 {analytics?.tx_count ?? 0} 笔</span>
-            </div>
-            <button className="btn btn--primary btn--lg" onClick={() => setVoiceOpen(true)}>
+          {/* 右：语音 CTA */}
+          <div style={{ flex: '0 0 auto', display: 'flex', flexDirection: 'column', alignItems: 'flex-end' }}>
+            <button
+              className="btn btn--primary btn--lg"
+              onClick={() => { void startVoice(); setVoiceOpen(true); }}
+            >
               🎙️ 记一笔
             </button>
           </div>

@@ -25,7 +25,7 @@ export default function Stats() {
 
   if (!ledger) return null;
 
-  const yearSel = Array.from({ length: 4 }, (_, i) => new Date().getFullYear() - 2 + i);
+  const yearSel = Array.from({ length: 4 }, (_, i) => new Date().getFullYear() + i);
 
   return (
     <div className="nike-in stack gap-6">
@@ -39,7 +39,7 @@ export default function Stats() {
               <div className="eyebrow eyebrow--black">ANALYTICS / 数据分析 · EVA-02</div>
             </div>
             <h1 className="hero-title" style={{ marginTop: 6, fontSize: 'clamp(1.6rem, 3vw, 2.4rem)' }}>
-              {scope === 'month' ? `${year} 月度` : scope === 'year' ? `${year} 年度` : '全部数据'}
+              {scope === 'month' ? `${year} 年 ${new Date().getMonth() + 1} 月` : scope === 'year' ? `${year} 年度` : '全部数据'}
             </h1>
             {data && (
               <div className="row gap-3" style={{ marginTop: 10, fontSize: 12, fontWeight: 600 }}>

@@ -1,5 +1,4 @@
-// 语音记账 Modal — 明日香风格：点击"记一笔"→ 语音识别（豆包流式语音识别大模型，联网）→ 自动生成记账
-// 识别文本 → 复用 /transactions/parse（豆包 / 规则引擎）→ 记账
+// 语音记账 Modal — 既可语音识别（千问），也可手动输入；识别结果可二次编辑
 import { useEffect, useState } from 'react';
 import { api } from '../api';
 import { useApp } from '../store';
@@ -17,6 +16,10 @@ export default function VoiceRecorder({ onClose, onSaved }: {
     supported: false, mode: 'none', listening: false, interim: '', final: '', error: null,
   });
   const [saving, setSaving] = useState(false);
+  /** 识别结果 + 用户手动输入合并的最终文本（识别完成自动填入，可编辑） */
+  const [text, setText] = useState('');
+  /** 是否已从识别结果自动填充过，避免覆盖用户已编辑的内容 */
+  const [filled, setFilled] = useState(false);
 
   useEffect(() => {
     const off = onVoiceState(setState);
@@ -27,7 +30,7 @@ export default function VoiceRecorder({ onClose, onSaved }: {
           ...s,
           supported: false,
           mode: 'none',
-          error: '语音识别未启用：需在后端配置千问语音识别大模型（环境变量 DASHSCOPE_API_KEY）。详见 TESTING_AND_BUILD.md。',
+          error: '语音识别未启用：请到「设置」页填入阿里云百炼 API Key（DASHSCOPE_API_KEY）—— 仅语音识别时联网，其余功能完全离线。',
         }));
         return;
       }
@@ -36,106 +39,89 @@ export default function VoiceRecorder({ onClose, onSaved }: {
     return () => { off(); clearVoice(); };
   }, []);
 
-  const fullText = (state.final + state.interim).trim();
+  const interimText = (state.final + state.interim).trim();
 
-  // 识别完成自动解析（转写完成后 final 已落库且停止聆听）
+  // 识别完成后一次性回填到编辑框（用户可继续修改）
   useEffect(() => {
-    if (!state.listening && state.final && !saving) {
-      void parseAndSave(state.final);
+    if (!state.listening && state.final && !filled) {
+      setText(state.final.trim());
+      setFilled(true);
     }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [state.listening, state.final]);
+  }, [state.listening, state.final, filled]);
 
-  const parseAndSave = async (text: string) => {
+  const parseAndSave = async (raw: string) => {
+    const useText = raw.trim();
     if (!ledger) return;
     if (saving) return;
+    if (!useText) return toast('请先说话或输入内容', 'err');
     setSaving(true);
     try {
-      const r = await api.parseTransaction(text, ledger.id);
+      const r = await api.parseTransaction(useText, ledger.id);
       const parsed = (r as { parsed?: { amount?: number; category?: string | null; engine?: string } }).parsed;
       const amt = parsed?.amount ?? r.amount;
       const cat = parsed?.category;
-      const eng = parsed?.engine === 'doubao' ? '豆包' : parsed?.engine === 'rule' ? '规则' : '';
+      const eng = parsed?.engine === 'qwen' ? '千问' : parsed?.engine === 'deepseek' ? 'DeepSeek' : parsed?.engine === 'doubao' ? '豆包' : parsed?.engine === 'rule' ? '规则' : '';
       toast(`已记账：¥${fmtMoney(amt).replace('¥', '')}${cat ? ` · ${cat}` : ''}${eng ? `（${eng}解析）` : ''}`);
       onSaved();
       onClose();
     } catch (e) {
-      toast(`语音内容无法识别金额：「${text.slice(0, 20)}」请说「XX元 干什么」`, 'err');
+      toast(`无法识别金额：「${useText.slice(0, 20)}」请试试「XX元 干什么」`, 'err');
       setSaving(false);
     }
   };
 
-  const handleStop = async () => {
-    const text = await stopVoice();
-    if (!text) { toast('未识别到语音内容', 'err'); return; }
-    await parseAndSave(text);
-  };
-
   const canListen = state.supported && !state.listening;
+  const canConfirm = !saving && text.trim().length > 0;
 
   return (
-    <Modal title="🎙️ 语音记账 · あんたバカ？直接说就行" onClose={onClose} wide>
-      {/* 引擎标识：联网千问语音大模型 */}
-      <div className="eva-pilot-badge eva-pilot-badge--ghost" style={{ marginBottom: 12 }}>
-        QWEN ASR · 千问语音识别大模型（Paraformer）· 联网识别 · 免费 10h/月
-      </div>
-      {/* 波形指示 */}
-      <div style={{ textAlign: 'center', padding: '20px 0 24px' }}>
-        <div
-          style={{
-            width: 96, height: 96, margin: '0 auto 16px', borderRadius: '50%',
-            background: state.listening
-              ? 'radial-gradient(circle, var(--eva-red-tint), rgba(211,41,15,0.25))'
-              : 'var(--gray-50)',
-            border: `2px solid ${state.listening ? 'var(--eva-red)' : 'var(--gray-200)'}`,
-            display: 'flex', alignItems: 'center', justifyContent: 'center',
-            fontSize: 40, boxShadow: state.listening ? 'var(--eva-glow-red)' : 'none',
-            animation: state.listening ? 'pulse-ring 1.2s ease infinite' : 'none',
-          }}
-        >
-          {state.listening ? '🔴' : '🎙️'}
-        </div>
-        <div style={{ fontWeight: 700, fontSize: 16, color: 'var(--text)' }}>
-          {saving ? '记账中…' : state.listening ? '正在聆听…' : fullText ? '识别完成' : '准备就绪'}
-        </div>
-        <div style={{ fontSize: 12, color: 'var(--text-secondary)', marginTop: 4 }}>
-          {state.listening
-            ? '说一句话后自动停止，例如「昨天星巴克咖啡38块」'
-            : fullText ? '点击「确认记账」保存结果' : '点击「开始聆听」说话'}
-        </div>
-      </div>
-
-      {/* 实时转录 */}
-      <div className="panel-inset" style={{ marginBottom: 16, minHeight: 64 }}>
+    <Modal title="" onClose={onClose} wide>
+      {/* 实时转录（只读） */}
+      <div className="panel-inset" style={{ minHeight: 110 }}>
         <div className="eyebrow eyebrow--black" style={{ marginBottom: 6 }}>TRANSCRIPT / 转录</div>
-        <div style={{ fontSize: 18, fontWeight: 600, color: 'var(--text)', minHeight: 26 }}>
-          {fullText || <span style={{ color: 'var(--text-tertiary)', fontWeight: 400 }}>{state.listening ? '聆听中…' : '等待语音输入…'}</span>}
+        <div style={{ fontSize: 18, fontWeight: 600, color: 'var(--text)', minHeight: 70 }}>
+          {interimText || <span style={{ color: 'var(--text-tertiary)', fontWeight: 400 }}>{state.listening ? '聆听中…' : '等待语音或手动输入…'}</span>}
           {state.listening && <span style={{ display: 'inline-block', width: 10, height: 18, background: 'var(--eva-red)', marginLeft: 3, verticalAlign: 'text-bottom', animation: 'cursor-blink 1s step-end infinite' }} />}
         </div>
       </div>
 
+      {/* 可编辑文本框：识别结果自动填入，也可手动输入 */}
+      <textarea
+        className="input"
+        rows={4}
+        placeholder="手动输入「昨天星巴克38块」"
+        value={text}
+        onChange={(e) => setText(e.target.value)}
+        style={{
+          width: '100%', marginTop: 20, fontSize: 16, lineHeight: 1.5,
+          resize: 'vertical', minHeight: 110, fontFamily: 'inherit',
+        }}
+      />
+
       {state.error && (
-        <div style={{ marginBottom: 14, padding: '10px 14px', borderRadius: 'var(--radius-md)', background: 'rgba(220,38,38,0.08)', color: 'var(--danger)', fontSize: 13, fontWeight: 500 }}>
+        <div style={{ marginTop: 12, padding: '10px 14px', borderRadius: 'var(--radius-md)', background: 'rgba(220,38,38,0.08)', color: 'var(--danger)', fontSize: 13, fontWeight: 500 }}>
           ⚠ {state.error}
         </div>
       )}
 
-      <div className="row" style={{ justifyContent: 'flex-end', gap: 10 }}>
+      <div className="row" style={{ justifyContent: 'flex-end', gap: 10, marginTop: 14 }}>
         <button className="btn btn--ghost" onClick={onClose}>取消</button>
-        <button className="btn btn--ghost" onClick={() => void startVoice()} disabled={!canListen}>
+        <button
+          className="btn btn--ghost"
+          onClick={() => { setText(''); setFilled(false); void startVoice(); }}
+          disabled={!canListen}
+        >
           重新听
         </button>
-        <button className="btn btn--primary" onClick={() => void handleStop()} disabled={(!fullText && !state.listening) || saving}>
-          {state.listening ? '停止并记账' : saving ? '记账中…' : '确认记账'}
+        <button
+          className="btn btn--primary"
+          onClick={() => void parseAndSave(text)}
+          disabled={!canConfirm}
+        >
+          {saving ? '记账中…' : '确认记账'}
         </button>
       </div>
 
       <style>{`
-        @keyframes pulse-ring {
-          0% { box-shadow: 0 0 0 0 rgba(211,41,15,0.4); }
-          70% { box-shadow: 0 0 0 18px rgba(211,41,15,0); }
-          100% { box-shadow: 0 0 0 0 rgba(211,41,15,0); }
-        }
         @keyframes cursor-blink {
           0%, 100% { opacity: 1; }
           50% { opacity: 0; }

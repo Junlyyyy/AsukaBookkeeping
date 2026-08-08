@@ -23,8 +23,6 @@ const WEB_DIST = join(__dirname, '..', '..', 'web', 'dist');
 initSchema();
 seedIfEmpty();
 
-import { isDoubaoConfigured } from './ai/doubao.js';
-import { isDeepSeekConfigured } from './ai/deepseek.js';
 
 const app = express();
 app.use(cors());
@@ -62,7 +60,7 @@ app.listen(PORT, () => {
   console.log(`  Asuka记账 本地后端已启动（Bento × EVA-02 明日香）`);
   console.log(`  API:   http://localhost:${PORT}/api/v1`);
   console.log(`  健康:  http://localhost:${PORT}/api/v1/health`);
-  console.log(`  语言模型: ${isDeepSeekConfigured() ? 'DeepSeek 大模型（DeepSeek API）✓' : isDoubaoConfigured() ? '豆包大模型（火山方舟 ARK）✓' : '规则解析（未配置 DEEPSEEK_API_KEY/ARK_API_KEY）'}`);
+  console.log('  文本解析: 本地规则引擎 ✓（离线；仅语音识别联网）');
   console.log(`  语音识别: ${isQwenAsrConfigured() ? '千问语音识别大模型 ✓ (Paraformer, 免费10h/月)' : '未配置 DASHSCOPE_API_KEY —— 语音记账暂不可用（见 TESTING_AND_BUILD.md）'}`);
   if (existsSync(WEB_DIST)) console.log(`  应用:  http://localhost:${PORT}`);
   else console.log(`  前端:  npm --prefix web run dev  → http://localhost:5173`);

@@ -1,9 +1,7 @@
 // 顶部导航 + 应用外壳 — Bento × EVA-02 明日香：机体感悬浮条 + NERV 斜纹
 
-import { useState, useEffect, useRef } from 'react';
 import Swoosh from './Swoosh';
 import NERVBadge from './NERVBadge';
-import { useApp } from '../store';
 import type { ReactNode } from 'react';
 
 export type NavKey = 'dashboard' | 'transactions' | 'stats' | 'budgets' | 'categories' | 'accounts' | 'settings';
@@ -23,23 +21,15 @@ export function Shell({ page, setPage, children }: {
   setPage: (k: NavKey) => void;
   children: ReactNode;
 }) {
-  const { ledger, ledgers, setLedger } = useApp();
-  const [ledgerOpen, setLedgerOpen] = useState(false);
-  const ledgerRef = useRef<HTMLDivElement>(null);
-
-  // 点击外部关闭账本下拉
-  useEffect(() => {
-    function onDocClick(e: MouseEvent) {
-      if (ledgerOpen && ledgerRef.current && !ledgerRef.current.contains(e.target as Node)) {
-        setLedgerOpen(false);
-      }
-    }
-    document.addEventListener('mousedown', onDocClick);
-    return () => document.removeEventListener('mousedown', onDocClick);
-  }, [ledgerOpen]);
-
   return (
-    <div className="layout">
+    <div
+      className="layout"
+      style={{
+        minHeight: '100dvh',
+        display: 'flex',
+        flexDirection: 'column',
+      }}
+    >
       {/* 顶部玻璃导航条 */}
       <header
         className="glass"
@@ -58,7 +48,7 @@ export function Shell({ page, setPage, children }: {
             gap: 20,
           }}
         >
-          {/* Logo */}
+          {/* Logo 文字（图标已挪到 APK 桌面与右上角头像处） */}
           <button
             onClick={() => setPage('dashboard')}
             className="hide-mobile"
@@ -68,13 +58,11 @@ export function Shell({ page, setPage, children }: {
               cursor: 'pointer',
               display: 'flex',
               alignItems: 'center',
-              gap: 10,
               padding: '4px 0',
               color: 'var(--text)',
               flexShrink: 0,
             }}
           >
-            <Swoosh size={36} />
             <span style={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-start', lineHeight: 1.1 }}>
               <span style={{ fontFamily: 'var(--font-display)', fontWeight: 800, fontSize: 16, letterSpacing: '-0.01em', color: 'var(--text)' }}>
                 Asuka记账
@@ -85,17 +73,8 @@ export function Shell({ page, setPage, children }: {
             </span>
           </button>
 
-          {/* 移动端 Logo */}
-          <button
-            onClick={() => setPage('dashboard')}
-            className="hide-desktop"
-            style={{ background: 'none', border: 'none', cursor: 'pointer', padding: 0 }}
-          >
-            <Swoosh size={32} />
-          </button>
-
           {/* 导航 */}
-          <nav className="nav-wrap" style={{ display: 'flex', flex: 1, overflowX: 'auto', justifyContent: 'center' }}>
+          <nav className="nav-wrap" style={{ display: 'flex', flex: 1, minWidth: 0, overflowX: 'auto', justifyContent: 'center' }}>
             {NAV.map((n) => (
                 <button
                   key={n.key}
@@ -107,60 +86,6 @@ export function Shell({ page, setPage, children }: {
                 </button>
               ))}
           </nav>
-
-          {/* 账本切换 */}
-          <div style={{ position: 'relative', flexShrink: 0 }} ref={ledgerRef}>
-            <button
-              onClick={() => setLedgerOpen(!ledgerOpen)}
-              className="ledger-btn hide-mobile"
-            >
-              <span style={{ fontSize: 14 }}>📓</span>
-              <span className="truncate" style={{ maxWidth: 120 }}>{ledger?.name ?? '加载中'}</span>
-              <span style={{ fontSize: 9 }}>▼</span>
-            </button>            {/* 移动端 */}
-            <button
-              onClick={() => setLedgerOpen(!ledgerOpen)}
-              className="ledger-btn hide-desktop"
-              style={{ padding: '9px 13px' }}
-            >
-              <span style={{ fontSize: 12 }}>📓</span>
-              <span style={{ fontSize: 9 }}>▼</span>
-            </button>
-            {ledgerOpen && (
-              <div
-                style={{
-                  position: 'absolute',
-                  right: 0,
-                  top: 'calc(100% + 10px)',
-                  background: 'rgba(255,255,255,0.88)',
-                  WebkitBackdropFilter: 'saturate(180%) blur(20px)',
-                  backdropFilter: 'saturate(180%) blur(20px)',
-                  color: 'var(--text)',
-                  borderRadius: 'var(--radius-lg)',
-                  boxShadow: 'var(--shadow-lg)',
-                  minWidth: 220,
-                  zIndex: 60,
-                  overflow: 'hidden',
-                  border: '1px solid rgba(255,255,255,0.7)',
-                }}
-              >
-                <div style={{ padding: '12px 16px 8px', borderBottom: '1px solid rgba(255,255,255,0.6)' }}>
-                  <div className="eyebrow">账本切换</div>
-                </div>
-                {ledgers.map((l) => (
-                  <button
-                    key={l.id}
-                    onClick={async () => { await setLedger(l.id); setLedgerOpen(false); }}
-                    className="ledger-item"
-                    data-active={l.id === ledger?.id ? 'true' : 'false'}
-                  >
-                    <span className="truncate">{l.name}</span>
-                    {l.id === ledger?.id && <span className="text-volt">✓</span>}
-                  </button>
-                ))}
-              </div>
-            )}
-          </div>
         </div>
         {/* NERV 警示斜纹 */}
         <div className="eva-stripe" />
