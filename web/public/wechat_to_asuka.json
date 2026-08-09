@@ -1,0 +1,2603 @@
+[
+  {
+    "ledger_id": 1,
+    "type": "income",
+    "amount": 368.0,
+    "note": "陈文伟 (陳文偉) / 转账备注:微信转账 / 转账",
+    "category_id": null,
+    "account_id": null,
+    "occurred_at": "2026-07-30 17:00:51"
+  },
+  {
+    "ledger_id": 1,
+    "type": "income",
+    "amount": 100.0,
+    "note": "周欣炫 / 微信红包",
+    "category_id": null,
+    "account_id": null,
+    "occurred_at": "2026-07-30 14:46:35"
+  },
+  {
+    "ledger_id": 1,
+    "type": "income",
+    "amount": 0.01,
+    "note": "打开拼多多，领更多现金红包 / 其他 / 打开拼多多，领更多现金红包",
+    "category_id": null,
+    "account_id": null,
+    "occurred_at": "2026-07-21 09:55:26"
+  },
+  {
+    "ledger_id": 1,
+    "type": "income",
+    "amount": 2.05,
+    "note": "统一网关接入钱包机构网联机构支付用户 / 经营收款",
+    "category_id": null,
+    "account_id": null,
+    "occurred_at": "2026-07-20 11:03:32"
+  },
+  {
+    "ledger_id": 1,
+    "type": "income",
+    "amount": 37.94,
+    "note": "统一网关接入钱包机构网联机构支付用户 / 经营收款",
+    "category_id": null,
+    "account_id": null,
+    "occurred_at": "2026-07-20 11:00:20"
+  },
+  {
+    "ledger_id": 1,
+    "type": "expense",
+    "amount": 13.0,
+    "note": "🐼 / 收款方备注:二维码收款 / 扫二维码付款",
+    "category_id": null,
+    "account_id": null,
+    "occurred_at": "2026-07-19 17:10:26"
+  },
+  {
+    "ledger_id": 1,
+    "type": "expense",
+    "amount": 10.0,
+    "note": "发给思蓉🌶 🐔  (好运来) / 微信红包（单发）",
+    "category_id": null,
+    "account_id": null,
+    "occurred_at": "2026-07-18 12:27:03"
+  },
+  {
+    "ledger_id": 1,
+    "type": "income",
+    "amount": 22.0,
+    "note": "陈文伟 (陳文偉) / 转账备注:微信转账 / 转账",
+    "category_id": null,
+    "account_id": null,
+    "occurred_at": "2026-07-16 13:35:23"
+  },
+  {
+    "ledger_id": 1,
+    "type": "expense",
+    "amount": 520.0,
+    "note": "展 (故眩) / 转账备注:微信转账 / 转账",
+    "category_id": null,
+    "account_id": null,
+    "occurred_at": "2026-07-13 15:07:26"
+  },
+  {
+    "ledger_id": 1,
+    "type": "income",
+    "amount": 10.0,
+    "note": "TenPayGo支付用户 / 经营收款",
+    "category_id": null,
+    "account_id": null,
+    "occurred_at": "2026-07-11 12:12:38"
+  },
+  {
+    "ledger_id": 1,
+    "type": "income",
+    "amount": 40.0,
+    "note": "TenPayGo支付用户 / 经营收款",
+    "category_id": null,
+    "account_id": null,
+    "occurred_at": "2026-07-10 17:14:57"
+  },
+  {
+    "ledger_id": 1,
+    "type": "income",
+    "amount": 50.0,
+    "note": "统一网关接入钱包机构网联机构支付用户 / 经营收款",
+    "category_id": null,
+    "account_id": null,
+    "occurred_at": "2026-07-10 13:47:22"
+  },
+  {
+    "ledger_id": 1,
+    "type": "expense",
+    "amount": 88.0,
+    "note": "发给展 (故眩) / 微信红包（单发）",
+    "category_id": null,
+    "account_id": null,
+    "occurred_at": "2026-07-10 12:53:42"
+  },
+  {
+    "ledger_id": 1,
+    "type": "income",
+    "amount": 40.0,
+    "note": "TenPayGo支付用户 / 经营收款",
+    "category_id": null,
+    "account_id": null,
+    "occurred_at": "2026-07-10 11:49:08"
+  },
+  {
+    "ledger_id": 1,
+    "type": "expense",
+    "amount": 7.4,
+    "note": "美宜佳便利店 / 美宜佳粤37815店 / 商户消费",
+    "category_id": null,
+    "account_id": null,
+    "occurred_at": "2026-07-09 11:17:45"
+  },
+  {
+    "ledger_id": 1,
+    "type": "expense",
+    "amount": 12.4,
+    "note": "美宜佳便利店 / 美宜佳粤37815店 / 商户消费",
+    "category_id": null,
+    "account_id": null,
+    "occurred_at": "2026-07-06 14:44:54"
+  },
+  {
+    "ledger_id": 1,
+    "type": "expense",
+    "amount": 18.9,
+    "note": "京东 / 京东-订单编号3551471000576761 / 商户消费",
+    "category_id": null,
+    "account_id": null,
+    "occurred_at": "2026-07-06 12:21:37"
+  },
+  {
+    "ledger_id": 1,
+    "type": "expense",
+    "amount": 102.0,
+    "note": "广东联合电子服务股份有限公司 / 通行费_ES010220130056043017260705210332 / 商户消费",
+    "category_id": null,
+    "account_id": null,
+    "occurred_at": "2026-07-05 21:03:34"
+  },
+  {
+    "ledger_id": 1,
+    "type": "expense",
+    "amount": 14.26,
+    "note": "CITYBUS LIMITED / 2026-07-05乘车 / 商户消费",
+    "category_id": null,
+    "account_id": null,
+    "occurred_at": "2026-07-05 18:42:25"
+  },
+  {
+    "ledger_id": 1,
+    "type": "expense",
+    "amount": 39.76,
+    "note": "7‑Eleven / SEVEN ELEVEN, SHOP NO7 ON GROUND FLOOR TUEN MUN TOWN PLAZA PHASE II 3 TUEN LUNG STREET TUEN MUN NEW TERRITORIES / 商户消费",
+    "category_id": null,
+    "account_id": null,
+    "occurred_at": "2026-07-05 18:19:28"
+  },
+  {
+    "ledger_id": 1,
+    "type": "expense",
+    "amount": 9.5,
+    "note": "7‑Eleven / SEVEN ELEVEN, Shop G11A & G11B, G/F., The Parkville, 88 Tuen Mun Heung Sze Wui Road, Tuen Mun, N.T / 商户消费",
+    "category_id": null,
+    "account_id": null,
+    "occurred_at": "2026-07-05 13:40:13"
+  },
+  {
+    "ledger_id": 1,
+    "type": "expense",
+    "amount": 14.24,
+    "note": "CITYBUS LIMITED / 2026-07-05乘车 / 商户消费",
+    "category_id": null,
+    "account_id": null,
+    "occurred_at": "2026-07-05 12:35:53"
+  },
+  {
+    "ledger_id": 1,
+    "type": "expense",
+    "amount": 13.9,
+    "note": "京东 / 京东-订单编号3549471009946583 / 商户消费",
+    "category_id": null,
+    "account_id": null,
+    "occurred_at": "2026-07-04 16:50:47"
+  },
+  {
+    "ledger_id": 1,
+    "type": "expense",
+    "amount": 4.5,
+    "note": "美宜佳便利店 / 美宜佳粤37815店 / 商户消费",
+    "category_id": null,
+    "account_id": null,
+    "occurred_at": "2026-07-04 13:31:51"
+  },
+  {
+    "ledger_id": 1,
+    "type": "expense",
+    "amount": 15.9,
+    "note": "京东 / 京东-订单编号3549471018223170 / 商户消费",
+    "category_id": null,
+    "account_id": null,
+    "occurred_at": "2026-07-04 11:41:22"
+  },
+  {
+    "ledger_id": 1,
+    "type": "income",
+    "amount": 0.01,
+    "note": "Feng / 微信红包",
+    "category_id": null,
+    "account_id": null,
+    "occurred_at": "2026-07-03 20:37:24"
+  },
+  {
+    "ledger_id": 1,
+    "type": "income",
+    "amount": 66.66,
+    "note": "思蓉🌶 🐔  / 微信红包",
+    "category_id": null,
+    "account_id": null,
+    "occurred_at": "2026-07-03 19:24:52"
+  },
+  {
+    "ledger_id": 1,
+    "type": "income",
+    "amount": 10000.0,
+    "note": "妈妈 (常乐) / 转账备注:微信转账 / 转账",
+    "category_id": null,
+    "account_id": null,
+    "occurred_at": "2026-07-03 19:13:39"
+  },
+  {
+    "ledger_id": 1,
+    "type": "expense",
+    "amount": 4.0,
+    "note": "佛山市顺德区潘国钱餐饮店 / 佛山市顺德区潘国钱餐饮店 / 商户消费",
+    "category_id": null,
+    "account_id": null,
+    "occurred_at": "2026-07-03 08:49:53"
+  },
+  {
+    "ledger_id": 1,
+    "type": "expense",
+    "amount": 19.7,
+    "note": "福生连锁超市总部 / M2406948000111032607010264520-福生超市大良店-福生超市大良店 / 商户消费",
+    "category_id": null,
+    "account_id": null,
+    "occurred_at": "2026-07-01 17:48:38"
+  },
+  {
+    "ledger_id": 1,
+    "type": "income",
+    "amount": 88.88,
+    "note": "爸 / 微信红包",
+    "category_id": null,
+    "account_id": null,
+    "occurred_at": "2026-07-01 13:52:53"
+  },
+  {
+    "ledger_id": 1,
+    "type": "income",
+    "amount": 188.88,
+    "note": "妈妈 / 微信红包",
+    "category_id": null,
+    "account_id": null,
+    "occurred_at": "2026-07-01 12:59:07"
+  },
+  {
+    "ledger_id": 1,
+    "type": "expense",
+    "amount": 35.0,
+    "note": "福生连锁超市总部 / M2406948000111082606300336434-福生超市大良店-福生超市大良店 / 商户消费",
+    "category_id": null,
+    "account_id": null,
+    "occurred_at": "2026-06-30 17:48:46"
+  },
+  {
+    "ledger_id": 1,
+    "type": "expense",
+    "amount": 5.0,
+    "note": "美宜佳便利店 / 美宜佳粤37815店 / 商户消费",
+    "category_id": null,
+    "account_id": null,
+    "occurred_at": "2026-06-27 15:30:39"
+  },
+  {
+    "ledger_id": 1,
+    "type": "expense",
+    "amount": 4.5,
+    "note": "美宜佳便利店 / 美宜佳粤37815店 / 商户消费",
+    "category_id": null,
+    "account_id": null,
+    "occurred_at": "2026-06-26 21:05:17"
+  },
+  {
+    "ledger_id": 1,
+    "type": "expense",
+    "amount": 30.0,
+    "note": "广东省公安厅出入境管理局 / 060780094885379 / 商户消费",
+    "category_id": null,
+    "account_id": null,
+    "occurred_at": "2026-06-26 18:55:34"
+  },
+  {
+    "ledger_id": 1,
+    "type": "expense",
+    "amount": 3.5,
+    "note": "美宜佳便利店 / 美宜佳粤37815店 / 商户消费",
+    "category_id": null,
+    "account_id": null,
+    "occurred_at": "2026-06-24 18:52:54"
+  },
+  {
+    "ledger_id": 1,
+    "type": "expense",
+    "amount": 4.5,
+    "note": "美宜佳便利店 / 美宜佳粤37815店 / 商户消费",
+    "category_id": null,
+    "account_id": null,
+    "occurred_at": "2026-06-23 17:59:17"
+  },
+  {
+    "ledger_id": 1,
+    "type": "expense",
+    "amount": 11.0,
+    "note": "发给展 (故眩) / 微信红包（单发）",
+    "category_id": null,
+    "account_id": null,
+    "occurred_at": "2026-06-20 21:20:54"
+  },
+  {
+    "ledger_id": 1,
+    "type": "expense",
+    "amount": 15.0,
+    "note": "发给展 (故眩) / 微信红包（单发）",
+    "category_id": null,
+    "account_id": null,
+    "occurred_at": "2026-06-19 21:46:05"
+  },
+  {
+    "ledger_id": 1,
+    "type": "expense",
+    "amount": 15.0,
+    "note": "发给展 (故眩) / 微信红包（单发）",
+    "category_id": null,
+    "account_id": null,
+    "occurred_at": "2026-06-16 12:23:15"
+  },
+  {
+    "ledger_id": 1,
+    "type": "income",
+    "amount": 20.0,
+    "note": "思蓉🌶 🐔  / 微信红包",
+    "category_id": null,
+    "account_id": null,
+    "occurred_at": "2026-06-16 09:51:05"
+  },
+  {
+    "ledger_id": 1,
+    "type": "income",
+    "amount": 17.0,
+    "note": "展 (故眩) / 转账备注:微信转账 / 转账",
+    "category_id": null,
+    "account_id": null,
+    "occurred_at": "2026-06-15 18:55:52"
+  },
+  {
+    "ledger_id": 1,
+    "type": "expense",
+    "amount": 4.0,
+    "note": "容边 茂 / 收款方备注:二维码收款 / 扫二维码付款",
+    "category_id": null,
+    "account_id": null,
+    "occurred_at": "2026-06-15 18:41:01"
+  },
+  {
+    "ledger_id": 1,
+    "type": "expense",
+    "amount": 8.0,
+    "note": "容边 茂 / 收款方备注:二维码收款 / 扫二维码付款",
+    "category_id": null,
+    "account_id": null,
+    "occurred_at": "2026-06-15 18:36:34"
+  },
+  {
+    "ledger_id": 1,
+    "type": "expense",
+    "amount": 22.0,
+    "note": "容边 茂 / 收款方备注:二维码收款 / 扫二维码付款",
+    "category_id": null,
+    "account_id": null,
+    "occurred_at": "2026-06-15 18:30:43"
+  },
+  {
+    "ledger_id": 1,
+    "type": "expense",
+    "amount": 13.0,
+    "note": "发给展 (故眩) / 微信红包（单发）",
+    "category_id": null,
+    "account_id": null,
+    "occurred_at": "2026-06-14 21:11:10"
+  },
+  {
+    "ledger_id": 1,
+    "type": "expense",
+    "amount": 49.5,
+    "note": "周欣炫 (🐼xx) / 转账备注:微信转账 / 转账",
+    "category_id": null,
+    "account_id": null,
+    "occurred_at": "2026-06-12 16:16:07"
+  },
+  {
+    "ledger_id": 1,
+    "type": "expense",
+    "amount": 25.0,
+    "note": "水豚科技 / 身份证 / 商户消费",
+    "category_id": null,
+    "account_id": null,
+    "occurred_at": "2026-06-09 18:28:16"
+  },
+  {
+    "ledger_id": 1,
+    "type": "income",
+    "amount": 25.0,
+    "note": "支星 / 支星 / 支星-退款",
+    "category_id": null,
+    "account_id": null,
+    "occurred_at": "2026-06-09 18:28:03"
+  },
+  {
+    "ledger_id": 1,
+    "type": "expense",
+    "amount": 25.0,
+    "note": "支星 / 广东身份证 / 商户消费",
+    "category_id": null,
+    "account_id": null,
+    "occurred_at": "2026-06-09 18:17:28"
+  },
+  {
+    "ledger_id": 1,
+    "type": "expense",
+    "amount": 24.0,
+    "note": "JaniceWong总部 / JANICE WONG 总店 / 商户消费",
+    "category_id": null,
+    "account_id": null,
+    "occurred_at": "2026-06-07 14:12:21"
+  },
+  {
+    "ledger_id": 1,
+    "type": "expense",
+    "amount": 1.15,
+    "note": "广东邦健医药 /  高济健康商城 / 商户消费",
+    "category_id": null,
+    "account_id": null,
+    "occurred_at": "2026-06-06 13:44:52"
+  },
+  {
+    "ledger_id": 1,
+    "type": "expense",
+    "amount": 21.5,
+    "note": "福生连锁超市总部 / M2406948000111082606030280132-福生超市大良店-福生超市大良店 / 商户消费",
+    "category_id": null,
+    "account_id": null,
+    "occurred_at": "2026-06-03 17:55:56"
+  },
+  {
+    "ledger_id": 1,
+    "type": "expense",
+    "amount": 11.8,
+    "note": "林桂妹 / 收款方备注:二维码收款 / 扫二维码付款",
+    "category_id": null,
+    "account_id": null,
+    "occurred_at": "2026-05-31 16:59:54"
+  },
+  {
+    "ledger_id": 1,
+    "type": "expense",
+    "amount": 7.0,
+    "note": "黄水生 / 收款方备注:二维码收款 / 扫二维码付款",
+    "category_id": null,
+    "account_id": null,
+    "occurred_at": "2026-05-31 16:56:47"
+  },
+  {
+    "ledger_id": 1,
+    "type": "expense",
+    "amount": 14.4,
+    "note": "美宜佳便利店 / 美宜佳粤37815店 / 商户消费",
+    "category_id": null,
+    "account_id": null,
+    "occurred_at": "2026-05-31 15:51:23"
+  },
+  {
+    "ledger_id": 1,
+    "type": "expense",
+    "amount": 22.69,
+    "note": "佛山市万民优选百货超市有限公司 / 条码支付 / 商户消费",
+    "category_id": null,
+    "account_id": null,
+    "occurred_at": "2026-05-29 11:25:23"
+  },
+  {
+    "ledger_id": 1,
+    "type": "expense",
+    "amount": 2.98,
+    "note": "滴滴出行 / 滴滴青桔 / 商户消费",
+    "category_id": null,
+    "account_id": null,
+    "occurred_at": "2026-05-23 20:28:45"
+  },
+  {
+    "ledger_id": 1,
+    "type": "expense",
+    "amount": 99.0,
+    "note": "腾讯云费用账户-移动支付 / 腾讯云购买云服务-100048944455 / 商户消费",
+    "category_id": null,
+    "account_id": null,
+    "occurred_at": "2026-05-23 14:25:38"
+  },
+  {
+    "ledger_id": 1,
+    "type": "expense",
+    "amount": 51.0,
+    "note": "发给思蓉🌶 🐔  (好运来) / 微信红包（单发）",
+    "category_id": null,
+    "account_id": null,
+    "occurred_at": "2026-05-22 18:14:47"
+  },
+  {
+    "ledger_id": 1,
+    "type": "expense",
+    "amount": 13.4,
+    "note": "美宜佳便利店 / 美宜佳粤37815店 / 商户消费",
+    "category_id": null,
+    "account_id": null,
+    "occurred_at": "2026-05-18 19:31:26"
+  },
+  {
+    "ledger_id": 1,
+    "type": "expense",
+    "amount": 261.01,
+    "note": "团油平台合作商户 / 加油服务订单 / 商户消费",
+    "category_id": null,
+    "account_id": null,
+    "occurred_at": "2026-05-14 17:33:56"
+  },
+  {
+    "ledger_id": 1,
+    "type": "expense",
+    "amount": 18.99,
+    "note": "抖音电商商家 / PLUSNOLOGO25SS索罗娜纳维亚正肩短袖口粮T恤半袖上衣打底衫 / 商户消费",
+    "category_id": null,
+    "account_id": null,
+    "occurred_at": "2026-05-12 22:09:30"
+  },
+  {
+    "ledger_id": 1,
+    "type": "expense",
+    "amount": 200.0,
+    "note": "发出群红包 / 微信红包（群红包）",
+    "category_id": null,
+    "account_id": null,
+    "occurred_at": "2026-05-10 11:26:41"
+  },
+  {
+    "ledger_id": 1,
+    "type": "expense",
+    "amount": 134.0,
+    "note": "牛圣众餐饮店 / 商品 / 商户消费",
+    "category_id": null,
+    "account_id": null,
+    "occurred_at": "2026-04-30 19:09:25"
+  },
+  {
+    "ledger_id": 1,
+    "type": "expense",
+    "amount": 234.96,
+    "note": "上海旻阙网络科技有限公司 / 订单支付 / 商户消费",
+    "category_id": null,
+    "account_id": null,
+    "occurred_at": "2026-04-29 08:11:01"
+  },
+  {
+    "ledger_id": 1,
+    "type": "expense",
+    "amount": 200.0,
+    "note": "妈妈 (常乐) / 转账备注:微信转账 / 转账",
+    "category_id": null,
+    "account_id": null,
+    "occurred_at": "2026-04-26 10:10:57"
+  },
+  {
+    "ledger_id": 1,
+    "type": "income",
+    "amount": 0.01,
+    "note": "飞牛网 / 飞牛网 / 飞牛网-退款",
+    "category_id": null,
+    "account_id": null,
+    "occurred_at": "2026-04-19 02:09:45"
+  },
+  {
+    "ledger_id": 1,
+    "type": "expense",
+    "amount": 205.91,
+    "note": "易加油 / 加油消费1052604171957480001 / 商户消费",
+    "category_id": null,
+    "account_id": null,
+    "occurred_at": "2026-04-17 19:58:04"
+  },
+  {
+    "ledger_id": 1,
+    "type": "expense",
+    "amount": 6.0,
+    "note": "佛山市明和天地智能停车运营管理有限公司 / 【粤EN792J】在【果栏路停车场】付停车费支付6元 / 商户消费",
+    "category_id": null,
+    "account_id": null,
+    "occurred_at": "2026-04-17 19:06:25"
+  },
+  {
+    "ledger_id": 1,
+    "type": "expense",
+    "amount": 681.0,
+    "note": "陈文伟 (陳文偉) / 转账备注:微信转账 / 转账",
+    "category_id": null,
+    "account_id": null,
+    "occurred_at": "2026-04-16 15:23:27"
+  },
+  {
+    "ledger_id": 1,
+    "type": "expense",
+    "amount": 200.0,
+    "note": "发给王凯龙@牧野宜博商贸 / 微信红包（单发）",
+    "category_id": null,
+    "account_id": null,
+    "occurred_at": "2026-04-16 10:24:12"
+  },
+  {
+    "ledger_id": 1,
+    "type": "expense",
+    "amount": 200.0,
+    "note": "发给王凯龙@牧野宜博商贸 / 微信红包（单发）",
+    "category_id": null,
+    "account_id": null,
+    "occurred_at": "2026-04-16 10:24:02"
+  },
+  {
+    "ledger_id": 1,
+    "type": "income",
+    "amount": 290.0,
+    "note": "惠 / 收款方备注:二维码收款 / 二维码收款",
+    "category_id": null,
+    "account_id": null,
+    "occurred_at": "2026-04-15 17:15:39"
+  },
+  {
+    "ledger_id": 1,
+    "type": "expense",
+    "amount": 32.5,
+    "note": "福生连锁超市总部 / 福生超市大良店-M2406948000111082604140185660 / 商户消费",
+    "category_id": null,
+    "account_id": null,
+    "occurred_at": "2026-04-14 17:43:44"
+  },
+  {
+    "ledger_id": 1,
+    "type": "expense",
+    "amount": 5.0,
+    "note": "广州地铁过闸交易 / 2026-04-12 18:21:49搭乘广州地铁 / 商户消费",
+    "category_id": null,
+    "account_id": null,
+    "occurred_at": "2026-04-12 18:54:54"
+  },
+  {
+    "ledger_id": 1,
+    "type": "expense",
+    "amount": 2.0,
+    "note": "广州地铁过闸交易 / 2026-04-12 17:10:01搭乘广州地铁 / 商户消费",
+    "category_id": null,
+    "account_id": null,
+    "occurred_at": "2026-04-12 17:23:46"
+  },
+  {
+    "ledger_id": 1,
+    "type": "expense",
+    "amount": 5.0,
+    "note": "广州地铁过闸交易 / 2026-04-12 13:07:40搭乘广州地铁 / 商户消费",
+    "category_id": null,
+    "account_id": null,
+    "occurred_at": "2026-04-12 13:46:29"
+  },
+  {
+    "ledger_id": 1,
+    "type": "expense",
+    "amount": 174.5,
+    "note": "哈啰油电服务 / 加油费用支付 / 商户消费",
+    "category_id": null,
+    "account_id": null,
+    "occurred_at": "2026-04-10 12:25:47"
+  },
+  {
+    "ledger_id": 1,
+    "type": "expense",
+    "amount": 1.0,
+    "note": "腾讯云费用账户-移动支付 / 腾讯云购买云服务-100046530018 / 商户消费",
+    "category_id": null,
+    "account_id": null,
+    "occurred_at": "2026-04-06 21:52:18"
+  },
+  {
+    "ledger_id": 1,
+    "type": "expense",
+    "amount": 10.0,
+    "note": "美宜佳便利店 / 美宜佳粤37815店 / 商户消费",
+    "category_id": null,
+    "account_id": null,
+    "occurred_at": "2026-04-06 00:19:50"
+  },
+  {
+    "ledger_id": 1,
+    "type": "expense",
+    "amount": 10.0,
+    "note": "广州快瑞便利店有限公司 / 广州快瑞便利店有限公司 / 商户消费",
+    "category_id": null,
+    "account_id": null,
+    "occurred_at": "2026-04-05 17:28:42"
+  },
+  {
+    "ledger_id": 1,
+    "type": "expense",
+    "amount": 5.0,
+    "note": "广州地铁过闸交易 / 2026-04-05 16:33:30搭乘广州地铁 / 商户消费",
+    "category_id": null,
+    "account_id": null,
+    "occurred_at": "2026-04-05 17:07:20"
+  },
+  {
+    "ledger_id": 1,
+    "type": "expense",
+    "amount": 5.0,
+    "note": "广州地铁过闸交易 / 2026-04-05 14:35:52搭乘广州地铁 / 商户消费",
+    "category_id": null,
+    "account_id": null,
+    "occurred_at": "2026-04-05 15:13:36"
+  },
+  {
+    "ledger_id": 1,
+    "type": "expense",
+    "amount": 2.0,
+    "note": "美宜佳便利店 / 美宜佳粤37815店 / 商户消费",
+    "category_id": null,
+    "account_id": null,
+    "occurred_at": "2026-04-05 13:35:33"
+  },
+  {
+    "ledger_id": 1,
+    "type": "expense",
+    "amount": 43.08,
+    "note": "美团 / 美团订单-26040211100300001308489616118072 / 商户消费",
+    "category_id": null,
+    "account_id": null,
+    "occurred_at": "2026-04-02 15:18:24"
+  },
+  {
+    "ledger_id": 1,
+    "type": "expense",
+    "amount": 0.48,
+    "note": "腾讯云费用账户-移动支付 / 腾讯云-腾讯云账户充值-100046530018 / 商户消费",
+    "category_id": null,
+    "account_id": null,
+    "occurred_at": "2026-03-31 20:18:33"
+  },
+  {
+    "ledger_id": 1,
+    "type": "expense",
+    "amount": 25.29,
+    "note": "美团 / 美团订单-26033111100300001308243871209072 / 商户消费",
+    "category_id": null,
+    "account_id": null,
+    "occurred_at": "2026-03-31 19:27:14"
+  },
+  {
+    "ledger_id": 1,
+    "type": "expense",
+    "amount": 31.45,
+    "note": "腾讯云费用账户-移动支付 / 腾讯云-腾讯云账户充值-100046530018 / 商户消费",
+    "category_id": null,
+    "account_id": null,
+    "occurred_at": "2026-03-31 18:09:53"
+  },
+  {
+    "ledger_id": 1,
+    "type": "expense",
+    "amount": 5.0,
+    "note": "杭州深度求索 / JSAPI充值 / 商户消费",
+    "category_id": null,
+    "account_id": null,
+    "occurred_at": "2026-03-30 09:25:10"
+  },
+  {
+    "ledger_id": 1,
+    "type": "expense",
+    "amount": 240.0,
+    "note": "思蓉🌶 🐔  (好运来) / 转账备注:微信转账 / 转账",
+    "category_id": null,
+    "account_id": null,
+    "occurred_at": "2026-03-25 09:26:01"
+  },
+  {
+    "ledger_id": 1,
+    "type": "expense",
+    "amount": 18.0,
+    "note": "顺丰速运 / 散单运费-顺丰速运 / 商户消费",
+    "category_id": null,
+    "account_id": null,
+    "occurred_at": "2026-03-25 08:46:40"
+  },
+  {
+    "ledger_id": 1,
+    "type": "expense",
+    "amount": 10.0,
+    "note": "发给思蓉🌶 🐔  (好运来) / 微信红包（单发）",
+    "category_id": null,
+    "account_id": null,
+    "occurred_at": "2026-03-23 20:09:12"
+  },
+  {
+    "ledger_id": 1,
+    "type": "expense",
+    "amount": 4.0,
+    "note": "美宜佳便利店 / 美宜佳粤37815店 / 商户消费",
+    "category_id": null,
+    "account_id": null,
+    "occurred_at": "2026-03-22 17:45:04"
+  },
+  {
+    "ledger_id": 1,
+    "type": "income",
+    "amount": 32.0,
+    "note": "CHAGEE霸王茶姬 / CHAGEE霸王茶姬 / CHAGEE霸王茶姬-退款",
+    "category_id": null,
+    "account_id": null,
+    "occurred_at": "2026-03-22 15:22:33"
+  },
+  {
+    "ledger_id": 1,
+    "type": "expense",
+    "amount": 10.64,
+    "note": "美团 / 蜜雪冰城-美团App-26032211100300001306863490963072 / 商户消费",
+    "category_id": null,
+    "account_id": null,
+    "occurred_at": "2026-03-22 15:20:30"
+  },
+  {
+    "ledger_id": 1,
+    "type": "expense",
+    "amount": 32.0,
+    "note": "霸王茶姬 / CHAGEE霸王茶姬（广东佛山顺德海骏达城店） / 商户消费",
+    "category_id": null,
+    "account_id": null,
+    "occurred_at": "2026-03-22 15:12:23"
+  },
+  {
+    "ledger_id": 1,
+    "type": "expense",
+    "amount": 2.0,
+    "note": "佛山市顺德区飞尝劲餐饮店（个体工商户） / 智能POS 05 / 商户消费",
+    "category_id": null,
+    "account_id": null,
+    "occurred_at": "2026-03-22 13:30:28"
+  },
+  {
+    "ledger_id": 1,
+    "type": "expense",
+    "amount": 327.0,
+    "note": "佛山市顺德区飞尝劲餐饮店（个体工商户） / 智能POS 05 / 商户消费",
+    "category_id": null,
+    "account_id": null,
+    "occurred_at": "2026-03-22 13:29:40"
+  },
+  {
+    "ledger_id": 1,
+    "type": "expense",
+    "amount": 36.0,
+    "note": "钟润超 / 商户消费",
+    "category_id": null,
+    "account_id": null,
+    "occurred_at": "2026-03-22 12:52:33"
+  },
+  {
+    "ledger_id": 1,
+    "type": "expense",
+    "amount": 40.2,
+    "note": "福生连锁超市总部 / 福生超市大良店-M2406948000111082603210213420 / 商户消费",
+    "category_id": null,
+    "account_id": null,
+    "occurred_at": "2026-03-21 18:14:30"
+  },
+  {
+    "ledger_id": 1,
+    "type": "expense",
+    "amount": 14.39,
+    "note": "拼多多平台商户 / 商户单号XP1526032000101076383210002861 / 商户消费",
+    "category_id": null,
+    "account_id": null,
+    "occurred_at": "2026-03-20 00:30:38"
+  },
+  {
+    "ledger_id": 1,
+    "type": "expense",
+    "amount": 3.5,
+    "note": "美宜佳便利店 / 美宜佳粤37815店 / 商户消费",
+    "category_id": null,
+    "account_id": null,
+    "occurred_at": "2026-03-19 20:05:32"
+  },
+  {
+    "ledger_id": 1,
+    "type": "expense",
+    "amount": 9.0,
+    "note": "美宜佳便利店 / 美宜佳粤37815店 / 商户消费",
+    "category_id": null,
+    "account_id": null,
+    "occurred_at": "2026-03-19 18:30:20"
+  },
+  {
+    "ledger_id": 1,
+    "type": "expense",
+    "amount": 0.01,
+    "note": "大润发 / 3809442433079567600 / 商户消费",
+    "category_id": null,
+    "account_id": null,
+    "occurred_at": "2026-03-19 16:44:32"
+  },
+  {
+    "ledger_id": 1,
+    "type": "expense",
+    "amount": 119.6,
+    "note": "拼多多平台商户 / 商户单号XP1526031723101948335231001205 复制该单号，前往【拼多多App-我的订单】搜索框粘贴查询 / 商户消费",
+    "category_id": null,
+    "account_id": null,
+    "occurred_at": "2026-03-17 23:32:30"
+  },
+  {
+    "ledger_id": 1,
+    "type": "income",
+    "amount": 29.0,
+    "note": "思蓉🌶 🐔  / 微信红包",
+    "category_id": null,
+    "account_id": null,
+    "occurred_at": "2026-03-16 23:40:00"
+  },
+  {
+    "ledger_id": 1,
+    "type": "expense",
+    "amount": 62.0,
+    "note": "途虎养车 / 途虎养车TH1207436577790266027订单 / 商户消费",
+    "category_id": null,
+    "account_id": null,
+    "occurred_at": "2026-03-16 10:47:18"
+  },
+  {
+    "ledger_id": 1,
+    "type": "expense",
+    "amount": 65.9,
+    "note": "途虎养车 / 途虎养车订单付款1207404504987766564 / 商户消费",
+    "category_id": null,
+    "account_id": null,
+    "occurred_at": "2026-03-16 08:26:15"
+  },
+  {
+    "ledger_id": 1,
+    "type": "expense",
+    "amount": 37.89,
+    "note": "广州中医药大学顺德医院 / 广州中医药大学顺德医院 / 商户消费",
+    "category_id": null,
+    "account_id": null,
+    "occurred_at": "2026-03-15 23:08:01"
+  },
+  {
+    "ledger_id": 1,
+    "type": "expense",
+    "amount": 21.0,
+    "note": "广州中医药大学顺德医院 / 广州中医药大学顺德医院 / 商户消费",
+    "category_id": null,
+    "account_id": null,
+    "occurred_at": "2026-03-15 23:01:42"
+  },
+  {
+    "ledger_id": 1,
+    "type": "expense",
+    "amount": 0.99,
+    "note": "滴滴出行 / 滴滴青桔 / 商户消费",
+    "category_id": null,
+    "account_id": null,
+    "occurred_at": "2026-03-15 19:16:16"
+  },
+  {
+    "ledger_id": 1,
+    "type": "expense",
+    "amount": 0.99,
+    "note": "滴滴出行 / 滴滴青桔 / 商户消费",
+    "category_id": null,
+    "account_id": null,
+    "occurred_at": "2026-03-15 11:36:41"
+  },
+  {
+    "ledger_id": 1,
+    "type": "expense",
+    "amount": 1.99,
+    "note": "滴滴出行 / 街兔电单车 / 商户消费",
+    "category_id": null,
+    "account_id": null,
+    "occurred_at": "2026-03-15 11:27:53"
+  },
+  {
+    "ledger_id": 1,
+    "type": "expense",
+    "amount": 7.88,
+    "note": "美团 / 团购-美团App-26031511100300001305767096896072 / 商户消费",
+    "category_id": null,
+    "account_id": null,
+    "occurred_at": "2026-03-15 10:27:24"
+  },
+  {
+    "ledger_id": 1,
+    "type": "expense",
+    "amount": 179.54,
+    "note": "滴滴加油 / 滴滴加油订单 / 商户消费",
+    "category_id": null,
+    "account_id": null,
+    "occurred_at": "2026-03-13 17:42:07"
+  },
+  {
+    "ledger_id": 1,
+    "type": "expense",
+    "amount": 30.6,
+    "note": "港华燃气 / 账单缴费 / 商户消费",
+    "category_id": null,
+    "account_id": null,
+    "occurred_at": "2026-03-13 15:47:59"
+  },
+  {
+    "ledger_id": 1,
+    "type": "income",
+    "amount": 200.0,
+    "note": "微信红包-退款",
+    "category_id": null,
+    "account_id": null,
+    "occurred_at": "2026-03-12 13:38:00"
+  },
+  {
+    "ledger_id": 1,
+    "type": "expense",
+    "amount": 7.6,
+    "note": "拼多多平台商户 / 商户单号XP1226031123100716308463001168 复制该单号，前往【拼多多App-我的订单】搜索框粘贴查询 / 商户消费",
+    "category_id": null,
+    "account_id": null,
+    "occurred_at": "2026-03-11 23:53:40"
+  },
+  {
+    "ledger_id": 1,
+    "type": "expense",
+    "amount": 200.0,
+    "note": "发给冲凉哥 (丝米麻塞) / 微信红包（单发）",
+    "category_id": null,
+    "account_id": null,
+    "occurred_at": "2026-03-11 13:37:47"
+  },
+  {
+    "ledger_id": 1,
+    "type": "expense",
+    "amount": 12.9,
+    "note": "拼多多平台商户 / 商户单号XP1526031108101456181062001437 复制该单号，前往【拼多多App-我的订单】搜索框粘贴查询 / 商户消费",
+    "category_id": null,
+    "account_id": null,
+    "occurred_at": "2026-03-11 08:56:29"
+  },
+  {
+    "ledger_id": 1,
+    "type": "expense",
+    "amount": 16.2,
+    "note": "拼多多平台商户 / 商户单号XP2426031108101455902527003796 复制该单号，前往【拼多多App-我的订单】搜索框粘贴查询 / 商户消费",
+    "category_id": null,
+    "account_id": null,
+    "occurred_at": "2026-03-11 08:55:39"
+  },
+  {
+    "ledger_id": 1,
+    "type": "expense",
+    "amount": 38.2,
+    "note": "拼多多平台商户 / 商户单号XP2326031108101455892947002050 复制该单号，前往【拼多多App-我的订单】搜索框粘贴查询 / 商户消费",
+    "category_id": null,
+    "account_id": null,
+    "occurred_at": "2026-03-11 08:55:09"
+  },
+  {
+    "ledger_id": 1,
+    "type": "expense",
+    "amount": 50.78,
+    "note": "拼多多平台商户 / 商户单号XP1926031108100662692634002684 复制该单号，前往【拼多多App-我的订单】搜索框粘贴查询 / 商户消费",
+    "category_id": null,
+    "account_id": null,
+    "occurred_at": "2026-03-11 08:52:31"
+  },
+  {
+    "ledger_id": 1,
+    "type": "income",
+    "amount": 43.0,
+    "note": "许惠娟 / 微信红包",
+    "category_id": null,
+    "account_id": null,
+    "occurred_at": "2026-03-10 15:15:49"
+  },
+  {
+    "ledger_id": 1,
+    "type": "expense",
+    "amount": 47.92,
+    "note": "拼多多平台商户 / 商户单号XP1326031011101394678371001040 复制该单号，前往【拼多多App-我的订单】搜索框粘贴查询 / 商户消费",
+    "category_id": null,
+    "account_id": null,
+    "occurred_at": "2026-03-10 11:38:32"
+  },
+  {
+    "ledger_id": 1,
+    "type": "income",
+    "amount": 207.0,
+    "note": "拼多多国际 / 拼多多国际 / 拼多多国际-退款",
+    "category_id": null,
+    "account_id": null,
+    "occurred_at": "2026-03-09 21:14:40"
+  },
+  {
+    "ledger_id": 1,
+    "type": "expense",
+    "amount": 207.0,
+    "note": "拼多多平台商户 / 商户单号XP1626030921100568490213001575 复制该单号，前往【拼多多App-我的订单】搜索框粘贴查询 / 商户消费",
+    "category_id": null,
+    "account_id": null,
+    "occurred_at": "2026-03-09 21:12:31"
+  },
+  {
+    "ledger_id": 1,
+    "type": "expense",
+    "amount": 29.34,
+    "note": "拼多多平台商户 / 商户单号XP2526030916100546169366001022 复制该单号，前往【拼多多App-我的订单】搜索框粘贴查询 / 商户消费",
+    "category_id": null,
+    "account_id": null,
+    "occurred_at": "2026-03-09 16:13:22"
+  },
+  {
+    "ledger_id": 1,
+    "type": "income",
+    "amount": 10.9,
+    "note": "美宜佳控股有限公司 / 美宜佳控股有限公司 / 美宜佳控股有限公司-退款",
+    "category_id": null,
+    "account_id": null,
+    "occurred_at": "2026-03-08 19:02:56"
+  },
+  {
+    "ledger_id": 1,
+    "type": "expense",
+    "amount": 10.9,
+    "note": "抖音生活服务商家 / 11.9元任选3罐魔爪(能量型维生素超越能量百香果番石榴味)330ml春日运动好物 / 商户消费",
+    "category_id": null,
+    "account_id": null,
+    "occurred_at": "2026-03-08 18:55:02"
+  },
+  {
+    "ledger_id": 1,
+    "type": "expense",
+    "amount": 111.84,
+    "note": "拼多多平台商户 / 商户单号XP1626030818100472425974001967 复制该单号，前往【拼多多App-我的订单】搜索框粘贴查询 / 商户消费",
+    "category_id": null,
+    "account_id": null,
+    "occurred_at": "2026-03-08 18:23:44"
+  },
+  {
+    "ledger_id": 1,
+    "type": "expense",
+    "amount": 27.3,
+    "note": "福生连锁超市总部 / 福生超市大良店-M2406948000111082603070321617 / 商户消费",
+    "category_id": null,
+    "account_id": null,
+    "occurred_at": "2026-03-07 20:18:41"
+  },
+  {
+    "ledger_id": 1,
+    "type": "expense",
+    "amount": 52.5,
+    "note": "卢艺彬 / 商户消费",
+    "category_id": null,
+    "account_id": null,
+    "occurred_at": "2026-03-07 18:01:47"
+  },
+  {
+    "ledger_id": 1,
+    "type": "income",
+    "amount": 13.0,
+    "note": "冯寿勇 / 微信红包",
+    "category_id": null,
+    "account_id": null,
+    "occurred_at": "2026-03-07 14:43:54"
+  },
+  {
+    "ledger_id": 1,
+    "type": "expense",
+    "amount": 50.0,
+    "note": "中国广电 / 充值 / 商户消费",
+    "category_id": null,
+    "account_id": null,
+    "occurred_at": "2026-03-05 07:13:57"
+  },
+  {
+    "ledger_id": 1,
+    "type": "expense",
+    "amount": 34.5,
+    "note": "福生连锁超市总部 / 福生超市大良店-M2406948000111092603040138260 / 商户消费",
+    "category_id": null,
+    "account_id": null,
+    "occurred_at": "2026-03-04 17:46:16"
+  },
+  {
+    "ledger_id": 1,
+    "type": "income",
+    "amount": 858.0,
+    "note": "曹飛 (飛) / 转账备注:F 05货拉拉 / 转账",
+    "category_id": null,
+    "account_id": null,
+    "occurred_at": "2026-03-04 09:35:22"
+  },
+  {
+    "ledger_id": 1,
+    "type": "income",
+    "amount": 836.04,
+    "note": "赖妍妍 (YY) / 转账备注:微信转账 / 转账",
+    "category_id": null,
+    "account_id": null,
+    "occurred_at": "2026-03-04 09:29:45"
+  },
+  {
+    "ledger_id": 1,
+    "type": "expense",
+    "amount": 124.15,
+    "note": "货拉拉 / 货拉拉车费后置支付 / 商户消费",
+    "category_id": null,
+    "account_id": null,
+    "occurred_at": "2026-03-03 20:57:05"
+  },
+  {
+    "ledger_id": 1,
+    "type": "expense",
+    "amount": 200.0,
+    "note": "中石化广东 / 中石化加油付款 / 商户消费",
+    "category_id": null,
+    "account_id": null,
+    "occurred_at": "2026-03-03 20:14:33"
+  },
+  {
+    "ledger_id": 1,
+    "type": "expense",
+    "amount": 711.89,
+    "note": "货拉拉 / 货拉拉费用 / 商户消费",
+    "category_id": null,
+    "account_id": null,
+    "occurred_at": "2026-03-03 13:24:51"
+  },
+  {
+    "ledger_id": 1,
+    "type": "expense",
+    "amount": 42.8,
+    "note": "美团 / 百姓堂（大良红岗店）-美团App-26030211100300001303908287343072 / 商户消费",
+    "category_id": null,
+    "account_id": null,
+    "occurred_at": "2026-03-02 15:29:59"
+  },
+  {
+    "ledger_id": 1,
+    "type": "income",
+    "amount": 47.5,
+    "note": "展 (故眩) / 转账备注:微信转账 / 转账",
+    "category_id": null,
+    "account_id": null,
+    "occurred_at": "2026-03-01 22:57:51"
+  },
+  {
+    "ledger_id": 1,
+    "type": "expense",
+    "amount": 12.0,
+    "note": "捷停车 / 停车费用-粤-EN792J-P180602272 / 商户消费",
+    "category_id": null,
+    "account_id": null,
+    "occurred_at": "2026-03-01 18:03:40"
+  },
+  {
+    "ledger_id": 1,
+    "type": "expense",
+    "amount": 5.99,
+    "note": "美团 / 团购-美团App-26030111100300001303753818861072 / 商户消费",
+    "category_id": null,
+    "account_id": null,
+    "occurred_at": "2026-03-01 14:44:07"
+  },
+  {
+    "ledger_id": 1,
+    "type": "expense",
+    "amount": 18.04,
+    "note": "拼多多平台商户 / 商户单号XP1426030113101739516920000415 复制该单号，前往【拼多多App-我的订单】搜索框粘贴查询 / 商户消费",
+    "category_id": null,
+    "account_id": null,
+    "occurred_at": "2026-03-01 13:29:12"
+  },
+  {
+    "ledger_id": 1,
+    "type": "expense",
+    "amount": 99.0,
+    "note": "腾讯云费用账户-移动支付 / 腾讯云购买云服务-100046530018 / 商户消费",
+    "category_id": null,
+    "account_id": null,
+    "occurred_at": "2026-02-27 23:26:18"
+  },
+  {
+    "ledger_id": 1,
+    "type": "expense",
+    "amount": 27.0,
+    "note": "顺丰速运 / 散单运费-顺丰速运 / 商户消费",
+    "category_id": null,
+    "account_id": null,
+    "occurred_at": "2026-02-27 08:49:38"
+  },
+  {
+    "ledger_id": 1,
+    "type": "income",
+    "amount": 100.0,
+    "note": "周欣炫 / 微信红包",
+    "category_id": null,
+    "account_id": null,
+    "occurred_at": "2026-02-26 14:16:45"
+  },
+  {
+    "ledger_id": 1,
+    "type": "expense",
+    "amount": 11.88,
+    "note": "拼多多平台商户 / 商户单号XP1926022522101466513284002218 复制该单号，前往【拼多多App-我的订单】搜索框粘贴查询 / 商户消费",
+    "category_id": null,
+    "account_id": null,
+    "occurred_at": "2026-02-25 22:36:57"
+  },
+  {
+    "ledger_id": 1,
+    "type": "expense",
+    "amount": 8.88,
+    "note": "发给冲凉哥 (丝米麻塞) / 微信红包（单发）",
+    "category_id": null,
+    "account_id": null,
+    "occurred_at": "2026-02-25 13:56:26"
+  },
+  {
+    "ledger_id": 1,
+    "type": "expense",
+    "amount": 19.39,
+    "note": "拼多多平台商户 / 商户单号XP2326022422101394536205003691 复制该单号，前往【拼多多App-我的订单】搜索框粘贴查询 / 商户消费",
+    "category_id": null,
+    "account_id": null,
+    "occurred_at": "2026-02-24 22:21:03"
+  },
+  {
+    "ledger_id": 1,
+    "type": "expense",
+    "amount": 26.0,
+    "note": "拼多多平台商户 / 商户单号XP1626022422100602371477000159 复制该单号，前往【拼多多App-我的订单】搜索框粘贴查询 / 商户消费",
+    "category_id": null,
+    "account_id": null,
+    "occurred_at": "2026-02-24 22:16:55"
+  },
+  {
+    "ledger_id": 1,
+    "type": "income",
+    "amount": 6.66,
+    "note": "冲凉哥 / 微信红包",
+    "category_id": null,
+    "account_id": null,
+    "occurred_at": "2026-02-22 21:18:20"
+  },
+  {
+    "ledger_id": 1,
+    "type": "expense",
+    "amount": 43.8,
+    "note": "福生连锁超市总部 / 福生超市大良店-M2406948000111012602220063425 / 商户消费",
+    "category_id": null,
+    "account_id": null,
+    "occurred_at": "2026-02-22 12:33:37"
+  },
+  {
+    "ledger_id": 1,
+    "type": "expense",
+    "amount": 26.5,
+    "note": "拼多多平台商户 / 商户单号XP1326022211100452040758000347 复制该单号，前往【拼多多App-我的订单】搜索框粘贴查询 / 商户消费",
+    "category_id": null,
+    "account_id": null,
+    "occurred_at": "2026-02-22 11:14:28"
+  },
+  {
+    "ledger_id": 1,
+    "type": "expense",
+    "amount": 5.07,
+    "note": "抖音电商商家 / 商户消费",
+    "category_id": null,
+    "account_id": null,
+    "occurred_at": "2026-02-21 12:11:43"
+  },
+  {
+    "ledger_id": 1,
+    "type": "expense",
+    "amount": 0.99,
+    "note": "滴滴出行 / 滴滴青桔 / 商户消费",
+    "category_id": null,
+    "account_id": null,
+    "occurred_at": "2026-02-20 21:03:25"
+  },
+  {
+    "ledger_id": 1,
+    "type": "expense",
+    "amount": 23.0,
+    "note": "越品鲜越南粉 / 美团/大众点评点餐订单-02204881935289224053643 / 商户消费",
+    "category_id": null,
+    "account_id": null,
+    "occurred_at": "2026-02-20 20:33:57"
+  },
+  {
+    "ledger_id": 1,
+    "type": "expense",
+    "amount": 18.9,
+    "note": "恭囍茶餐厅 / 美团/大众点评点餐订单-02204881935288437906679 / 商户消费",
+    "category_id": null,
+    "account_id": null,
+    "occurred_at": "2026-02-20 20:21:42"
+  },
+  {
+    "ledger_id": 1,
+    "type": "expense",
+    "amount": 2.0,
+    "note": "佛山星橙电竞 / 星橙电竞海骏达城店_10021002602201832030735099569638_4008200002562919 / 商户消费",
+    "category_id": null,
+    "account_id": null,
+    "occurred_at": "2026-02-20 18:32:19"
+  },
+  {
+    "ledger_id": 1,
+    "type": "expense",
+    "amount": 4.98,
+    "note": "滴滴出行 / 滴滴青桔 / 商户消费",
+    "category_id": null,
+    "account_id": null,
+    "occurred_at": "2026-02-20 14:38:14"
+  },
+  {
+    "ledger_id": 1,
+    "type": "income",
+    "amount": 50.0,
+    "note": "彭宣鸿 (来自未来) / 转账备注:微信转账 / 转账",
+    "category_id": null,
+    "account_id": null,
+    "occurred_at": "2026-02-19 22:33:52"
+  },
+  {
+    "ledger_id": 1,
+    "type": "expense",
+    "amount": 9.76,
+    "note": "拼多多平台商户 / 商户单号XP2526021921101136137688000172 复制该单号，前往【拼多多App-我的订单】搜索框粘贴查询 / 商户消费",
+    "category_id": null,
+    "account_id": null,
+    "occurred_at": "2026-02-19 21:28:24"
+  },
+  {
+    "ledger_id": 1,
+    "type": "expense",
+    "amount": 19.9,
+    "note": "邢海军 / 美团/大众点评点餐订单-02194719805665395510688 / 商户消费",
+    "category_id": null,
+    "account_id": null,
+    "occurred_at": "2026-02-19 20:25:28"
+  },
+  {
+    "ledger_id": 1,
+    "type": "expense",
+    "amount": 4.0,
+    "note": "八嘎 / 收款方备注:二维码收款 / 扫二维码付款",
+    "category_id": null,
+    "account_id": null,
+    "occurred_at": "2026-02-19 16:32:46"
+  },
+  {
+    "ledger_id": 1,
+    "type": "expense",
+    "amount": 8.0,
+    "note": "佛山星橙电竞 / 星橙电竞海骏达城店_10021002602191632280695099562985_4008200002530027 / 商户消费",
+    "category_id": null,
+    "account_id": null,
+    "occurred_at": "2026-02-19 16:32:30"
+  },
+  {
+    "ledger_id": 1,
+    "type": "expense",
+    "amount": 34.0,
+    "note": "美团 / 星橙电竞（海骏达城店）-美团App-26021911100300001302353160048072 / 商户消费",
+    "category_id": null,
+    "account_id": null,
+    "occurred_at": "2026-02-19 11:42:46"
+  },
+  {
+    "ledger_id": 1,
+    "type": "expense",
+    "amount": 9.9,
+    "note": "luckin coffee / 订单付款 / 商户消费",
+    "category_id": null,
+    "account_id": null,
+    "occurred_at": "2026-02-19 11:07:09"
+  },
+  {
+    "ledger_id": 1,
+    "type": "expense",
+    "amount": 1.0,
+    "note": "滴滴出行 / 滴滴青桔 / 商户消费",
+    "category_id": null,
+    "account_id": null,
+    "occurred_at": "2026-02-19 10:57:36"
+  },
+  {
+    "ledger_id": 1,
+    "type": "expense",
+    "amount": 3.29,
+    "note": "滴滴出行 / 滴滴青桔 / 商户消费",
+    "category_id": null,
+    "account_id": null,
+    "occurred_at": "2026-02-18 14:30:55"
+  },
+  {
+    "ledger_id": 1,
+    "type": "income",
+    "amount": 0.62,
+    "note": "第2轮红包提现 / 其他 / 第2轮红包提现",
+    "category_id": null,
+    "account_id": null,
+    "occurred_at": "2026-02-18 09:41:54"
+  },
+  {
+    "ledger_id": 1,
+    "type": "expense",
+    "amount": 11.6,
+    "note": "拼多多平台商户 / 商户单号XP1126021721100304982920002307 复制该单号，前往【拼多多App-我的订单】搜索框粘贴查询 / 商户消费",
+    "category_id": null,
+    "account_id": null,
+    "occurred_at": "2026-02-17 21:39:26"
+  },
+  {
+    "ledger_id": 1,
+    "type": "expense",
+    "amount": 24.2,
+    "note": "拼多多平台商户 / 商户单号XP2126021721101082934884003837 复制该单号，前往【拼多多App-我的订单】搜索框粘贴查询 / 商户消费",
+    "category_id": null,
+    "account_id": null,
+    "occurred_at": "2026-02-17 21:38:55"
+  },
+  {
+    "ledger_id": 1,
+    "type": "income",
+    "amount": 34.57,
+    "note": "拼多多平台商户 / 拼多多平台商户 / 拼多多平台商户-退款",
+    "category_id": null,
+    "account_id": null,
+    "occurred_at": "2026-02-17 14:34:47"
+  },
+  {
+    "ledger_id": 1,
+    "type": "income",
+    "amount": 0.25,
+    "note": "妈妈 / 微信红包",
+    "category_id": null,
+    "account_id": null,
+    "occurred_at": "2026-02-17 12:29:03"
+  },
+  {
+    "ledger_id": 1,
+    "type": "income",
+    "amount": 88.88,
+    "note": "姐 / 微信红包",
+    "category_id": null,
+    "account_id": null,
+    "occurred_at": "2026-02-17 10:25:30"
+  },
+  {
+    "ledger_id": 1,
+    "type": "expense",
+    "amount": 66.0,
+    "note": "发给展 (故眩) / 微信红包（单发）",
+    "category_id": null,
+    "account_id": null,
+    "occurred_at": "2026-02-17 10:01:45"
+  },
+  {
+    "ledger_id": 1,
+    "type": "income",
+    "amount": 1.72,
+    "note": "兰 / 微信红包",
+    "category_id": null,
+    "account_id": null,
+    "occurred_at": "2026-02-17 10:00:07"
+  },
+  {
+    "ledger_id": 1,
+    "type": "income",
+    "amount": 12.61,
+    "note": "姐 / 微信红包",
+    "category_id": null,
+    "account_id": null,
+    "occurred_at": "2026-02-17 10:00:04"
+  },
+  {
+    "ledger_id": 1,
+    "type": "income",
+    "amount": 168.88,
+    "note": "爸 / 微信红包",
+    "category_id": null,
+    "account_id": null,
+    "occurred_at": "2026-02-17 09:59:40"
+  },
+  {
+    "ledger_id": 1,
+    "type": "income",
+    "amount": 188.8,
+    "note": "妈妈 / 微信红包",
+    "category_id": null,
+    "account_id": null,
+    "occurred_at": "2026-02-17 00:28:26"
+  },
+  {
+    "ledger_id": 1,
+    "type": "income",
+    "amount": 2.22,
+    "note": "妈妈 / 微信红包",
+    "category_id": null,
+    "account_id": null,
+    "occurred_at": "2026-02-17 00:10:00"
+  },
+  {
+    "ledger_id": 1,
+    "type": "income",
+    "amount": 66.66,
+    "note": "思蓉🌶 🐔  / 微信红包",
+    "category_id": null,
+    "account_id": null,
+    "occurred_at": "2026-02-16 20:14:38"
+  },
+  {
+    "ledger_id": 1,
+    "type": "expense",
+    "amount": 52.2,
+    "note": "福生连锁超市总部 / 福生超市大良店-M2406948000111022602160314441 / 商户消费",
+    "category_id": null,
+    "account_id": null,
+    "occurred_at": "2026-02-16 17:54:46"
+  },
+  {
+    "ledger_id": 1,
+    "type": "expense",
+    "amount": 53.1,
+    "note": "金业商场顺峰店 / 商品 / 商户消费",
+    "category_id": null,
+    "account_id": null,
+    "occurred_at": "2026-02-15 16:24:59"
+  },
+  {
+    "ledger_id": 1,
+    "type": "expense",
+    "amount": 34.72,
+    "note": "拼多多平台商户 / 商户单号XP1726021513100253389586001727 复制该单号，前往【拼多多App-我的订单】搜索框粘贴查询 / 商户消费",
+    "category_id": null,
+    "account_id": null,
+    "occurred_at": "2026-02-15 13:14:01"
+  },
+  {
+    "ledger_id": 1,
+    "type": "expense",
+    "amount": 34.57,
+    "note": "拼多多平台商户 / 商户单号XP1926021512101029510692000219 复制该单号，前往【拼多多App-我的订单】搜索框粘贴查询 / 商户消费",
+    "category_id": null,
+    "account_id": null,
+    "occurred_at": "2026-02-15 12:15:35"
+  },
+  {
+    "ledger_id": 1,
+    "type": "expense",
+    "amount": 11.22,
+    "note": "港华燃气 / 账单缴费 / 商户消费",
+    "category_id": null,
+    "account_id": null,
+    "occurred_at": "2026-02-14 15:10:24"
+  },
+  {
+    "ledger_id": 1,
+    "type": "income",
+    "amount": 12.0,
+    "note": "赖妍妍 (YY) / 转账备注:微信转账 / 转账",
+    "category_id": null,
+    "account_id": null,
+    "occurred_at": "2026-02-13 15:16:26"
+  },
+  {
+    "ledger_id": 1,
+    "type": "expense",
+    "amount": 4.95,
+    "note": "拼多多平台商户 / 商户单号XP1126021312100196152291002739 复制该单号，前往【拼多多App-我的订单】搜索框粘贴查询 / 商户消费",
+    "category_id": null,
+    "account_id": null,
+    "occurred_at": "2026-02-13 12:13:26"
+  },
+  {
+    "ledger_id": 1,
+    "type": "expense",
+    "amount": 1000.0,
+    "note": "妈妈 (常乐) / 转账备注:过年买东西 / 转账",
+    "category_id": null,
+    "account_id": null,
+    "occurred_at": "2026-02-13 10:47:26"
+  },
+  {
+    "ledger_id": 1,
+    "type": "expense",
+    "amount": 25.0,
+    "note": "顺丰速运 / 散单运费-顺丰速运 / 商户消费",
+    "category_id": null,
+    "account_id": null,
+    "occurred_at": "2026-02-13 10:14:57"
+  },
+  {
+    "ledger_id": 1,
+    "type": "expense",
+    "amount": 53.6,
+    "note": "拼多多平台商户 / 商户单号XP1426021215101943622324002021 复制该单号，前往【拼多多App-我的订单】搜索框粘贴查询 / 商户消费",
+    "category_id": null,
+    "account_id": null,
+    "occurred_at": "2026-02-12 15:14:27"
+  },
+  {
+    "ledger_id": 1,
+    "type": "expense",
+    "amount": 191.0,
+    "note": "牛圣众餐饮店 / 商品 / 商户消费",
+    "category_id": null,
+    "account_id": null,
+    "occurred_at": "2026-02-11 19:09:50"
+  },
+  {
+    "ledger_id": 1,
+    "type": "expense",
+    "amount": 18.6,
+    "note": "滴滴出行 / 滴滴快车打车-赵师傅-02月10日行程 / 商户消费",
+    "category_id": null,
+    "account_id": null,
+    "occurred_at": "2026-02-10 20:21:50"
+  },
+  {
+    "ledger_id": 1,
+    "type": "expense",
+    "amount": 19.0,
+    "note": "广东联合电子服务股份有限公司 / 通行费_ES010140090076012341260210170300 / 商户消费",
+    "category_id": null,
+    "account_id": null,
+    "occurred_at": "2026-02-10 17:03:02"
+  },
+  {
+    "ledger_id": 1,
+    "type": "expense",
+    "amount": 24.0,
+    "note": "广东联合电子服务股份有限公司 / 通行费_ES010044030153022204260210140427 / 商户消费",
+    "category_id": null,
+    "account_id": null,
+    "occurred_at": "2026-02-10 14:04:29"
+  },
+  {
+    "ledger_id": 1,
+    "type": "expense",
+    "amount": 12.0,
+    "note": "奇力士南国西加油站有限公司 / 奇力士南国西加油站有限公司 / 商户消费",
+    "category_id": null,
+    "account_id": null,
+    "occurred_at": "2026-02-10 13:18:35"
+  },
+  {
+    "ledger_id": 1,
+    "type": "expense",
+    "amount": 126.71,
+    "note": "拼多多平台商户 / 商户单号XP2426021011100035100919001214 复制该单号，前往【拼多多App-我的订单】搜索框粘贴查询 / 商户消费",
+    "category_id": null,
+    "account_id": null,
+    "occurred_at": "2026-02-10 11:05:50"
+  },
+  {
+    "ledger_id": 1,
+    "type": "expense",
+    "amount": 394.0,
+    "note": "拼多多平台商户 / 商户单号XP1426021010100032355376000336 复制该单号，前往【拼多多App-我的订单】搜索框粘贴查询 / 商户消费",
+    "category_id": null,
+    "account_id": null,
+    "occurred_at": "2026-02-10 10:28:32"
+  },
+  {
+    "ledger_id": 1,
+    "type": "expense",
+    "amount": 150.38,
+    "note": "货拉拉 / 货拉拉车费后置支付 / 商户消费",
+    "category_id": null,
+    "account_id": null,
+    "occurred_at": "2026-02-09 17:17:38"
+  },
+  {
+    "ledger_id": 1,
+    "type": "expense",
+    "amount": 51.0,
+    "note": "美团 / 优购哆生活超市（大良店）-美团App-26020911100300001301231434688072 / 商户消费",
+    "category_id": null,
+    "account_id": null,
+    "occurred_at": "2026-02-09 16:38:37"
+  },
+  {
+    "ledger_id": 1,
+    "type": "expense",
+    "amount": 656.22,
+    "note": "货拉拉 / 货拉拉费用 / 商户消费",
+    "category_id": null,
+    "account_id": null,
+    "occurred_at": "2026-02-09 16:24:05"
+  },
+  {
+    "ledger_id": 1,
+    "type": "income",
+    "amount": 603.72,
+    "note": "货拉拉 / 货拉拉 / 货拉拉-退款",
+    "category_id": null,
+    "account_id": null,
+    "occurred_at": "2026-02-09 16:16:44"
+  },
+  {
+    "ledger_id": 1,
+    "type": "expense",
+    "amount": 603.72,
+    "note": "货拉拉 / 货拉拉费用 / 商户消费",
+    "category_id": null,
+    "account_id": null,
+    "occurred_at": "2026-02-09 15:11:56"
+  },
+  {
+    "ledger_id": 1,
+    "type": "expense",
+    "amount": 2.77,
+    "note": "拼多多平台商户 / 商户单号XP1826020913101777588468000510 复制该单号，前往【拼多多App-我的订单】搜索框粘贴查询 / 商户消费",
+    "category_id": null,
+    "account_id": null,
+    "occurred_at": "2026-02-09 13:40:03"
+  },
+  {
+    "ledger_id": 1,
+    "type": "income",
+    "amount": 3.47,
+    "note": "拼多多平台商户 / 拼多多平台商户 / 拼多多平台商户-退款",
+    "category_id": null,
+    "account_id": null,
+    "occurred_at": "2026-02-09 13:35:49"
+  },
+  {
+    "ledger_id": 1,
+    "type": "expense",
+    "amount": 3.47,
+    "note": "拼多多平台商户 / 商户单号XP1626020900100964540309002610 复制该单号，前往【拼多多App-我的订单】搜索框粘贴查询 / 商户消费",
+    "category_id": null,
+    "account_id": null,
+    "occurred_at": "2026-02-09 00:16:44"
+  },
+  {
+    "ledger_id": 1,
+    "type": "expense",
+    "amount": 6.49,
+    "note": "拼多多平台商户 / 商户单号XP2126020900100964525780002132 复制该单号，前往【拼多多App-我的订单】搜索框粘贴查询 / 商户消费",
+    "category_id": null,
+    "account_id": null,
+    "occurred_at": "2026-02-09 00:15:53"
+  },
+  {
+    "ledger_id": 1,
+    "type": "expense",
+    "amount": 2.7,
+    "note": "拼多多平台商户 / 商户单号XP2226020900101748321837001939 复制该单号，前往【拼多多App-我的订单】搜索框粘贴查询 / 商户消费",
+    "category_id": null,
+    "account_id": null,
+    "occurred_at": "2026-02-09 00:14:06"
+  },
+  {
+    "ledger_id": 1,
+    "type": "expense",
+    "amount": 2.76,
+    "note": "拼多多平台商户 / 商户单号XP1826020900100963017394003098 复制该单号，前往【拼多多App-我的订单】搜索框粘贴查询 / 商户消费",
+    "category_id": null,
+    "account_id": null,
+    "occurred_at": "2026-02-09 00:13:26"
+  },
+  {
+    "ledger_id": 1,
+    "type": "expense",
+    "amount": 0.01,
+    "note": "拼多多平台商户 / 商户单号XP1826020900100964441759000022 复制该单号，前往【拼多多App-我的订单】搜索框粘贴查询 / 商户消费",
+    "category_id": null,
+    "account_id": null,
+    "occurred_at": "2026-02-09 00:11:11"
+  },
+  {
+    "ledger_id": 1,
+    "type": "income",
+    "amount": 6.02,
+    "note": "拼多多平台商户 / 拼多多平台商户 / 拼多多平台商户-退款",
+    "category_id": null,
+    "account_id": null,
+    "occurred_at": "2026-02-08 20:28:23"
+  },
+  {
+    "ledger_id": 1,
+    "type": "expense",
+    "amount": 33.93,
+    "note": "拼多多平台商户 / 商户单号XP1426020818100931687227001911 复制该单号，前往【拼多多App-我的订单】搜索框粘贴查询 / 商户消费",
+    "category_id": null,
+    "account_id": null,
+    "occurred_at": "2026-02-08 18:34:55"
+  },
+  {
+    "ledger_id": 1,
+    "type": "expense",
+    "amount": 42.21,
+    "note": "福生连锁超市总部 / 福生超市大良店-M2406948000111082602080226285 / 商户消费",
+    "category_id": null,
+    "account_id": null,
+    "occurred_at": "2026-02-08 17:56:37"
+  },
+  {
+    "ledger_id": 1,
+    "type": "expense",
+    "amount": 6.02,
+    "note": "拼多多平台商户 / 商户单号XP1626020816101719780873000364 复制该单号，前往【拼多多App-我的订单】搜索框粘贴查询 / 商户消费",
+    "category_id": null,
+    "account_id": null,
+    "occurred_at": "2026-02-08 16:06:28"
+  },
+  {
+    "ledger_id": 1,
+    "type": "expense",
+    "amount": 11.89,
+    "note": "拼多多平台商户 / 商户单号XP1726020814101713074062002266 复制该单号，前往【拼多多App-我的订单】搜索框粘贴查询 / 商户消费",
+    "category_id": null,
+    "account_id": null,
+    "occurred_at": "2026-02-08 14:15:16"
+  },
+  {
+    "ledger_id": 1,
+    "type": "expense",
+    "amount": 132.2,
+    "note": "拼多多平台商户 / 商户单号XP1226020814101713020011001531 复制该单号，前往【拼多多App-我的订单】搜索框粘贴查询 / 商户消费",
+    "category_id": null,
+    "account_id": null,
+    "occurred_at": "2026-02-08 14:13:03"
+  },
+  {
+    "ledger_id": 1,
+    "type": "expense",
+    "amount": 2.15,
+    "note": "拼多多平台商户 / 商户单号XP2226020616100787244957002167 复制该单号，前往【拼多多App-我的订单】搜索框粘贴查询 / 商户消费",
+    "category_id": null,
+    "account_id": null,
+    "occurred_at": "2026-02-06 16:17:27"
+  },
+  {
+    "ledger_id": 1,
+    "type": "expense",
+    "amount": 7.9,
+    "note": "拼多多平台商户 / 商户单号XP2526020610100758869813000599 复制该单号，前往【拼多多App-我的订单】搜索框粘贴查询 / 商户消费",
+    "category_id": null,
+    "account_id": null,
+    "occurred_at": "2026-02-06 10:03:01"
+  },
+  {
+    "ledger_id": 1,
+    "type": "income",
+    "amount": 153.9,
+    "note": "拼多多平台商户 / 拼多多平台商户 / 拼多多平台商户-退款",
+    "category_id": null,
+    "account_id": null,
+    "occurred_at": "2026-02-05 11:58:31"
+  },
+  {
+    "ledger_id": 1,
+    "type": "expense",
+    "amount": 143.9,
+    "note": "拼多多平台商户 / 商户单号XP1426020511101460333606000794 复制该单号，前往【拼多多App-我的订单】搜索框粘贴查询 / 商户消费",
+    "category_id": null,
+    "account_id": null,
+    "occurred_at": "2026-02-05 11:58:04"
+  },
+  {
+    "ledger_id": 1,
+    "type": "expense",
+    "amount": 153.9,
+    "note": "拼多多平台商户 / 商户单号XP2326020511101458282765000831 复制该单号，前往【拼多多App-我的订单】搜索框粘贴查询 / 商户消费",
+    "category_id": null,
+    "account_id": null,
+    "occurred_at": "2026-02-05 11:55:44"
+  },
+  {
+    "ledger_id": 1,
+    "type": "expense",
+    "amount": 26.8,
+    "note": "拼多多平台商户 / 商户单号XP1626020508101437664510001364 复制该单号，前往【拼多多App-我的订单】搜索框粘贴查询 / 商户消费",
+    "category_id": null,
+    "account_id": null,
+    "occurred_at": "2026-02-05 08:39:18"
+  },
+  {
+    "ledger_id": 1,
+    "type": "income",
+    "amount": 3.37,
+    "note": "妈妈 / 微信红包",
+    "category_id": null,
+    "account_id": null,
+    "occurred_at": "2026-02-04 21:06:51"
+  },
+  {
+    "ledger_id": 1,
+    "type": "income",
+    "amount": 26.78,
+    "note": "妈妈 / 微信红包",
+    "category_id": null,
+    "account_id": null,
+    "occurred_at": "2026-02-04 21:06:38"
+  },
+  {
+    "ledger_id": 1,
+    "type": "income",
+    "amount": 13.2,
+    "note": "顺丰速运 / 顺丰速运 / 顺丰速运-退款",
+    "category_id": null,
+    "account_id": null,
+    "occurred_at": "2026-02-04 16:26:35"
+  },
+  {
+    "ledger_id": 1,
+    "type": "expense",
+    "amount": 20.6,
+    "note": "拼多多平台商户 / 商户单号XP2526020412100615750877003710 复制该单号，前往【拼多多App-我的订单】搜索框粘贴查询 / 商户消费",
+    "category_id": null,
+    "account_id": null,
+    "occurred_at": "2026-02-04 12:59:54"
+  },
+  {
+    "ledger_id": 1,
+    "type": "expense",
+    "amount": 14.78,
+    "note": "拼多多平台商户 / 商户单号XP1126020412101369518254002235 复制该单号，前往【拼多多App-我的订单】搜索框粘贴查询 / 商户消费",
+    "category_id": null,
+    "account_id": null,
+    "occurred_at": "2026-02-04 12:35:01"
+  },
+  {
+    "ledger_id": 1,
+    "type": "expense",
+    "amount": 10.2,
+    "note": "拼多多平台商户 / 商户单号XP1326020412101369348582003167 复制该单号，前往【拼多多App-我的订单】搜索框粘贴查询 / 商户消费",
+    "category_id": null,
+    "account_id": null,
+    "occurred_at": "2026-02-04 12:29:30"
+  },
+  {
+    "ledger_id": 1,
+    "type": "expense",
+    "amount": 8.65,
+    "note": "拼多多平台商户 / 商户单号XP2426020412101370598291003863 复制该单号，前往【拼多多App-我的订单】搜索框粘贴查询 / 商户消费",
+    "category_id": null,
+    "account_id": null,
+    "occurred_at": "2026-02-04 12:28:18"
+  },
+  {
+    "ledger_id": 1,
+    "type": "income",
+    "amount": 7.9,
+    "note": "周欣炫 / 微信红包",
+    "category_id": null,
+    "account_id": null,
+    "occurred_at": "2026-02-04 11:23:38"
+  },
+  {
+    "ledger_id": 1,
+    "type": "expense",
+    "amount": 86.8,
+    "note": "拼多多平台商户 / 商户单号XP2426020410100606784130001107 复制该单号，前往【拼多多App-我的订单】搜索框粘贴查询 / 商户消费",
+    "category_id": null,
+    "account_id": null,
+    "occurred_at": "2026-02-04 10:19:35"
+  },
+  {
+    "ledger_id": 1,
+    "type": "expense",
+    "amount": 139.9,
+    "note": "拼多多平台商户 / 商户单号XP2426020400101351454335001390 复制该单号，前往【拼多多App-我的订单】搜索框粘贴查询 / 商户消费",
+    "category_id": null,
+    "account_id": null,
+    "occurred_at": "2026-02-04 00:29:05"
+  },
+  {
+    "ledger_id": 1,
+    "type": "expense",
+    "amount": 130.0,
+    "note": "拼多多平台商户 / 商户单号XP1826020323100574514231001727 复制该单号，前往【拼多多App-我的订单】搜索框粘贴查询 / 商户消费",
+    "category_id": null,
+    "account_id": null,
+    "occurred_at": "2026-02-03 23:53:50"
+  },
+  {
+    "ledger_id": 1,
+    "type": "expense",
+    "amount": 44.0,
+    "note": "顺丰速运 / 散单运费-顺丰速运 / 商户消费",
+    "category_id": null,
+    "account_id": null,
+    "occurred_at": "2026-02-03 16:25:57"
+  },
+  {
+    "ledger_id": 1,
+    "type": "expense",
+    "amount": 7.0,
+    "note": "广东东菱智泊停车科技有限公司 / 订单组合支付-R1UGH787448367等3个订单-ROS2602031128462915110 / 商户消费",
+    "category_id": null,
+    "account_id": null,
+    "occurred_at": "2026-02-03 11:28:52"
+  },
+  {
+    "ledger_id": 1,
+    "type": "expense",
+    "amount": 395.76,
+    "note": "京东 / 京东-订单编号3398271009053907 / 商户消费",
+    "category_id": null,
+    "account_id": null,
+    "occurred_at": "2026-02-03 10:27:27"
+  },
+  {
+    "ledger_id": 1,
+    "type": "expense",
+    "amount": 27.2,
+    "note": "拼多多平台商户 / 商户单号XP1326020219101235692116000050 复制该单号，前往【拼多多App-我的订单】搜索框粘贴查询 / 商户消费",
+    "category_id": null,
+    "account_id": null,
+    "occurred_at": "2026-02-02 19:05:55"
+  },
+  {
+    "ledger_id": 1,
+    "type": "expense",
+    "amount": 6.82,
+    "note": "拼多多平台商户 / 商户单号XP1526020209100420449110000083 复制该单号，前往【拼多多App-我的订单】搜索框粘贴查询 / 商户消费",
+    "category_id": null,
+    "account_id": null,
+    "occurred_at": "2026-02-02 09:24:34"
+  },
+  {
+    "ledger_id": 1,
+    "type": "expense",
+    "amount": 25.89,
+    "note": "拼多多平台商户 / 商户单号XP2126020209100418759885003294 复制该单号，前往【拼多多App-我的订单】搜索框粘贴查询 / 商户消费",
+    "category_id": null,
+    "account_id": null,
+    "occurred_at": "2026-02-02 09:15:51"
+  },
+  {
+    "ledger_id": 1,
+    "type": "expense",
+    "amount": 27.99,
+    "note": "拼多多平台商户 / 商户单号XP2426020209100415836362004023 复制该单号，前往【拼多多App-我的订单】搜索框粘贴查询 / 商户消费",
+    "category_id": null,
+    "account_id": null,
+    "occurred_at": "2026-02-02 09:06:03"
+  },
+  {
+    "ledger_id": 1,
+    "type": "expense",
+    "amount": 7.25,
+    "note": "拼多多平台商户 / 商户单号XP1026020208100418149570003845 复制该单号，前往【拼多多App-我的订单】搜索框粘贴查询 / 商户消费",
+    "category_id": null,
+    "account_id": null,
+    "occurred_at": "2026-02-02 08:50:05"
+  },
+  {
+    "ledger_id": 1,
+    "type": "expense",
+    "amount": 1.95,
+    "note": "拼多多平台商户 / 商户单号XP1926020208100415265749000416 复制该单号，前往【拼多多App-我的订单】搜索框粘贴查询 / 商户消费",
+    "category_id": null,
+    "account_id": null,
+    "occurred_at": "2026-02-02 08:41:07"
+  },
+  {
+    "ledger_id": 1,
+    "type": "expense",
+    "amount": 18.9,
+    "note": "拼多多平台商户 / 商户单号XP2426020208100413190144001683 复制该单号，前往【拼多多App-我的订单】搜索框粘贴查询 / 商户消费",
+    "category_id": null,
+    "account_id": null,
+    "occurred_at": "2026-02-02 08:30:18"
+  },
+  {
+    "ledger_id": 1,
+    "type": "expense",
+    "amount": 3.0,
+    "note": "虾米生活 / 先骑后付 / 商户消费",
+    "category_id": null,
+    "account_id": null,
+    "occurred_at": "2026-02-01 17:18:11"
+  },
+  {
+    "ledger_id": 1,
+    "type": "expense",
+    "amount": 3.0,
+    "note": "锐力电竞佛山顺德店 / 锐力电竞佛山顺德店 / 商户消费",
+    "category_id": null,
+    "account_id": null,
+    "occurred_at": "2026-02-01 14:16:43"
+  },
+  {
+    "ledger_id": 1,
+    "type": "expense",
+    "amount": 9.9,
+    "note": "美团 / 锐力电竞网咖（顺德容桂店）-美团App-26020111100300001300036353479072 / 商户消费",
+    "category_id": null,
+    "account_id": null,
+    "occurred_at": "2026-02-01 14:15:05"
+  },
+  {
+    "ledger_id": 1,
+    "type": "expense",
+    "amount": 3.0,
+    "note": "虾米生活 / 先骑后付 / 商户消费",
+    "category_id": null,
+    "account_id": null,
+    "occurred_at": "2026-02-01 14:13:15"
+  },
+  {
+    "ledger_id": 1,
+    "type": "expense",
+    "amount": 74.25,
+    "note": "拼多多平台商户 / 商户单号XP1126020110101126318556000318 复制该单号，前往【拼多多App-我的订单】搜索框粘贴查询 / 商户消费",
+    "category_id": null,
+    "account_id": null,
+    "occurred_at": "2026-02-01 10:38:17"
+  },
+  {
+    "ledger_id": 1,
+    "type": "expense",
+    "amount": 0.01,
+    "note": "拼多多平台商户 / 商户单号XP2526013110100233954283001023 复制该单号，前往【拼多多App-我的订单】搜索框粘贴查询 / 商户消费",
+    "category_id": null,
+    "account_id": null,
+    "occurred_at": "2026-01-31 10:02:44"
+  },
+  {
+    "ledger_id": 1,
+    "type": "expense",
+    "amount": 22.26,
+    "note": "拼多多平台商户 / 商户单号XP2026012518100765200271003937 复制该单号，前往【拼多多App-我的订单】搜索框粘贴查询 / 商户消费",
+    "category_id": null,
+    "account_id": null,
+    "occurred_at": "2026-01-25 18:52:03"
+  },
+  {
+    "ledger_id": 1,
+    "type": "expense",
+    "amount": 8.75,
+    "note": "拼多多平台商户 / 商户单号XP1226012518101646670014003135 复制该单号，前往【拼多多App-我的订单】搜索框粘贴查询 / 商户消费",
+    "category_id": null,
+    "account_id": null,
+    "occurred_at": "2026-01-25 18:48:55"
+  },
+  {
+    "ledger_id": 1,
+    "type": "expense",
+    "amount": 300.0,
+    "note": "曹飛 (飛) / 转账备注:微信转账 / 转账",
+    "category_id": null,
+    "account_id": null,
+    "occurred_at": "2026-01-24 14:38:59"
+  },
+  {
+    "ledger_id": 1,
+    "type": "income",
+    "amount": 500.0,
+    "note": "曹飛 (飛) / 转账备注:微信转账 / 转账",
+    "category_id": null,
+    "account_id": null,
+    "occurred_at": "2026-01-24 14:38:47"
+  },
+  {
+    "ledger_id": 1,
+    "type": "expense",
+    "amount": 152.0,
+    "note": "拼多多平台商户 / 商户单号XP2126012020101283419007000784 复制该单号，前往【拼多多App-我的订单】搜索框粘贴查询 / 商户消费",
+    "category_id": null,
+    "account_id": null,
+    "occurred_at": "2026-01-20 20:27:18"
+  },
+  {
+    "ledger_id": 1,
+    "type": "income",
+    "amount": 152.0,
+    "note": "拼多多平台商户 / 拼多多平台商户 / 拼多多平台商户-退款",
+    "category_id": null,
+    "account_id": null,
+    "occurred_at": "2026-01-20 20:06:36"
+  },
+  {
+    "ledger_id": 1,
+    "type": "expense",
+    "amount": 152.0,
+    "note": "拼多多平台商户 / 商户单号XP1726012019100398384411002591 复制该单号，前往【拼多多App-我的订单】搜索框粘贴查询 / 商户消费",
+    "category_id": null,
+    "account_id": null,
+    "occurred_at": "2026-01-20 19:32:55"
+  },
+  {
+    "ledger_id": 1,
+    "type": "income",
+    "amount": 224.1,
+    "note": "拼多多平台商户 / 拼多多平台商户 / 拼多多平台商户-退款",
+    "category_id": null,
+    "account_id": null,
+    "occurred_at": "2026-01-20 19:17:12"
+  },
+  {
+    "ledger_id": 1,
+    "type": "expense",
+    "amount": 224.1,
+    "note": "拼多多平台商户 / 商户单号XP1326012018101276619272000732 复制该单号，前往【拼多多App-我的订单】搜索框粘贴查询 / 商户消费",
+    "category_id": null,
+    "account_id": null,
+    "occurred_at": "2026-01-20 18:59:25"
+  },
+  {
+    "ledger_id": 1,
+    "type": "expense",
+    "amount": 700.0,
+    "note": "爸 (兴) / 转账备注:微信转账 / 转账",
+    "category_id": null,
+    "account_id": null,
+    "occurred_at": "2026-01-20 14:26:26"
+  },
+  {
+    "ledger_id": 1,
+    "type": "income",
+    "amount": 300.0,
+    "note": "曹飛 (飛) / 转账备注:转向柱 / 转账",
+    "category_id": null,
+    "account_id": null,
+    "occurred_at": "2026-01-19 14:21:10"
+  },
+  {
+    "ledger_id": 1,
+    "type": "expense",
+    "amount": 18.0,
+    "note": "广州萨莉亚 / 编码O1_000062292505的订单 / 商户消费",
+    "category_id": null,
+    "account_id": null,
+    "occurred_at": "2026-01-19 11:53:42"
+  },
+  {
+    "ledger_id": 1,
+    "type": "expense",
+    "amount": 4.9,
+    "note": "美团 / 库迪咖啡-美团App-26011911100300001308129623783072 / 商户消费",
+    "category_id": null,
+    "account_id": null,
+    "occurred_at": "2026-01-19 10:43:14"
+  },
+  {
+    "ledger_id": 1,
+    "type": "expense",
+    "amount": 54.9,
+    "note": "拼多多平台商户 / 商户单号XP1726011909100294261726002852 复制该单号，前往【拼多多App-我的订单】搜索框粘贴查询 / 商户消费",
+    "category_id": null,
+    "account_id": null,
+    "occurred_at": "2026-01-19 09:30:53"
+  },
+  {
+    "ledger_id": 1,
+    "type": "expense",
+    "amount": 7.56,
+    "note": "拼多多平台商户 / 商户单号XP1726011813100244465160002966 复制该单号，前往【拼多多App-我的订单】搜索框粘贴查询 / 商户消费",
+    "category_id": null,
+    "account_id": null,
+    "occurred_at": "2026-01-18 13:06:29"
+  },
+  {
+    "ledger_id": 1,
+    "type": "expense",
+    "amount": 10.7,
+    "note": "拼多多平台商户 / 商户单号XP1026011518101908804973000046 复制该单号，前往【拼多多App-我的订单】搜索框粘贴查询 / 商户消费",
+    "category_id": null,
+    "account_id": null,
+    "occurred_at": "2026-01-15 18:38:46"
+  },
+  {
+    "ledger_id": 1,
+    "type": "expense",
+    "amount": 1.0,
+    "note": "明记副食店铺 / 收款方备注:二维码收款 / 扫二维码付款",
+    "category_id": null,
+    "account_id": null,
+    "occurred_at": "2026-01-13 18:01:38"
+  },
+  {
+    "ledger_id": 1,
+    "type": "expense",
+    "amount": 100.0,
+    "note": "发给思蓉🌶 🐔  (好运来) / 微信红包（单发）",
+    "category_id": null,
+    "account_id": null,
+    "occurred_at": "2026-01-12 21:34:48"
+  },
+  {
+    "ledger_id": 1,
+    "type": "expense",
+    "amount": 32.09,
+    "note": "赵一鸣 / 赵一鸣零食广东佛山赵一鸣南霞市场店-消费 / 商户消费",
+    "category_id": null,
+    "account_id": null,
+    "occurred_at": "2026-01-11 20:12:54"
+  },
+  {
+    "ledger_id": 1,
+    "type": "expense",
+    "amount": 7.99,
+    "note": "拼多多平台商户 / 商户单号XP1826011112100727155739000464 复制该单号，前往【拼多多App-我的订单】搜索框粘贴查询 / 商户消费",
+    "category_id": null,
+    "account_id": null,
+    "occurred_at": "2026-01-11 12:16:21"
+  },
+  {
+    "ledger_id": 1,
+    "type": "expense",
+    "amount": 4.0,
+    "note": "汤包 / 收款方备注:二维码收款 / 扫二维码付款",
+    "category_id": null,
+    "account_id": null,
+    "occurred_at": "2026-01-11 10:09:32"
+  },
+  {
+    "ledger_id": 1,
+    "type": "expense",
+    "amount": 39.9,
+    "note": "拼多多平台商户 / 商户单号XP2226011017101554949116000246 复制该单号，前往【拼多多App-我的订单】搜索框粘贴查询 / 商户消费",
+    "category_id": null,
+    "account_id": null,
+    "occurred_at": "2026-01-10 17:05:12"
+  },
+  {
+    "ledger_id": 1,
+    "type": "income",
+    "amount": 0.08,
+    "note": "打开拼多多，领更多现金红包 / 其他 / 打开拼多多，领更多现金红包",
+    "category_id": null,
+    "account_id": null,
+    "occurred_at": "2026-01-10 14:43:33"
+  },
+  {
+    "ledger_id": 1,
+    "type": "expense",
+    "amount": 2.0,
+    "note": "大众五金交电 / 收款方备注:二维码收款 / 扫二维码付款",
+    "category_id": null,
+    "account_id": null,
+    "occurred_at": "2026-01-10 10:35:14"
+  },
+  {
+    "ledger_id": 1,
+    "type": "income",
+    "amount": 153.93,
+    "note": "拼多多平台商户 / 拼多多平台商户 / 拼多多平台商户-退款",
+    "category_id": null,
+    "account_id": null,
+    "occurred_at": "2026-01-10 00:49:11"
+  },
+  {
+    "ledger_id": 1,
+    "type": "expense",
+    "amount": 153.93,
+    "note": "拼多多平台商户 / 商户单号XP1526011000101509242450000396 复制该单号，前往【拼多多App-我的订单】搜索框粘贴查询 / 商户消费",
+    "category_id": null,
+    "account_id": null,
+    "occurred_at": "2026-01-10 00:18:48"
+  },
+  {
+    "ledger_id": 1,
+    "type": "expense",
+    "amount": 50.0,
+    "note": "中国广电 / 充值 / 商户消费",
+    "category_id": null,
+    "account_id": null,
+    "occurred_at": "2026-01-09 18:00:32"
+  },
+  {
+    "ledger_id": 1,
+    "type": "income",
+    "amount": 76.0,
+    "note": "许惠娟 / 微信红包",
+    "category_id": null,
+    "account_id": null,
+    "occurred_at": "2026-01-05 17:58:12"
+  },
+  {
+    "ledger_id": 1,
+    "type": "expense",
+    "amount": 22.4,
+    "note": "平少 / 收款方备注:二维码收款 / 扫二维码付款",
+    "category_id": null,
+    "account_id": null,
+    "occurred_at": "2026-01-03 17:02:47"
+  },
+  {
+    "ledger_id": 1,
+    "type": "expense",
+    "amount": 16.0,
+    "note": "平少 / 收款方备注:二维码收款 / 扫二维码付款",
+    "category_id": null,
+    "account_id": null,
+    "occurred_at": "2026-01-02 17:12:17"
+  },
+  {
+    "ledger_id": 1,
+    "type": "income",
+    "amount": 2000.0,
+    "note": "思蓉🌶 🐔  (好运来) / 转账备注:微信转账 / 转账",
+    "category_id": null,
+    "account_id": null,
+    "occurred_at": "2026-01-01 22:18:05"
+  },
+  {
+    "ledger_id": 1,
+    "type": "expense",
+    "amount": 27.0,
+    "note": "广东联合电子服务股份有限公司 / 通行费_ES010124130053043792260101155600 / 商户消费",
+    "category_id": null,
+    "account_id": null,
+    "occurred_at": "2026-01-01 15:55:58"
+  },
+  {
+    "ledger_id": 1,
+    "type": "income",
+    "amount": 3.69,
+    "note": "妈妈 / 微信红包",
+    "category_id": null,
+    "account_id": null,
+    "occurred_at": "2026-01-01 11:59:27"
+  },
+  {
+    "ledger_id": 1,
+    "type": "expense",
+    "amount": 18.88,
+    "note": "发给思蓉🌶 🐔  (好运来) / 微信红包（单发）",
+    "category_id": null,
+    "account_id": null,
+    "occurred_at": "2026-01-01 00:09:32"
+  },
+  {
+    "ledger_id": 1,
+    "type": "income",
+    "amount": 18.88,
+    "note": "黄涛 / 微信红包",
+    "category_id": null,
+    "account_id": null,
+    "occurred_at": "2026-01-01 00:01:21"
+  }
+]

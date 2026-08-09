@@ -1,0 +1,89 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8" />
+<title>导入微信账单</title>
+<style>
+  body { font-family: -apple-system, sans-serif; padding: 24px; background: #fff5f0; color: #1a1a1a; }
+  h1 { font-size: 20px; }
+  pre { background: #f0f0f0; padding: 12px; border-radius: 8px; overflow: auto; font-size: 12px; max-height: 300px; }
+  .ok { color: #07ca6b; font-weight: 600; }
+  .err { color: #dc2626; font-weight: 600; }
+  button { padding: 12px 24px; background: #d32f2f; color: #fff; border: 0; border-radius: 999px; font-size: 14px; font-weight: 600; cursor: pointer; }
+  .progress { margin: 16px 0; }
+</style>
+</head>
+<body>
+<h1>📥 微信支付账单导入</h1>
+<p>正在加载交易数据...</p>
+<div id="status" class="progress">⏳ 加载中...</div>
+<pre id="log"></pre>
+<button id="back" onclick="location.href='/'">返回 Asuka记账</button>
+
+<script>
+const LOG = document.getElementById('log');
+const STATUS = document.getElementById('status');
+function log(msg) {
+  LOG.textContent += msg + '\n';
+}
+async function main() {
+  try {
+    log('[1] fetch wechat_to_asuka.json');
+    const r = await fetch('./wechat_to_asuka.json');
+    const txs = await r.json();
+    log(`[2] loaded ${txs.length} transactions`);
+    STATUS.textContent = `📊 共 ${txs.length} 条`;
+
+    const KEY = 'asuka_db_v1';
+    log('[3] read existing db');
+    let db = JSON.parse(localStorage.getItem(KEY) || 'null');
+    if (!db) {
+      STATUS.textContent = '⚠️ 未找到 asuka_db_v1 — 请先打开 App 一次初始化数据';
+      STATUS.className = 'err progress';
+      return;
+    }
+
+    log('[4] find max id');
+    const maxId = db.transactions.reduce((m, t) => Math.max(m, t.id || 0), 0);
+    const now = new Date().toISOString().slice(0, 19).replace('T', ' ');
+    let n = 0;
+    log('[5] append transactions');
+    for (const it of txs) {
+      const t = {
+        id: maxId + ++n,
+        ledger_id: Number(it.ledger_id) || 1,
+        account_id: it.account_id || null,
+        category_id: it.category_id || null,
+        type: it.type || 'expense',
+        amount: Math.round(Number(it.amount) * 100),
+        note: String(it.note || '').trim(),
+        occurred_at: it.occurred_at || now,
+        status: 'active',
+        created_at: now,
+        updated_at: now,
+      };
+      db.transactions.push(t);
+    }
+
+    log('[6] save back to localStorage');
+    localStorage.setItem(KEY, JSON.stringify(db));
+    log(`[7] DONE — added ${n} txs, total ${db.transactions.length}`);
+
+    const inc = db.transactions.filter(t => t.type === 'income').length;
+    const exp = db.transactions.filter(t => t.type === 'expense').length;
+    const sum = db.transactions.filter(t => t.type === 'expense').reduce((s, t) => s + t.amount, 0) / 100;
+    const sum_i = db.transactions.filter(t => t.type === 'income').reduce((s, t) => s + t.amount, 0) / 100;
+
+    STATUS.innerHTML = `<span class="ok">✅ 导入成功！</span><br>` +
+      `新增 ${n} 笔 (收入 ${inc} 笔 ¥${sum_i.toFixed(2)} / 支出 ${exp} 笔 ¥${sum.toFixed(2)})<br>` +
+      `共 ${db.transactions.length} 笔交易`;
+  } catch (e) {
+    STATUS.textContent = '❌ ' + e.message;
+    STATUS.className = 'err progress';
+    log('ERR: ' + e.stack);
+  }
+}
+main();
+</script>
+</body>
+</html>
