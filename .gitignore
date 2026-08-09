@@ -52,3 +52,6 @@ screenshots/
 
 # 本地截图/预览
 shots/
+
+# 本地交接文档（含本机路径/用户名，仅本地使用）
+CONTINUE_HERE.md
