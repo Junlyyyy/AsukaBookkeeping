@@ -34,8 +34,9 @@ function load(): DB {
   if (raw) {
     try { _db = JSON.parse(raw); return _db!; } catch { /* fallthrough */ }
   }
+  // 正式版：不写任何示例数据。首次打开 app 数据完全为空，
+  // 由用户主动创建第一个账本 + 分类 + 账户。
   _db = { ledgers: [], accounts: [], categories: [], tags: [], transactions: [], transaction_tags: [], budgets: [], seq: 1 };
-  seed(_db);
   save();
   return _db;
 }
@@ -45,35 +46,6 @@ function nextId(db: DB): number { return db.seq++; }
 const yuan = (cents: number) => Number((cents / 100).toFixed(2));
 const cents = (y: number) => Math.round(Number(y) * 100);
 const txSqlDate = (d: string) => d.replace('T', ' ');
-
-// ---- 首次使用写入基础骨架（账本 + 12 个分类 + 4 个账户，无交易/预算/标签示例）----
-function seed(db: DB) {
-  const ledgerId = nextId(db);
-  db.ledgers.push({ id: ledgerId, name: '我的账本', currency: 'CNY', is_active: 1, created_at: now(), updated_at: now() });
-
-  const catDefs: [string, string, string, number][] = [
-    ['餐饮', '🍜', 'expense', 0], ['交通', '🚌', 'expense', 1], ['购物', '🛍️', 'expense', 2],
-    ['居住', '🏠', 'expense', 3], ['娱乐', '🎮', 'expense', 4], ['医疗', '💊', 'expense', 5],
-    ['教育', '📚', 'expense', 6], ['人情', '🎁', 'expense', 7], ['通讯', '📱', 'expense', 8],
-    ['工资', '💰', 'income', 0], ['奖金', '🎉', 'income', 1], ['理财', '📈', 'income', 2],
-  ];
-  const catId: Record<string, number> = {};
-  catDefs.forEach(([n, ic, t, o]) => {
-    const id = nextId(db);
-    db.categories.push({ id, ledger_id: ledgerId, name: n, type: t, icon: ic, sort_order: o, created_at: now() });
-    catId[n] = id;
-  });
-
-  const acctDefs: [string, string, number][] = [
-    ['现金', 'cash', 0], ['招商银行', 'bank', 0], ['信用卡', 'credit_card', 0], ['支付宝', 'e_wallet', 0],
-  ];
-  const acctId: Record<string, number> = {};
-  acctDefs.forEach(([n, t, b]) => {
-    const id = nextId(db);
-    db.accounts.push({ id, ledger_id: ledgerId, name: n, type: t, balance: b, created_at: now() });
-    acctId[n] = id;
-  });
-}
 
 // ---- 内部工具 ----
 function serializeTx(db: DB, t: any) {

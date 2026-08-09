@@ -70,13 +70,24 @@ export function RankBars({ items, max, color = '#c42710' }: {
       {items.map((it, i) => {
         const pct = max > 0 ? (it.amount / max) * 100 : 0;
         return (
-          <div key={it.name}>
-            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'baseline', marginBottom: 4 }}>
-              <span style={{ fontWeight: 600, fontSize: 13 }}>
+          <div key={it.name} style={{ minWidth: 0 }}>
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'baseline', gap: 8, marginBottom: 4 }}>
+              <span style={{
+                fontWeight: 600, fontSize: 13, minWidth: 0,
+                overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap',
+              }}>
                 <span style={{ color: 'var(--text-tertiary)', marginRight: 8, fontFamily: 'var(--font-num)' }}>0{i + 1}</span>
                 {it.icon} {it.name}
               </span>
-              <span className="num-xl" style={{ fontSize: 14 }}>¥{it.amount.toLocaleString('zh-CN', { minimumFractionDigits: 2 })}</span>
+              <span
+                className="num-xl"
+                style={{
+                  fontSize: 14, flexShrink: 0, whiteSpace: 'nowrap',
+                  fontVariantNumeric: 'tabular-nums',
+                }}
+              >
+                ¥{it.amount.toLocaleString('zh-CN', { minimumFractionDigits: 2 })}
+              </span>
             </div>
             <div style={{
               background: 'var(--gray-100)',

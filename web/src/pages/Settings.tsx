@@ -106,28 +106,13 @@ export default function Settings() {
         </div>
       </div>
 
-      {/* 数据工具 — 微信账单导入（测试入口） */}
-      <div className="card" style={{ padding: '20px 22px' }}>
-        <div className="eyebrow eyebrow--black">DATA / 数据工具</div>
-        <h3 className="section-title" style={{ marginTop: 4, fontSize: 18 }}>微信账单导入</h3>
-        <p style={{ fontSize: 13, color: 'var(--text-tertiary)', margin: '8px 0 14px', lineHeight: 1.5 }}>
-          测试：把内置的微信支付账单样例（289 条）追加到当前账本
-        </p>
-        <button
-          className="btn btn--primary"
-          onClick={() => { location.href = './import-wechat.html'; }}
-        >
-          📥 导入微信账单（测试）
-        </button>
-      </div>
-
       {/* 关于 — SPEC 机体档案 */}
       <div className="card card--black" style={{ padding: '20px 22px' }}>
         <div className="row gap-3" style={{ marginBottom: 12, alignItems: 'center' }}>
           <NERVBadge size={42} />
           <div>
             <div className="eyebrow eyebrow--white">SPEC / 机体档案 · EVA-02</div>
-            <h3 className="section-title" style={{ marginTop: 2, fontSize: 18 }}>Asuka记账 v1.2.2</h3>
+            <h3 className="section-title" style={{ marginTop: 2, fontSize: 18 }}>Asuka记账 v1.2.8</h3>
           </div>
         </div>
 
@@ -145,7 +130,7 @@ export default function Settings() {
 
         {/* 规格表 — 多行内容 label 顶端对齐，行间距随行高自适应 */}
         <div style={{ display: 'grid', gridTemplateColumns: '64px 1fr', columnGap: 14, rowGap: 10, fontSize: 12, color: 'rgba(255,255,255,0.88)', fontWeight: 500 }}>
-          <Spec k="版本">Asuka记账 v1.2.2</Spec>
+          <Spec k="版本">Asuka记账 v1.2.8</Spec>
           <Spec k="主题">明日香 · Bento × EVA-02（红橙配色）</Spec>
           <Spec k="驾驶员">惣流・アスカ・ラングレー · EVA-02 PILOT</Spec>
           <Spec k="前端">React + TypeScript + Vite · JetBrains Mono</Spec>

@@ -113,7 +113,7 @@ export default function Stats() {
       </section>
 
       {/* 趋势 + 排行 */}
-      <section className="grid-2" style={{ gridTemplateColumns: 'minmax(0, 2fr) minmax(0, 1fr)' }}>
+      <section className="grid-2" style={{ gridTemplateColumns: 'minmax(0, 2fr) minmax(220px, 1fr)' }}>
         <div className="card card--hover">
           <div className="row-between" style={{ marginBottom: 14 }}>
             <div>

@@ -88,7 +88,8 @@ public class AsukaCapturePlugin extends Plugin {
             requestPermissionForAlias("readSms", call, "smsPermsCallback");
             return;
         }
-        long sinceMs = call.getLong("sinceMs", System.currentTimeMillis() - 24L * 3600 * 1000);
+        // sinceMs = 0 表示从 epoch 开始，即扫描收件箱里所有短信（不再限制最近 24h）
+        long sinceMs = call.getLong("sinceMs", 0L);
         try {
             JSONArray items = querySms(sinceMs);
             JSObject ret = new JSObject();

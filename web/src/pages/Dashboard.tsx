@@ -1,6 +1,6 @@
 // 仪表盘 — Bento × EVA-02 明日香：模块 Hero + 大小块卡片 + KPI 三联 + EVA 机体系状态
 
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { api } from '../api';
 import { useApp } from '../store';
 import type { AnalyticsSummary, Budget, LedgerStats } from '../types';
@@ -16,19 +16,6 @@ export default function Dashboard({ go }: { go: (page: 'transactions' | 'stats' 
   const [budgets, setBudgets] = useState<Budget[]>([]);
   const [voiceOpen, setVoiceOpen] = useState(false);
 
-  // 账本切换下拉
-  const [ledgerOpen, setLedgerOpen] = useState(false);
-  const ledgerRef = useRef<HTMLDivElement>(null);
-  useEffect(() => {
-    function onDocClick(e: MouseEvent) {
-      if (ledgerOpen && ledgerRef.current && !ledgerRef.current.contains(e.target as Node)) {
-        setLedgerOpen(false);
-      }
-    }
-    document.addEventListener('mousedown', onDocClick);
-    return () => document.removeEventListener('mousedown', onDocClick);
-  }, [ledgerOpen]);
-
   useEffect(() => {
     if (!ledger) return;
     api.ledgerStats(ledger.id).then(setStats).catch(() => {});
@@ -36,7 +23,7 @@ export default function Dashboard({ go }: { go: (page: 'transactions' | 'stats' 
     api.budgets(ledger.id).then((r) => setBudgets(r.items)).catch(() => {});
   }, [ledger, tick]);
 
-  if (!ledger) return <div style={{ padding: 60, textAlign: 'center', color: 'var(--text-tertiary)' }}>加载中…</div>;
+  if (!ledger) return <NoLedgerEmpty onCreated={async (id) => { await setLedger(id); bump(); }} />;
 
   const income = analytics?.income ?? 0;
   const expense = analytics?.expense ?? 0;
@@ -52,60 +39,8 @@ export default function Dashboard({ go }: { go: (page: 'transactions' | 'stats' 
         style={{ padding: '30px 32px 34px' }}
       >
         <div className="hero-status-row">
-          <div ref={ledgerRef} style={{ position: 'relative', minWidth: 0, overflow: 'hidden' }}>
-            <button
-              onClick={() => setLedgerOpen((v) => !v)}
-              className="eyebrow eyebrow--black"
-              style={{
-                background: 'transparent', border: 'none', padding: '2px 6px', margin: '-2px -6px',
-                cursor: 'pointer', display: 'inline-flex', alignItems: 'center', gap: 6,
-                color: 'inherit', maxWidth: '100%', minWidth: 0,
-                fontFamily: 'inherit', fontSize: 'inherit', letterSpacing: 'inherit',
-                borderRadius: 6, transition: 'background 0.15s ease',
-              }}
-              onMouseEnter={(e) => { e.currentTarget.style.background = 'rgba(0,0,0,0.04)'; }}
-              onMouseLeave={(e) => { e.currentTarget.style.background = 'transparent'; }}
-              title="切换账本"
-            >
-              <span style={{ overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap', minWidth: 0 }}>
-                {ledger.name} · {analytics?.month ?? ''}月 · 概览
-              </span>
-              <span style={{ fontSize: 10, opacity: 0.6, flexShrink: 0 }}>▼</span>
-            </button>
-            {ledgerOpen && (
-              <div
-                style={{
-                  position: 'absolute', top: 'calc(100% + 8px)', left: 0,
-                  background: 'rgba(255,255,255,0.92)',
-                  WebkitBackdropFilter: 'saturate(180%) blur(24px)',
-                  backdropFilter: 'saturate(180%) blur(24px)',
-                  color: 'var(--text)',
-                  borderRadius: 'var(--radius-lg)',
-                  boxShadow: 'var(--shadow-lg)',
-                  minWidth: 220, zIndex: 60,
-                  overflow: 'hidden',
-                  border: '1px solid rgba(255,255,255,0.7)',
-                }}
-              >
-                <div style={{ padding: '12px 16px 8px', borderBottom: '1px solid rgba(0,0,0,0.06)' }}>
-                  <div className="eyebrow">账本切换</div>
-                </div>
-                {ledgers.map((l) => (
-                  <button
-                    key={l.id}
-                    onClick={async () => { setLedgerOpen(false); await setLedger(l.id); }}
-                    style={{
-                      width: '100%', display: 'flex', alignItems: 'center', justifyContent: 'space-between',
-                      padding: '10px 16px', background: l.id === ledger?.id ? 'rgba(211,41,15,0.08)' : 'transparent',
-                      color: 'var(--text)', border: 'none', textAlign: 'left', cursor: 'pointer', fontSize: 14,
-                    }}
-                  >
-                    <span style={{ overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{l.name}</span>
-                    {l.id === ledger?.id && <span className="text-volt">✓</span>}
-                  </button>
-                ))}
-              </div>
-            )}
+          <div className="eyebrow eyebrow--black" style={{ display: 'inline-flex', alignItems: 'center', gap: 6 }}>
+            <span>{ledger.name} · {analytics?.month ?? ''}月 · 概览</span>
           </div>
           <div className="row gap-3 hero-status-mid hide-mobile" style={{ flexWrap: 'nowrap' }}>
             <span className="eva-headband" aria-label="明日香发带" />
@@ -280,6 +215,61 @@ function KpiCard({ label, amount, accent, meta }: {
         {amount}
       </div>
       <div className="eyebrow" style={{ marginTop: 12 }}>{meta}</div>
+    </div>
+  );
+}
+
+// =============== 无账本空状态 — 引导创建第一个账本 ===============
+function NoLedgerEmpty({ onCreated }: { onCreated: (id: number) => void | Promise<void> }) {
+  const [name, setName] = useState('我的账本');
+  const [creating, setCreating] = useState(false);
+  const submit = async () => {
+    const n = name.trim();
+    if (!n) return;
+    if (creating) return;
+    setCreating(true);
+    try {
+      const l = await api.createLedger(n, 'CNY');
+      await onCreated(l.id);
+    } catch (e) {
+      toast(String((e as Error).message || '创建失败'), 'err');
+      setCreating(false);
+    }
+  };
+  return (
+    <div className="nike-in" style={{ display: 'flex', flexDirection: 'column', gap: 22 }}>
+      <section
+        className="card card--plug-suit"
+        style={{ padding: '40px 32px', textAlign: 'center' }}
+      >
+        <div className="eva-headband" style={{ margin: '0 auto 14px' }} aria-hidden />
+        <div className="eyebrow eyebrow--black" style={{ marginBottom: 8 }}>EVA-02 · FIRST SYNC</div>
+        <h2 className="section-title" style={{ fontSize: 22, marginBottom: 6 }}>建立你的第一个账本</h2>
+        <p style={{ color: 'var(--text-tertiary)', fontSize: 13, maxWidth: 420, margin: '0 auto 22px', lineHeight: 1.5 }}>
+          Asuka记账 完全本地化 — 所有数据只存你这台设备，不联网、不上云。给账本起个名字就开始记。
+        </p>
+        <div style={{ display: 'flex', gap: 8, justifyContent: 'center', alignItems: 'center', flexWrap: 'wrap' }}>
+          <input
+            className="input"
+            value={name}
+            onChange={(e) => setName(e.target.value)}
+            onKeyDown={(e) => { if (e.key === 'Enter') void submit(); }}
+            placeholder="账本名称（如：日常 / 家庭 / 旅行…）"
+            style={{ width: 240, fontSize: 14, padding: '10px 14px' }}
+            disabled={creating}
+            autoFocus
+          />
+          <button
+            className="btn btn--primary"
+            onClick={submit}
+            disabled={creating || !name.trim()}
+            style={{ padding: '10px 22px' }}
+          >
+            {creating ? '创建中…' : '＋ 创建账本'}
+          </button>
+        </div>
+        <div className="eyebrow" style={{ marginTop: 24 }}>数据仅本机存储 · 离线可用 · 隐私安全</div>
+      </section>
     </div>
   );
 }
