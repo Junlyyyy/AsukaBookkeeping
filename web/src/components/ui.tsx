@@ -79,46 +79,31 @@ export function Modal({ title, onClose, children, wide }: {
           borderRadius: 'var(--radius-lg)',
           boxShadow: 'var(--shadow-lg)',
           border: '1px solid rgba(255,255,255,0.7)',
-          width: '100%', maxWidth: wide ? 760 : 520, padding: 28, position: 'relative',
+          width: '100%', maxWidth: wide ? 760 : 520, padding: 24, position: 'relative',
+          /* 高于视口时内部可滚，且 X 按钮固定不动 */
+          maxHeight: 'calc(100dvh - 24px)',
+          display: 'flex',
+          flexDirection: 'column',
+          overflow: 'hidden',
         }}
       >
-        {title && (
-          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 20 }}>
-            <h2 className="display-md" style={{ fontSize: 20, fontWeight: 700, color: 'var(--text)', letterSpacing: '-0.01em' }}>{title}</h2>
-            <button
-              onClick={onClose}
-              style={{
-                background: 'rgba(255,255,255,0.85)', color: 'var(--text-secondary)', border: '1px solid rgba(0,0,0,0.06)',
-                cursor: 'pointer', padding: 0, flexShrink: 0,
-                width: 36, height: 36, fontSize: 16, fontWeight: 600, lineHeight: 1,
-                borderRadius: '50%', boxShadow: '0 2px 6px rgba(0,0,0,0.06)',
-                display: 'inline-flex', alignItems: 'center', justifyContent: 'center',
-                transition: 'background 0.15s ease',
-              }}
-              onMouseEnter={(e) => { e.currentTarget.style.background = 'rgba(255,255,255,1)'; }}
-              onMouseLeave={(e) => { e.currentTarget.style.background = 'rgba(255,255,255,0.85)'; }}
-              aria-label="关闭"
-            >✕</button>
-          </div>
-        )}
-        {!title && (
-          <button
-            onClick={onClose}
-            style={{
-              position: 'absolute', top: 14, right: 14,
-              background: 'rgba(255,255,255,0.85)', color: 'var(--text-secondary)', border: '1px solid rgba(0,0,0,0.06)',
-              cursor: 'pointer', padding: 0, flexShrink: 0,
-              width: 36, height: 36, fontSize: 16, fontWeight: 600, lineHeight: 1,
-              borderRadius: '50%', boxShadow: '0 2px 6px rgba(0,0,0,0.06)',
-              display: 'inline-flex', alignItems: 'center', justifyContent: 'center',
-              transition: 'background 0.15s ease',
-            }}
-            onMouseEnter={(e) => { e.currentTarget.style.background = 'rgba(255,255,255,1)'; }}
-            onMouseLeave={(e) => { e.currentTarget.style.background = 'rgba(255,255,255,0.85)'; }}
-            aria-label="关闭"
-          >✕</button>
-        )}
-        {children}
+        {/* X 按钮固定右上，不随内容滚动 */}
+        <button
+          onClick={onClose}
+          style={{
+            position: 'absolute', top: 12, right: 12, zIndex: 2,
+            background: 'rgba(255,255,255,0.9)', color: 'var(--text-secondary)', border: '1px solid rgba(0,0,0,0.06)',
+            cursor: 'pointer', padding: 0, flexShrink: 0,
+            width: 32, height: 32, fontSize: 14, fontWeight: 600, lineHeight: 1,
+            borderRadius: '50%', boxShadow: '0 2px 6px rgba(0,0,0,0.06)',
+            display: 'inline-flex', alignItems: 'center', justifyContent: 'center',
+            transition: 'background 0.15s ease',
+          }}
+          aria-label="关闭"
+        >✕</button>
+        <div style={{ overflowY: 'auto', flex: 1, minHeight: 0, paddingRight: 4 }}>
+          {children}
+        </div>
       </div>
     </div>
   );

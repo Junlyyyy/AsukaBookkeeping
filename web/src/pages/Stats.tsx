@@ -13,19 +13,22 @@ export default function Stats() {
   const { ledger, tick } = useApp();
   const [scope, setScope] = useState<Scope>('month');
   const [year, setYear] = useState(new Date().getFullYear());
+  const [month, setMonth] = useState(new Date().getMonth() + 1);
   const [data, setData] = useState<AnalyticsSummary | null>(null);
 
   useEffect(() => {
     if (!ledger) return;
     api.analytics({
       ledger_id: ledger.id, scope, year,
-      month: scope === 'month' ? new Date().getMonth() + 1 : undefined,
+      month: scope === 'month' ? month : undefined,
     }).then(setData).catch(() => {});
-  }, [ledger, scope, year, tick]);
+  }, [ledger, scope, year, month, tick]);
 
   if (!ledger) return null;
 
   const yearSel = Array.from({ length: 4 }, (_, i) => new Date().getFullYear() + i);
+  const monthSel = Array.from({ length: 12 }, (_, i) => i + 1);
+  const monthName = (m: number) => `${m} 月`;
 
   return (
     <div className="nike-in stack gap-6">
@@ -39,7 +42,7 @@ export default function Stats() {
               <div className="eyebrow eyebrow--black">ANALYTICS / 数据分析 · EVA-02</div>
             </div>
             <h1 className="hero-title" style={{ marginTop: 6, fontSize: 'clamp(1.6rem, 3vw, 2.4rem)' }}>
-              {scope === 'month' ? `${year} 年 ${new Date().getMonth() + 1} 月` : scope === 'year' ? `${year} 年度` : '全部数据'}
+              {scope === 'month' ? `${year} 年 ${month} 月` : scope === 'year' ? `${year} 年度` : '全部数据'}
             </h1>
             {data && (
               <div className="row gap-3" style={{ marginTop: 10, fontSize: 12, fontWeight: 600 }}>
@@ -67,17 +70,33 @@ export default function Stats() {
           </div>
         </div>
         {scope !== 'all' && (
-          <div className="row gap-2" style={{ marginTop: 14, flexWrap: 'wrap' }}>
-            <span className="eyebrow">年份:</span>
-            {yearSel.map((y) => (
-              <button
-                key={y}
-                className={`chip ${year === y ? 'chip--volt' : ''}`}
-                onClick={() => setYear(y)}
-              >
-                {y}
-              </button>
-            ))}
+          <div className="stack gap-2" style={{ marginTop: 14 }}>
+            <div className="row gap-2" style={{ flexWrap: 'wrap' }}>
+              <span className="eyebrow">年份:</span>
+              {yearSel.map((y) => (
+                <button
+                  key={y}
+                  className={`chip ${year === y ? 'chip--volt' : ''}`}
+                  onClick={() => setYear(y)}
+                >
+                  {y}
+                </button>
+              ))}
+            </div>
+            {scope === 'month' && (
+              <div className="row gap-2" style={{ flexWrap: 'wrap' }}>
+                <span className="eyebrow">月份:</span>
+                {monthSel.map((m) => (
+                  <button
+                    key={m}
+                    className={`chip ${month === m ? 'chip--volt' : ''}`}
+                    onClick={() => setMonth(m)}
+                  >
+                    {monthName(m)}
+                  </button>
+                ))}
+              </div>
+            )}
           </div>
         )}
       </header>

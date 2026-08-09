@@ -78,12 +78,7 @@ export default function Settings() {
       {/* 语音识别配置（千问 · 仅语音识别时联网） */}
       <div className="card">
         <div className="eyebrow eyebrow--black">QWEN ASR / 千问语音识别 · EVA-02</div>
-        <h3 className="section-title" style={{ marginTop: 4 }}>语音记账引擎</h3>
-        <p style={{ fontSize: 13, color: 'var(--text-secondary)', margin: '10px 0 12px', lineHeight: 1.6 }}>
-          在下面填入阿里云百炼 API Key（<code style={{ background: 'var(--surface)', padding: '2px 6px', borderRadius: 6 }}>DASHSCOPE_API_KEY</code>），
-          即可在 APK 内联网使用语音记账。Key 仅保存在本机，
-          <b>只有点语音识别时才联网</b>，其余记账/解析/抓取全部离线完成。不填则语音记账不可用。
-        </p>
+        <h3 className="section-title" style={{ marginTop: 4, marginBottom: 12 }}>语音记账引擎</h3>
         <div className="stack gap-3">
           <input
             className="input"
@@ -92,7 +87,7 @@ export default function Settings() {
             value={asrKey}
             onChange={(e) => { setAsrKey(e.target.value); setAsrSaved(false); }}
           />
-          <div className="row" style={{ gap: 10, alignItems: 'center' }}>
+          <div className="row" style={{ gap: 10, alignItems: 'center', flexWrap: 'wrap' }}>
             <button
               className="btn btn--primary"
               onClick={() => {
@@ -111,33 +106,37 @@ export default function Settings() {
         </div>
       </div>
 
-      {/* 关于 */}
-      <div className="card card--black">
-        <div className="row gap-3" style={{ marginBottom: 14, alignItems: 'center' }}>
-          <NERVBadge size={48} />
+      {/* 关于 — SPEC 机体档案 */}
+      <div className="card card--black" style={{ padding: '20px 22px' }}>
+        <div className="row gap-3" style={{ marginBottom: 12, alignItems: 'center' }}>
+          <NERVBadge size={42} />
           <div>
             <div className="eyebrow eyebrow--white">SPEC / 机体档案 · EVA-02</div>
-            <h3 className="section-title" style={{ marginTop: 4 }}>Asuka记账 v1.2</h3>
+            <h3 className="section-title" style={{ marginTop: 2, fontSize: 18 }}>Asuka记账 v1.1.5</h3>
           </div>
         </div>
 
-        {/* 机体数据行（机体系仪表装饰） */}
-        <div className="row gap-3" style={{ flexWrap: 'wrap', marginBottom: 14, fontSize: 11, fontWeight: 700, letterSpacing: '0.06em' }}>
+        {/* 机体数据行（机体系仪表装饰）— 5 个状态 pill 横向紧排 */}
+        <div className="row gap-2" style={{ flexWrap: 'wrap', marginBottom: 14, fontSize: 10, fontWeight: 700, letterSpacing: '0.04em' }}>
           <span className="chip chip--volt">MAGI 在线</span>
           <span className="chip chip--volt">AT 力场 稳定</span>
           <span className="chip chip--volt">同步率 100%</span>
           <span className="chip chip--volt">LCL 正常</span>
-          <span className="chip" style={{ background: 'rgba(255,255,255,0.12)', color: '#fff' }}>A.T. FIELD · ACTIVE</span>
+          <span className="chip" style={{ background: 'rgba(255,255,255,0.12)', color: '#fff' }}>A.T. FIELD</span>
         </div>
 
-        {/* 规格表：标签 + 内容的两列布局 */}
-        <div style={{ display: 'grid', gridTemplateColumns: '90px 1fr', gap: '8px 16px', fontSize: 13, color: 'rgba(255,255,255,0.85)', fontWeight: 500 }}>
-          <Spec k="版本">Asuka记账 v1.2</Spec>
+        {/* 分割线 */}
+        <div style={{ height: 1, background: 'rgba(255,255,255,0.1)', marginBottom: 12 }} />
+
+        {/* 规格表 — 多行内容 label 顶端对齐，行间距随行高自适应 */}
+        <div style={{ display: 'grid', gridTemplateColumns: '64px 1fr', columnGap: 14, rowGap: 10, fontSize: 12, color: 'rgba(255,255,255,0.88)', fontWeight: 500 }}>
+          <Spec k="版本">Asuka记账 v1.1.5</Spec>
           <Spec k="主题">明日香 · Bento × EVA-02（红橙配色）</Spec>
-          <Spec k="驾驶员">惣流・アスカ・ラングレー（EVA-02 PILOT · SYNC RATE 100%）</Spec>
-          <Spec k="前端">React + TypeScript + Vite · 数字 JetBrains Mono</Spec>
-          <Spec k="后端">本地 SQLite（asuka.db）· 金额以分存储 · 数据完全本地</Spec>
-          <Spec k="核心">账本切换 · MAGI 自动抓取 · 二次确认删除 · 千问语音识别（仅语音联网）</Spec>
+          <Spec k="驾驶员">惣流・アスカ・ラングレー · EVA-02 PILOT</Spec>
+          <Spec k="前端">React + TypeScript + Vite · JetBrains Mono</Spec>
+          <Spec k="后端">本地 SQLite（asuka.db）· 金额以分存储</Spec>
+          <Spec k="核心">账本切换 · MAGI 自动抓取 · 二次确认删除</Spec>
+          <Spec k="语音">千问 ASR（仅识别联网，其余完全离线）</Spec>
         </div>
       </div>
 
@@ -171,13 +170,14 @@ function Spec({ k, children }: { k: string; children: React.ReactNode }) {
     <>
       <span
         style={{
-          color: 'var(--eva-orange)', fontWeight: 700, fontSize: 11,
-          letterSpacing: '0.08em', textTransform: 'uppercase', paddingTop: 2,
+          color: 'var(--eva-orange)', fontWeight: 700, fontSize: 10,
+          letterSpacing: '0.08em', textTransform: 'uppercase',
+          alignSelf: 'start', paddingTop: 2,
         }}
       >
         {k}
       </span>
-      <span style={{ color: 'rgba(255,255,255,0.9)' }}>{children}</span>
+      <span style={{ color: 'rgba(255,255,255,0.92)', lineHeight: 1.5 }}>{children}</span>
     </>
   );
 }

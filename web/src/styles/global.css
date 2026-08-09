@@ -658,19 +658,19 @@ body::after {
   .container { padding: 0 16px; }
   /* 竖屏 header 紧凑：避免 logo/导航/账本按钮互相挤压重叠 */
   header.glass > .container { gap: 10px !important; }
-  /* 顶栏避让状态栏（Android 15+ edge-to-edge；配合 viewport-fit=cover 生效） */
-  header.glass { padding-top: max(10px, env(safe-area-inset-top)) !important; }
-  /* nav-btn 紧凑：7 个按钮在窄屏也能显示 */
-  .nav-btn { padding: 6px 10px; font-size: 12px; flex-shrink: 0; white-space: nowrap; }
-  .nav-wrap { gap: 4px !important; -webkit-overflow-scrolling: touch; justify-content: flex-start !important; }
+  /* 顶栏避让状态栏（Android 15/16 edge-to-edge；env() 在 cap WebView 偶发为 0，故加 32px fallback 兜底） */
+  header.glass { padding-top: max(32px, calc(12px + env(safe-area-inset-top))) !important; }
+  /* nav-btn 紧凑：7 个按钮在窄屏也能完整显示，不用横滑 */
+  .nav-btn { padding: 5px 8px; font-size: 11px; flex-shrink: 0; white-space: nowrap; }
+  .nav-wrap { gap: 3px !important; -webkit-overflow-scrolling: touch; justify-content: space-between !important; }
   .nav-wrap::-webkit-scrollbar { display: none; }
   /* 主区与底部安全区（小米15 虚拟按键） */
   main.container { padding-bottom: max(60px, calc(60px + env(safe-area-inset-bottom))) !important; }
 }
 /* 小屏手机 (< 480px, 含小米15 400 CSS 宽) */
 @media (max-width: 480px) {
-  .nav-btn { padding: 4px 4px; font-size: 10px; letter-spacing: 0; }
-  .nav-wrap { gap: 2px !important; }
+  .nav-btn { padding: 3px 4px; font-size: 9.5px; letter-spacing: 0; }
+  .nav-wrap { gap: 1px !important; }
   .container { padding: 0 12px; }
   /* Hero 数字进一步缩小 */
   .hero-num { font-size: clamp(1.7rem, 8.5vw, 2.4rem) !important; }
@@ -679,7 +679,7 @@ body::after {
   .card { padding: 14px !important; }
   .grid-2, .grid-3, .grid-4 { gap: 10px; }
   /* header sticky 支持顶部挖孔（小米15） */
-  header.glass { padding-top: max(8px, env(safe-area-inset-top)) !important; }
+  header.glass { padding-top: max(30px, calc(10px + env(safe-area-inset-top))) !important; }
   /* 移动 Logo 略缩小 */
   .mobile-logo-wrap { gap: 6px !important; }
 }

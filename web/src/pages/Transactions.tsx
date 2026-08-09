@@ -3,8 +3,9 @@
 import { useCallback, useEffect, useState } from 'react';
 import { api } from '../api';
 import { useApp } from '../store';
-import type { Account, Category, Tag, Transaction, TxCandidate } from '../types';
+import type { Account, Category, Tag, Transaction } from '../types';
 import { Modal, toast, fmtDate, fmtMoney } from '../components/ui';
+import AutoCapture from '../components/AutoCapture';
 
 export default function Transactions() {
   const { ledger, tick, bump } = useApp();
@@ -27,9 +28,6 @@ export default function Transactions() {
   const [delArmed, setDelArmed] = useState<number | null>(null);
   const [filterOpen, setFilterOpen] = useState(false);
   const [fetchOpen, setFetchOpen] = useState(false);
-  const [fetchText, setFetchText] = useState('');
-  const [fetching, setFetching] = useState(false);
-  const [candidates, setCandidates] = useState<TxCandidate[]>([]);
 
   const load = useCallback(() => {
     if (!ledger) return;
@@ -66,39 +64,6 @@ export default function Transactions() {
           setTimeout(() => setDelArmed((v) => (v === id ? null : v)), 4000);
         }
       }
-    } catch (e) { toast(String((e as Error).message), 'err'); }
-  };
-
-  // 自动抓取：粘贴支付短信/分享文本 → 解析候选 → 确认批量入账
-  const onFetch = async () => {
-    if (!fetchText.trim()) return toast('请粘贴支付短信或消费记录文本', 'err');
-    setFetching(true);
-    try {
-      const r = await api.fetchTransactionCandidates(fetchText, ledger.id);
-      setCandidates(r.items);
-      if (r.items.length === 0) toast('未识别到有效的消费记录，请检查文本格式', 'err');
-    } catch (e) { toast(String((e as Error).message), 'err'); }
-    setFetching(false);
-  };
-
-  const onConfirmFetch = async () => {
-    if (candidates.length === 0) return;
-    try {
-      const items = candidates.map((c) => ({
-        ledger_id: ledger.id,
-        type: c.type,
-        amount: c.amount,
-        note: c.note,
-        category_id: c.category?.id ?? null,
-        account_id: null,
-        occurred_at: c.occurred_at,
-      }));
-      const r = await api.createTransactions(items);
-      toast(`已导入 ${r.created} 笔消费记录`);
-      setCandidates([]);
-      setFetchText('');
-      setFetchOpen(false);
-      bump();
     } catch (e) { toast(String((e as Error).message), 'err'); }
   };
 
@@ -240,59 +205,10 @@ export default function Transactions() {
       )}
 
       {fetchOpen && (
-        <Modal title="📥 MAGI 自动抓取消费记录" onClose={() => { setFetchOpen(false); setCandidates([]); setFetchText(''); }} wide>
-          <div className="eva-pilot-badge eva-pilot-badge--ghost" style={{ marginBottom: 12 }}>
-            MAGI 解析引擎 · 已同步
-          </div>
-          <p style={{ marginBottom: 12, fontSize: 13, color: 'var(--text-secondary)', fontWeight: 500 }}>
-            粘贴微信/支付宝支付短信或银行交易详情，可多行；MAGI 自动识别金额、商家、时间与分类，确认后批量入账。
-          </p>
-          <textarea
-            className="textarea"
-            rows={6}
-            autoFocus
-            placeholder="粘贴支付短信 / 分享文本 / 对账单文本…"
-            value={fetchText}
-            onChange={(e) => setFetchText(e.target.value)}
-            style={{ marginBottom: 14 }}
-          />
-          <div className="row" style={{ justifyContent: 'flex-end', gap: 10, marginBottom: candidates.length ? 18 : 0 }}>
-            <button className="btn btn--ghost" onClick={() => { setFetchOpen(false); setCandidates([]); setFetchText(''); }}>取消</button>
-            <button className="btn btn--primary" onClick={onFetch} disabled={fetching}>
-              {fetching ? '解析中…' : '解析消费记录'}
-            </button>
-          </div>
-
-          {candidates.length > 0 && (
-            <div className="panel-inset" style={{ padding: '14px 16px' }}>
-              <div className="row-between" style={{ marginBottom: 10 }}>
-                <div className="eyebrow eyebrow--black">识别到 {candidates.length} 笔消费</div>
-              </div>
-              <div className="stack gap-2" style={{ maxHeight: 300, overflowY: 'auto' }}>
-                {candidates.map((c, i) => (
-                  <div key={i} className="list__item" style={{ borderRadius: 'var(--radius-md)', border: 'none', boxShadow: 'var(--shadow-xs)', marginBottom: 8 }}>
-                    <div className="list__icon" style={{ background: c.type === 'income' ? 'rgba(7,202,107,0.14)' : 'rgba(255,255,255,0.55)' }}>
-                      {c.category ? c.category.name.slice(0, 1) : '💰'}
-                    </div>
-                    <div className="list__main">
-                      <div className="list__title">{c.note} {c.category && <span className="chip chip--volt" style={{ marginLeft: 6, fontSize: 10, padding: '1px 7px' }}>{c.category.name}</span>}</div>
-                      <div className="list__meta">{fmtDate(c.occurred_at)} · {c.type === 'income' ? '收入' : '支出'}</div>
-                    </div>
-                    <div className={`list__amount ${c.type === 'income' ? 'list__amount--income' : 'list__amount--expense'}`}>
-                      {c.type === 'expense' ? '-' : '+'}{fmtMoney(c.amount)}
-                    </div>
-                  </div>
-                ))}
-              </div>
-              <div className="row" style={{ justifyContent: 'flex-end', gap: 10, marginTop: 14 }}>
-                <button className="btn btn--ghost" onClick={() => setCandidates([])}>重新解析</button>
-                <button className="btn btn--primary" onClick={onConfirmFetch}>
-                  全部确认入账
-                </button>
-              </div>
-            </div>
-          )}
-        </Modal>
+        <AutoCapture
+          onClose={() => setFetchOpen(false)}
+          onImported={(n) => { bump(); toast(`已导入 ${n} 笔`); }}
+        />
       )}
 
       {/* =============== 筛选二级页面（Modal） =============== */}

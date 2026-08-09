@@ -75,35 +75,35 @@ export default function VoiceRecorder({ onClose, onSaved }: {
 
   return (
     <Modal title="" onClose={onClose} wide>
-      {/* 实时转录（只读） */}
-      <div className="panel-inset" style={{ minHeight: 110 }}>
-        <div className="eyebrow eyebrow--black" style={{ marginBottom: 6 }}>TRANSCRIPT / 转录</div>
-        <div style={{ fontSize: 18, fontWeight: 600, color: 'var(--text)', minHeight: 70 }}>
-          {interimText || <span style={{ color: 'var(--text-tertiary)', fontWeight: 400 }}>{state.listening ? '聆听中…' : '等待语音或手动输入…'}</span>}
-          {state.listening && <span style={{ display: 'inline-block', width: 10, height: 18, background: 'var(--eva-red)', marginLeft: 3, verticalAlign: 'text-bottom', animation: 'cursor-blink 1s step-end infinite' }} />}
+      {/* 实时转录（只读）：紧凑高度，识别中才有大块空间，否则小提示即可 */}
+      <div className="panel-inset" style={{ padding: '10px 14px', minHeight: 56 }}>
+        <div className="eyebrow eyebrow--black" style={{ marginBottom: 4, fontSize: 10 }}>TRANSCRIPT / 转录</div>
+        <div style={{ fontSize: 14, fontWeight: 600, color: 'var(--text)', minHeight: 18, lineHeight: 1.4 }}>
+          {interimText || <span style={{ color: 'var(--text-tertiary)', fontWeight: 400, fontSize: 13 }}>{state.listening ? '聆听中…' : '等待语音或手动输入…'}</span>}
+          {state.listening && <span style={{ display: 'inline-block', width: 6, height: 14, background: 'var(--eva-red)', marginLeft: 3, verticalAlign: 'text-bottom', animation: 'cursor-blink 1s step-end infinite' }} />}
         </div>
       </div>
 
-      {/* 可编辑文本框：识别结果自动填入，也可手动输入 */}
+      {/* 可编辑文本框：识别结果自动填入，也可手动输入 — 紧凑 2 行起步 */}
       <textarea
         className="input"
-        rows={4}
+        rows={2}
         placeholder="手动输入「昨天星巴克38块」"
         value={text}
         onChange={(e) => setText(e.target.value)}
         style={{
-          width: '100%', marginTop: 20, fontSize: 16, lineHeight: 1.5,
-          resize: 'vertical', minHeight: 110, fontFamily: 'inherit',
+          width: '100%', marginTop: 12, fontSize: 14, lineHeight: 1.4,
+          resize: 'vertical', minHeight: 48, maxHeight: 100, fontFamily: 'inherit',
         }}
       />
 
       {state.error && (
-        <div style={{ marginTop: 12, padding: '10px 14px', borderRadius: 'var(--radius-md)', background: 'rgba(220,38,38,0.08)', color: 'var(--danger)', fontSize: 13, fontWeight: 500 }}>
+        <div style={{ marginTop: 10, padding: '8px 12px', borderRadius: 'var(--radius-md)', background: 'rgba(220,38,38,0.08)', color: 'var(--danger)', fontSize: 12, fontWeight: 500, lineHeight: 1.5 }}>
           ⚠ {state.error}
         </div>
       )}
 
-      <div className="row" style={{ justifyContent: 'flex-end', gap: 10, marginTop: 14 }}>
+      <div className="row" style={{ justifyContent: 'flex-end', gap: 8, marginTop: 12 }}>
         <button className="btn btn--ghost" onClick={onClose}>取消</button>
         <button
           className="btn btn--ghost"
