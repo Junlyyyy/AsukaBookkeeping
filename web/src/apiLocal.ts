@@ -32,7 +32,7 @@ function load(): DB {
   if (_db) return _db;
   const raw = localStorage.getItem(DB_KEY);
   if (raw) {
-    try { _db = JSON.parse(raw); return _db!; } catch { /* fallthrough */ }
+    try { _db = JSON.parse(raw); ensureDefaultCats(); return _db!; } catch { /* fallthrough */ }
   }
   // 正式版：不写任何示例数据。首次打开 app 数据完全为空，
   // 由用户主动创建第一个账本 + 分类 + 账户。
@@ -41,11 +41,130 @@ function load(): DB {
   return _db;
 }
 
+/** 默认分类模板（与 createLedger 保持一致） */
+const DEFAULT_CATS: { name: string; type: 'expense' | 'income'; icon: string }[] = [
+  { name: '餐饮', type: 'expense', icon: '🍜' },
+  { name: '交通', type: 'expense', icon: '🚇' },
+  { name: '购物', type: 'expense', icon: '🛍' },
+  { name: '娱乐', type: 'expense', icon: '🎮' },
+  { name: '居住', type: 'expense', icon: '🏠' },
+  { name: '医疗', type: 'expense', icon: '💊' },
+  { name: '通讯', type: 'expense', icon: '📱' },
+  { name: '人情', type: 'expense', icon: '🧧' },
+  { name: '学习', type: 'expense', icon: '📚' },
+  { name: '其他', type: 'expense', icon: '▣' },
+  { name: '工资', type: 'income', icon: '💰' },
+  { name: '奖金', type: 'income', icon: '🎉' },
+  { name: '理财', type: 'income', icon: '📈' },
+  { name: '其他收入', type: 'income', icon: '✚' },
+];
+
+/** 惰性补建：旧账本（v1.2.8 及更早创建）没有默认分类时补一套，幂等 */
+function ensureDefaultCats() {
+  if (!_db) return;
+  let changed = false;
+  for (const l of _db.ledgers) {
+    if (!_db.categories.some((c) => c.ledger_id === l.id)) {
+      DEFAULT_CATS.forEach((c, i) => {
+        _db!.categories.push({
+          id: nextId(_db!), ledger_id: l.id, name: c.name, type: c.type, icon: c.icon,
+          sort_order: i, created_at: now(),
+        });
+      });
+      changed = true;
+    }
+  }
+  if (changed) save();
+}
+
 function save() { if (_db) localStorage.setItem(DB_KEY, JSON.stringify(_db)); }
 function nextId(db: DB): number { return db.seq++; }
 const yuan = (cents: number) => Number((cents / 100).toFixed(2));
 const cents = (y: number) => Math.round(Number(y) * 100);
 const txSqlDate = (d: string) => d.replace('T', ' ');
+
+/**
+ * 口语化金额解析（支持中文数字 + 万/千/百单位）
+ * 例：38块 / 38.5元 / 5块2毛 / 5000 / 5万块(50000) / 1.2万(12000) / 3千5(3500)
+ *    一万五(15000) / 三千五百(3500) / 五十块(50) / 一百二(120) / 工资收入5万块(50000)
+ * 返回「元」为单位的数字；解析不到返回 null
+ */
+function parseAmountCn(s: string): number | null {
+  // 0) 阿拉伯数字 + 中文单位（含零头）：5万 / 1.2万 / 3千5 / 8百5
+  const m = s.match(/(\d+(?:\.\d+)?)\s*(万|千|百)\s*(\d+(?:\.\d+)?)?/);
+  if (m) {
+    const unit = m[2] === '万' ? 10000 : m[2] === '千' ? 1000 : 100;
+    const main = Number(m[1]) * unit;
+    if (m[3] !== undefined) {
+      const subUnit = m[2] === '万' ? 1000 : m[2] === '千' ? 100 : 10;
+      return main + Number(m[3]) * subUnit;
+    }
+    return main;
+  }
+  // 1) 元角分：38.5元 / 38块5毛 / 5块2 / ¥38 / ￥38
+  const m1 = s.match(/(\d+(?:\.\d+)?)\s*(?:元|块|块钱|¥|￥)/);
+  const m2 = s.match(/(\d+)\s*块\s*(\d+)\s*(?:毛|角)?/);
+  if (m2) return Number(m2[1]) + Number(m2[2]) / 10;
+  if (m1) return Number(m1[1]);
+  // 2) 中文数字 + 块 + 角：三十八块五(38.5) / 五块二(5.2) / 一块五(1.5)
+  const cnDigits: Record<string, number> = { 零: 0, 一: 1, 壹: 1, 二: 2, 贰: 2, 两: 2, 俩: 2, 三: 3, 叁: 3, 四: 4, 肆: 4, 五: 5, 伍: 5, 六: 6, 陆: 6, 七: 7, 柒: 7, 八: 8, 捌: 8, 九: 9, 玖: 9, '０': 0, '１': 1, '２': 2, '３': 3, '４': 4, '５': 5, '６': 6, '７': 7, '８': 8, '９': 9 };
+  const cnUnits: Record<string, number> = { 十: 10, 拾: 10, 百: 100, 佰: 100, 千: 1000, 仟: 1000, 万: 10000, 萬: 10000, 亿: 100000000, 億: 100000000 };
+  const CN_CHARS = '[零〇一二两俩三四五六七八九十百千万亿壹贰叁肆伍陆柒捌玖拾佰仟萬億０１２３４５６７８９]';
+  const mCnMoney = s.match(new RegExp(`(${CN_CHARS}+)\\s*块\\s*([${CN_CHARS.slice(1, -1)}])?\\s*(?:毛|角)?`));
+  if (mCnMoney) {
+    const whole = cn2num(mCnMoney[1], cnDigits, cnUnits);
+    const dec = mCnMoney[2] ? cnDigits[mCnMoney[2]] / 10 : 0;
+    if (whole > 0) return whole + dec;
+  }
+  // 2.5) 财务完整格式：叁拾贰万捌仟零陆元柒角捌分 → 328006.78（元+角+分）
+  const mCnYuanJiao = s.match(new RegExp(`(${CN_CHARS}+)元(${CN_CHARS})?(?:角|毛)?(${CN_CHARS})?分?`));
+  if (mCnYuanJiao) {
+    const whole = cn2num(mCnYuanJiao[1], cnDigits, cnUnits);
+    const dec = (mCnYuanJiao[2] ? cnDigits[mCnYuanJiao[2]] / 10 : 0) + (mCnYuanJiao[3] ? cnDigits[mCnYuanJiao[3]] / 100 : 0);
+    if (whole > 0) return whole + dec;
+  }
+  // 3) 中文数字：一万五 / 三千五百 / 五十块 / 一百二 / 十五块 / 壹佰贰拾叁
+  const cnNumMatch = s.match(new RegExp(`(${CN_CHARS}+)\\s*(?:元|块|块钱)?`));
+  if (cnNumMatch) {
+    const cn = cnNumMatch[1];
+    // 纯中文数字 → 数字
+    const n = cn2num(cn, cnDigits, cnUnits);
+    if (n > 0) return n;
+  }
+  // 4) 纯阿拉伯数字结尾：5000 / 38
+  const m3 = s.match(/(\d+(?:\.\d+)?)\s*$/);
+  if (m3) return Number(m3[1]);
+  return null;
+}
+
+/** 中文数字串 → 数值（支持：五十/三百/四千/五万/三万五/三千五/一百二/十五/壹佰贰拾叁/五亿） */
+function cn2num(cn: string, digits: Record<string, number>, units: Record<string, number>): number {
+  let total = 0;      // 已结算（亿/万级别）
+  let section = 0;    // 当前小节（万以下）
+  let num = 0;        // 当前数字位
+  let lastUnit = 1;   // 最近一次大单位（用于「三千五」省略单位补位）
+  for (const ch of cn) {
+    if (ch in digits) { num = digits[ch]; continue; }
+    if (ch in units) {
+      const u = units[ch];
+      if (u === 10000 || u === 100000000) {
+        // 万/亿：结算当前小节并累计
+        total += (section + (num || 1)) * u;
+        section = 0; num = 0; lastUnit = u;
+      } else {
+        // 十/百/千：进小节
+        section += (num || 1) * u;
+        num = 0; lastUnit = u;
+      }
+    }
+  }
+  // 末尾残留数字：口语省略单位（三万五=35000、三千五=3500、一百二=120）
+  // 但含「零」时数字位完整（捌仟零陆=8006），不补位
+  if (num > 0 && lastUnit >= 10 && !cn.includes('零')) {
+    return total + section + num * (lastUnit / 10);
+  }
+  return total + section + num;
+}
 
 // ---- 内部工具 ----
 function serializeTx(db: DB, t: any) {
@@ -92,7 +211,15 @@ export const localApi = {
   createLedger: (name: string, currency = 'CNY'): Promise<Ledger> => {
     const db = load();
     const l = { id: nextId(db), name, currency, is_active: 0, created_at: now(), updated_at: now() };
-    db.ledgers.push(l); save();
+    db.ledgers.push(l);
+    // 新账本自动生成默认分类（支出/收入各一套），否则记账永远无分类
+    DEFAULT_CATS.forEach((c, i) => {
+      db.categories.push({
+        id: nextId(db), ledger_id: l.id, name: c.name, type: c.type, icon: c.icon,
+        sort_order: i, created_at: now(),
+      });
+    });
+    save();
     return Promise.resolve(l);
   },
   setActiveLedger: (id: number): Promise<{ ok: boolean }> => {
@@ -239,30 +366,47 @@ export const localApi = {
   parseTransaction: (text: string, ledger_id: number): Promise<Transaction & { parsed?: unknown }> => {
     const db = load();
     const s = String(text).trim();
-    let amountYuan: number | null = null;
-    const m1 = s.match(/(\d+(?:\.\d+)?)\s*(?:元|块|块钱|¥|￥)/);
-    const m2 = s.match(/(\d+)\s*块\s*(\d+)\s*(?:毛|角)?/);
-    const m3 = s.match(/(\d+(?:\.\d+)?)\s*$/);
-    if (m2) amountYuan = Number(m2[1]) + Number(m2[2]) / 10;
-    else if (m1) amountYuan = Number(m1[1]);
-    else if (m3) amountYuan = Number(m3[1]);
+    const amountYuan = parseAmountCn(s);
     if (amountYuan === null || amountYuan <= 0) return Promise.reject(new Error('未识别到金额'));
-    const kw: [string, string[]][] = [
-      ['餐饮', ['餐', '饭', '咖啡', '奶茶', '外卖', '吃', '面', '火锅', '星巴克']],
-      ['交通', ['车', '地铁', '打车', '公交', '油', '停车']],
-      ['购物', ['买', '购', '超市', '衣服', '鞋', '数码']],
-      ['娱乐', ['电影', '游戏', 'KTV']],
-      ['医疗', ['药', '医院', '挂号', '体检']],
-      ['通讯', ['话费', '流量', '宽带']],
-      ['人情', ['红包', '礼物', '请客']],
+    // 收支类型：收入关键词优先（工资收入5万块 → income），无收入词再看出支词，默认支出
+    const kwIncome: [string, string[]][] = [
+      ['工资', ['工资', '薪金', '薪水', '薪资', '发工资', '工资条', '工资到账']],
+      ['奖金', ['奖金', '年终奖', '绩效', '提成']],
+      ['报销', ['报销', '报销款']],
+      ['理财', ['利息', '分红', '理财', '基金', '股票', '收益', '租金']],
+      ['其他收入', ['收入', '收款', '收到', '进账', '入账', '红包到账', '收到红包']],
     ];
+    // 注意：分类按顺序匹配，具体词（话费/房租）放前面，泛词（买/车/费）放后面，避免误分
+    const kwExpense: [string, string[]][] = [
+      ['餐饮', ['餐', '饭', '咖啡', '奶茶', '外卖', '吃', '面', '火锅', '星巴克', '早餐', '午餐', '晚餐', '夜宵', '烧烤', '小龙虾', '汉堡', '炸鸡', '蜜雪', '瑞幸', '肯德基', '麦当劳', '买菜', '水果', '菜市场']],
+      ['交通', ['地铁', '打车', '滴滴', '出租', '公交', '高铁', '火车', '机票', '飞机', '加油', '油费', '停车', '高速', '过路费', '车票', '共享单车', '租车']],
+      ['购物', ['拼多多', '淘宝', '天猫', '京东', '抖音', '得物', '闲鱼', '唯品会', '苏宁', '小红书', '网易严选', '网购', '下单', '快递', '包裹', '商场', '逛街', '超市', '便利店', '衣服', '鞋', '数码', '手机壳', '化妆品', '护肤', '美妆', '饰品', '玩具', '文具', '日用品', '家电', '家具', '包包', '首饰', '零食', '购物', '买']],
+      ['娱乐', ['电影', '游戏', 'KTV', '演唱会', '门票', '酒店', '旅行', '旅游', '景区', '会员', '爱奇艺', '腾讯视频', '视频会员']],
+      ['医疗', ['药', '医院', '挂号', '体检', '看病', '药店', '诊所', '疫苗', '就诊', '检查费']],
+      ['通讯', ['话费', '流量', '宽带', '套餐', '月租']],
+      ['居住', ['房租', '水电', '水费', '电费', '燃气', '物业', '房贷', '装修']],
+      ['人情', ['随礼', '份子', '送礼', '发红包', '礼物', '请客']],
+      ['学习', ['学费', '书', '课程', '培训', '网课', '教材']],
+    ];
+    let txType: 'income' | 'expense' = 'expense';
     let catName: string | null = null;
-    for (const [cn, words] of kw) if (words.some((w) => s.includes(w))) { catName = cn; break; }
-    const cat = catName ? db.categories.find((c) => c.ledger_id === ledger_id && c.name === catName) : undefined;
-    const defCat = db.categories.find((c) => c.ledger_id === ledger_id && c.type === 'expense');
+    for (const [cn, words] of kwIncome) {
+      if (words.some((w) => s.includes(w))) { txType = 'income'; catName = cn; break; }
+    }
+    if (txType === 'expense') {
+      for (const [cn, words] of kwExpense) {
+        if (words.some((w) => s.includes(w))) { catName = cn; break; }
+      }
+    }
+    const cat = catName
+      ? db.categories.find((c) => c.ledger_id === ledger_id && c.name === catName && c.type === txType)
+      : undefined;
+    // 无关键词命中 → 归入「其他」，避免误归到第一个分类
+    const defCat = db.categories.find((c) => c.ledger_id === ledger_id && c.type === txType && c.name === '其他')
+      ?? db.categories.find((c) => c.ledger_id === ledger_id && c.type === txType);
     const t: any = {
       id: nextId(db), ledger_id, category_id: (cat || defCat)?.id ?? null,
-      account_id: null, type: 'expense', amount: Math.round(amountYuan * 100),
+      account_id: null, type: txType, amount: Math.round(amountYuan * 100),
       note: s.replace(/(昨天|前天)\s*/, '').slice(0, 50),
       occurred_at: now(), status: 'active', created_at: now(), updated_at: now(),
     };

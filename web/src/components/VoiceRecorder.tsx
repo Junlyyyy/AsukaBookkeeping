@@ -1,4 +1,7 @@
-// 语音记账 Modal — 长按「说话」键录音，松开自动转写（千问）；识别结果可二次编辑，也可手动输入
+// 语音记账 Modal — 语音识别 / 手动输入 双通道完全独立，各自单独确认记账
+// 通道A（语音）：长按圆钮录音 → 松开转写 → 识别结果进语音区 → 点「语音记账」独立入账
+// 通道B（手动）：在手动区输入文本 → 点「手动记账」独立入账
+// 两个通道互不干扰：识别结果只进语音区，绝不碰手动输入内容
 import { useEffect, useRef, useState } from 'react';
 import { api } from '../api';
 import { useApp } from '../store';
@@ -16,10 +19,10 @@ export default function VoiceRecorder({ onClose, onSaved }: {
     supported: false, mode: 'none', listening: false, transcribing: false, interim: '', final: '', error: null,
   });
   const [saving, setSaving] = useState(false);
-  /** 识别结果 + 用户手动输入合并的最终文本（识别完成自动填入，可编辑） */
-  const [text, setText] = useState('');
-  /** 是否已从识别结果自动填充过，避免覆盖用户已编辑的内容 */
-  const [filled, setFilled] = useState(false);
+  /** 语音识别结果（语音通道专用，可编辑修正错字） */
+  const [voiceText, setVoiceText] = useState('');
+  /** 手动输入内容（手动通道专用） */
+  const [manualText, setManualText] = useState('');
   /** 是否正在按住录音（防止重复触发） */
   const pressRef = useRef(false);
   /** 录音计时（秒） */
@@ -69,13 +72,14 @@ export default function VoiceRecorder({ onClose, onSaved }: {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
-  // 识别完成后一次性回填到编辑框（用户可继续修改）
+  // 识别结果 → 写入语音通道（与手动通道完全隔离）
   useEffect(() => {
-    if (!state.listening && !state.transcribing && state.final && !filled) {
-      setText(state.final.trim());
-      setFilled(true);
+    if (!state.listening && !state.transcribing && state.final) {
+      const finalText = state.final.trim();
+      if (finalText) setVoiceText(finalText);
     }
-  }, [state.listening, state.transcribing, state.final, filled]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [state.listening, state.transcribing, state.final]);
 
   const parseAndSave = async (raw: string) => {
     const useText = raw.trim();
@@ -99,81 +103,98 @@ export default function VoiceRecorder({ onClose, onSaved }: {
   };
 
   const canListen = state.supported && !state.listening && !state.transcribing;
-  const canConfirm = !saving && text.trim().length > 0;
+  const canConfirm = !saving && (voiceText.trim().length > 0 || manualText.trim().length > 0);
+
+  // 合并确认记账：有语音记语音（语音是「记一笔」主入口），无语音记手动；两边都有优先语音并提示
+  const onConfirm = () => {
+    const v = voiceText.trim();
+    const m = manualText.trim();
+    if (v && m) {
+      toast('语音和手动均有内容，已按语音记账');
+      return void parseAndSave(v);
+    }
+    if (v) return void parseAndSave(v);
+    if (m) return void parseAndSave(m);
+    return toast('请先说话或输入内容', 'err');
+  };
 
   return (
     <Modal title="" onClose={onClose} wide>
-      {/* 实时转录（只读）：紧凑高度，识别中才有大块空间，否则小提示即可 */}
-      <div className="panel-inset" style={{ padding: '10px 14px', minHeight: 56 }}>
-        <div className="eyebrow eyebrow--black" style={{ marginBottom: 4, fontSize: 10 }}>TRANSCRIPT / 转录</div>
-        <div style={{ fontSize: 14, fontWeight: 600, color: 'var(--text)', minHeight: 18, lineHeight: 1.4 }}>
-          {(state.final || state.interim) || <span style={{ color: 'var(--text-tertiary)', fontWeight: 400, fontSize: 13 }}>
-            {state.listening ? '聆听中…' : state.transcribing ? '识别中…' : '长按下方「说话」键录音，松开自动转写'}
-          </span>}
-          {state.listening && <span style={{ display: 'inline-block', width: 6, height: 14, background: 'var(--eva-red)', marginLeft: 3, verticalAlign: 'text-bottom', animation: 'cursor-blink 1s step-end infinite' }} />}
+      {/* ============ 通道A：语音识别 ============ */}
+      <div className="panel-inset">
+        <div className="eyebrow eyebrow--black" style={{ fontSize: 10 }}>VOICE / 语音识别</div>
+
+        {/* 识别结果（可编辑修正错字） */}
+        <textarea
+          className="input"
+          rows={2}
+          placeholder="识别结果将显示在这里，可修改错字"
+          value={voiceText}
+          onChange={(e) => setVoiceText(e.target.value)}
+          style={{
+            width: '100%', marginTop: 8, fontSize: 14, lineHeight: 1.4,
+            resize: 'vertical', minHeight: 44, maxHeight: 90, fontFamily: 'inherit',
+          }}
+        />
+
+        {state.error && (
+          <div style={{ marginTop: 8, padding: '8px 12px', borderRadius: 'var(--radius-md)', background: 'rgba(220,38,38,0.08)', color: 'var(--danger)', fontSize: 12, fontWeight: 500, lineHeight: 1.5 }}>
+            ⚠ {state.error}
+          </div>
+        )}
+
+        {/* 长按说话 — 精致浅色圆钮 */}
+        <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', marginTop: 12 }}>
+          <button
+            className={`voice-round${state.listening ? ' voice-round--live' : ''}`}
+            disabled={!canListen}
+            onPointerDown={startPress}
+            onPointerUp={endPress}
+            onPointerCancel={endPress}
+            style={{ touchAction: 'none' }}
+          >
+            {state.transcribing ? (
+              <span className="voice-round__spinner" />
+            ) : (
+              <svg viewBox="0 0 24 24" width="28" height="28" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+                <path d="M12 1a3 3 0 0 0-3 3v8a3 3 0 0 0 6 0V4a3 3 0 0 0-3-3z"/>
+                <path d="M19 10v2a7 7 0 0 1-14 0v-2"/>
+                <line x1="12" y1="19" x2="12" y2="23"/>
+              </svg>
+            )}
+          </button>
+          <div className={`voice-round__label${state.listening ? ' voice-round__label--live' : ''}`}>
+            {state.transcribing ? '识别中，请稍候…'
+              : state.listening ? `松开结束 · ${String(secs).padStart(2, '0')}s`
+              : canListen ? '长按说话 · 松开转写'
+              : state.supported ? '处理中…'
+              : '语音未启用'}
+          </div>
         </div>
       </div>
 
-      {/* 可编辑文本框：识别结果自动填入，也可手动输入 — 紧凑 2 行起步 */}
-      <textarea
-        className="input"
-        rows={2}
-        placeholder="手动输入「昨天星巴克38块」"
-        value={text}
-        onChange={(e) => setText(e.target.value)}
-        style={{
-          width: '100%', marginTop: 12, fontSize: 14, lineHeight: 1.4,
-          resize: 'vertical', minHeight: 48, maxHeight: 100, fontFamily: 'inherit',
-        }}
-      />
-
-      {state.error && (
-        <div style={{ marginTop: 10, padding: '8px 12px', borderRadius: 'var(--radius-md)', background: 'rgba(220,38,38,0.08)', color: 'var(--danger)', fontSize: 12, fontWeight: 500, lineHeight: 1.5 }}>
-          ⚠ {state.error}
-        </div>
-      )}
-
-      {/* 长按说话 — 精致浅色圆钮：玻璃质感，按住点亮红 */}
-      <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', marginTop: 18 }}>
-        <button
-          className={`voice-round${state.listening ? ' voice-round--live' : ''}`}
-          disabled={!canListen}
-          onPointerDown={startPress}
-          onPointerUp={endPress}
-          onPointerCancel={endPress}
-          style={{ touchAction: 'none' }}
-        >
-          {state.transcribing ? (
-            <span className="voice-round__spinner" />
-          ) : (
-            <svg viewBox="0 0 24 24" width="28" height="28" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
-              <path d="M12 1a3 3 0 0 0-3 3v8a3 3 0 0 0 6 0V4a3 3 0 0 0-3-3z"/>
-              <path d="M19 10v2a7 7 0 0 1-14 0v-2"/>
-              <line x1="12" y1="19" x2="12" y2="23"/>
-            </svg>
-          )}
-        </button>
-        <div className={`voice-round__label${state.listening ? ' voice-round__label--live' : ''}`}>
-          {state.transcribing ? '识别中，请稍候…'
-            : state.listening ? `松开结束 · ${String(secs).padStart(2, '0')}s`
-            : canListen ? '长按说话 · 松开转写'
-            : state.supported ? '处理中…'
-            : '语音未启用'}
-        </div>
+      {/* ============ 通道B：手动输入 ============ */}
+      <div className="panel-inset" style={{ marginTop: 14 }}>
+        <div className="eyebrow eyebrow--black" style={{ fontSize: 10 }}>MANUAL / 手动输入</div>
+        <textarea
+          className="input"
+          rows={2}
+          placeholder="手动输入，如：昨天星巴克38块"
+          value={manualText}
+          onChange={(e) => setManualText(e.target.value)}
+          style={{
+            width: '100%', marginTop: 8, fontSize: 14, lineHeight: 1.4,
+            resize: 'vertical', minHeight: 44, maxHeight: 90, fontFamily: 'inherit',
+          }}
+        />
       </div>
 
-      <div className="row" style={{ justifyContent: 'flex-end', gap: 8, marginTop: 10 }}>
-        <button
-          className="btn btn--ghost"
-          onClick={() => { setText(''); setFilled(false); }}
-          disabled={!text.trim()}
-        >
-          清空
-        </button>
+      {/* 底部：合并确认记账 + 取消 */}
+      <div className="row" style={{ justifyContent: 'flex-end', gap: 8, marginTop: 14 }}>
         <button className="btn btn--ghost" onClick={onClose}>取消</button>
         <button
           className="btn btn--primary"
-          onClick={() => void parseAndSave(text)}
+          onClick={onConfirm}
           disabled={!canConfirm}
         >
           {saving ? '记账中…' : '确认记账'}
@@ -181,10 +202,6 @@ export default function VoiceRecorder({ onClose, onSaved }: {
       </div>
 
       <style>{`
-        @keyframes cursor-blink {
-          0%, 100% { opacity: 1; }
-          50% { opacity: 0; }
-        }
         /* 精致浅色圆钮 */
         .voice-round {
           width: 78px; height: 78px; border-radius: 50%;
