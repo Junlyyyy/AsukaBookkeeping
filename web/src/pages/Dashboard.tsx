@@ -7,7 +7,6 @@ import type { AnalyticsSummary, Budget, LedgerStats } from '../types';
 import { Donut, RankBars, TrendChart } from '../components/charts';
 import { fmtDate, fmtMoney, toast, TypeBadge } from '../components/ui';
 import VoiceRecorder from '../components/VoiceRecorder';
-import { startVoice } from '../lib/voice';
 
 export default function Dashboard({ go }: { go: (page: 'transactions' | 'stats' | 'budgets') => void }) {
   const { ledger, ledgers, setLedger, tick, bump } = useApp();
@@ -68,7 +67,7 @@ export default function Dashboard({ go }: { go: (page: 'transactions' | 'stats' 
           <div style={{ flex: '0 0 auto', display: 'flex', flexDirection: 'column', alignItems: 'flex-end' }}>
             <button
               className="btn btn--primary btn--lg"
-              onClick={() => { void startVoice(); setVoiceOpen(true); }}
+              onClick={() => setVoiceOpen(true)}
             >
               🎙️ 记一笔
             </button>

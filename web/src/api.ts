@@ -226,7 +226,9 @@ export const api = {
     try { return await remoteApi.speechHealth(); } catch { return { ok: false as const, engine: null }; }
   },
   speechTranscribe(blob: Blob) {
-    if (ensureMode() !== 'remote') return Promise.reject(new Error('ASR 服务仅本地后端可用'));
+    if (ensureMode() !== 'remote') {
+      return Promise.reject(new Error('语音识别服务未配置：请到「设置」页填入阿里云百炼 API Key（DASHSCOPE_API_KEY）'));
+    }
     return remoteApi.speechTranscribe(blob);
   },
 };

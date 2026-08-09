@@ -1,6 +1,6 @@
 // 语音识别工具 — 只保留联网大模型方式：千问语音识别大模型（阿里云百炼 Paraformer）
-// 流程：AudioContext 16kHz 单声道 PCM 采集 → WAV → 直连千问转写（设置页配置的 Key，仅语音识别时联网）
-//      无 Key 时回退本地后端 POST /api/v1/speech/transcribe（PC 模式）
+// 交互：长按「说话」键开始录音，松开立即上传转写（千问直连，设置页配置 Key，仅语音识别时联网）
+//      未配置 Key 且无本地后端（PC 开发模式）时不可用，引导到设置页
 // 注意：应用仅在语音识别时联网；其余（记账/解析/抓取）全部本地完成
 
 import { transcribeQwenDirect, getDashScopeKey } from './qwenAsr';
@@ -9,6 +9,7 @@ export interface VoiceState {
   supported: boolean;
   mode: 'cloud-asr' | 'none';
   listening: boolean;
+  transcribing: boolean;
   interim: string;
   final: string;
   error: string | null;
@@ -20,6 +21,7 @@ let listeners = new Set<Handler>();
 let interimBuf = '';
 let finalBuf = '';
 let listening = false;
+let transcribing = false;
 let errorMsg: string | null = null;
 let autoStopTimer: any = null;
 
@@ -38,6 +40,7 @@ function emit() {
     supported: mode !== 'none',
     mode,
     listening,
+    transcribing,
     interim: interimBuf,
     final: finalBuf,
     error: errorMsg,
@@ -45,17 +48,18 @@ function emit() {
   listeners.forEach((h) => h(state));
 }
 
-/** 探测：千问语音识别是否可用 —— 优先本地配置的 Key（直连），其次后端（PC 模式） */
+/** 探测：千问语音识别是否可用 —— 优先本地配置的 Key（直连），其次后端（PC 开发模式） */
 export async function detectMode(): Promise<'cloud-asr' | 'none'> {
   // 1) 设置页配置了 Key → 前端直连千问（APK/离线可用，仅语音识别联网）
-  if (getDashScopeKey()) { mode = 'cloud-asr'; return mode; }
-  // 2) 后端已配置（PC 模式）→ 走 /api/v1/speech/transcribe
+  if (getDashScopeKey()) { mode = 'cloud-asr'; emit(); return mode; }
+  // 2) 后端已配置（PC 开发模式）→ 走 /api/v1/speech/transcribe
   try {
     const { api } = await import('../api');
     const h = await api.speechHealth();
-    if (h.ok) { mode = 'cloud-asr'; return mode; }
+    if (h.ok) { mode = 'cloud-asr'; emit(); return mode; }
   } catch { /* fallthrough */ }
   mode = 'none';
+  emit();
   return mode;
 }
 
@@ -130,13 +134,17 @@ function encodeWav(samples: Float32Array, sr: number): Blob {
   return new Blob([buf], { type: 'audio/wav' });
 }
 
+/** 松开录音键 → 停止录音并上传转写（千问直连 / PC 开发模式后端） */
 async function transcribeCloud(): Promise<void> {
   stopRecording();
   listening = false;
-  emit(); // 先停动画
+  transcribing = true;
+  emit(); // 先停录音动画，进入转写状态
   const total = pcmChunks.reduce((s, a) => s + a.length, 0);
   if (total < 1600) { // 少于 0.1s，视为没有语音
-    errorMsg = '未检测到语音，请靠近麦克风重试';
+    pcmChunks = [];
+    transcribing = false;
+    errorMsg = '说话时间太短，请长按按钮说清楚一点再试';
     emit();
     return;
   }
@@ -148,46 +156,46 @@ async function transcribeCloud(): Promise<void> {
     const blob = encodeWav(samples, 16000);
     const key = getDashScopeKey();
     if (key) {
-      // 直连千问（设置页配置的 Key；仅此一步联网）
-      try {
-        const text = await transcribeQwenDirect(blob, key);
-        if (!text) { errorMsg = '千问大模型未识别到语音内容，请重试'; }
-        else { finalBuf = text; errorMsg = null; }
-        emit();
-        return;
-      } catch (e) {
-        console.warn('[voice] 直连千问失败，尝试后端:', (e as Error).message);
-      }
-    }
-    // 回退后端（PC 模式 /api/v1/speech/transcribe）
-    const { api } = await import('../api');
-    const r = await api.speechTranscribe(blob);
-    if (!r.text) {
-      errorMsg = '千问大模型未识别到语音内容，请重试';
+      // APK/离线场景：直连千问（设置页配置的 Key；仅此一步联网）
+      // 失败直接报具体原因，不回退本地后端（APK 内不存在后端）
+      const text = await transcribeQwenDirect(blob, key);
+      if (!text) { errorMsg = '千问大模型未识别到语音内容，请重试'; }
+      else { finalBuf = text; errorMsg = null; }
     } else {
-      finalBuf = r.text;
-      errorMsg = null;
+      // PC 开发模式：走本地后端 /api/v1/speech/transcribe
+      const { api } = await import('../api');
+      const r = await api.speechTranscribe(blob);
+      if (!r.text) { errorMsg = '千问大模型未识别到语音内容，请重试'; }
+      else { finalBuf = r.text; errorMsg = null; }
     }
   } catch (e) {
     errorMsg = `语音识别失败：${(e as Error).message}`;
   }
+  transcribing = false;
   emit();
 }
 
-// ===================== 对外接口 =====================
+// ===================== 对外接口（长按说话：按下 start / 松开 stop） =====================
 
-/** 启动语音识别（录音后上传千问大模型识别；最长 15s 自动结束） */
+/** 是否正在等待麦克风授权（startVoice 异步进行中） */
+let starting = false;
+
+/**
+ * 长按按下：开始录音（最长 15s 自动结束并转写，防止忘记松开）
+ */
 export async function startVoice(): Promise<boolean> {
-  if (listening) return true;
+  if (listening || starting) return true;
   if (mode !== 'cloud-asr') {
-    errorMsg = '语音识别未启用：需要后端配置千问语音识别（DASHSCOPE_API_KEY）';
+    errorMsg = '语音识别未启用：请到「设置」页填入阿里云百炼 API Key（DASHSCOPE_API_KEY）';
     emit();
     return false;
   }
   interimBuf = '';
   finalBuf = '';
   errorMsg = null;
+  starting = true;
   const ok = await startRecording();
+  starting = false;
   if (!ok) return false;
   listening = true;
   emit();
@@ -195,9 +203,16 @@ export async function startVoice(): Promise<boolean> {
   return true;
 }
 
-/** 停止识别并返回文本（自动上传千问大模型转写） */
+/**
+ * 松开录音键：停止录音并转写，返回识别文本
+ */
 export async function stopVoice(): Promise<string> {
   if (autoStopTimer) { clearTimeout(autoStopTimer); autoStopTimer = null; }
+  // 麦克风授权弹窗尚未结束就松手：等录音真正开始再停，避免录丢
+  if (starting) {
+    await new Promise((r) => setTimeout(r, 400));
+    if (starting) return finalBuf.trim(); // 授权最终失败，错误已置
+  }
   if (listening) await transcribeCloud();
   return finalBuf.trim();
 }
