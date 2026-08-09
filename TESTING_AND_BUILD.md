@@ -31,7 +31,7 @@
 前置：node ≥ 22（server 用 node:sqlite）、JDK 17+、Android SDK（ANDROID_HOME 已配置）。
 
 ```bash
-cd D:/aiworkspace/3/BeeCount-Website/web
+cd <项目根目录>/web   # 例：D:/your-projects/AsukaBookkeeping/web
 npm run build                 # 1. 构建前端 → dist/
 npx cap sync android          # 2. 同步到 Android 工程（拷贝 dist 至 assets/public）
 cd android
