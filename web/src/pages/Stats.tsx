@@ -169,7 +169,7 @@ function BigStat({ label, value, accent }: { label: string; value: string; accen
   const color =
     accent === 'positive' ? 'var(--positive)' :
     accent === 'negative' ? 'var(--negative)' :
-    'var(--text)';
+    'var(--primary)';
   return (
     <div className="card">
       <div className="eyebrow">{label}</div>

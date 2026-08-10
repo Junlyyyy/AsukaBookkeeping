@@ -11,8 +11,8 @@
   --eva-red-bright: #ec2323;   /* 亮红（官方） */
   --eva-orange: #e6770b;       /* 二号机橙（官方） */
   --eva-amber: #f7bb2a;        /* 橙黄点缀 */
-  --eva-dark: #1a100d;         /* 深色（机体暗部） */
-  --eva-dark-2: #2a1a14;       /* 深色面板 */
+  --eva-dark: #2b0f06;         /* 深色（机体暗部 · 红褐调） */
+  --eva-dark-2: #3d150a;       /* 深色面板（红褐） */
   --eva-red-tint: #fbeae6;     /* 浅红底 */
   --eva-orange-tint: #fdf0e3;  /* 浅橙底 */
 
@@ -32,8 +32,8 @@
   --text-tertiary: #a58273;
   --white: #ffffff;
 
-  /* —— 中性分隔线/边框 —— */
-  --border: rgba(0, 0, 0, 0.08);
+  /* —— 中性分隔线/边框（暖褐调，契合明日香色板） —— */
+  --border: rgba(60, 25, 10, 0.10);
 
   /* 兼容旧引用 */
   --black: #221512;
@@ -291,7 +291,11 @@ body::after {
   box-shadow: var(--shadow-md);
 }
 .card--black {
-  background: linear-gradient(145deg, var(--eva-dark), var(--eva-dark-2));
+  /* 明日香机体暗红褐 + 红橙光晕 */
+  background:
+    radial-gradient(120% 80% at 90% 0%, rgba(230, 119, 11, 0.20), transparent 55%),
+    radial-gradient(100% 70% at 0% 100%, rgba(211, 41, 15, 0.25), transparent 55%),
+    linear-gradient(145deg, var(--eva-dark), var(--eva-dark-2));
   color: #fff;
   box-shadow: var(--shadow-md);
 }

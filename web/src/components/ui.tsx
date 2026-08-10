@@ -64,7 +64,7 @@ export function Modal({ title, onClose, children, wide, grow = false }: {
     <div
       onClick={onClose}
       style={{
-        position: 'fixed', inset: 0, background: 'rgba(16, 20, 43, 0.45)', zIndex: 100,
+        position: 'fixed', inset: 0, background: 'rgba(43, 17, 9, 0.5)', zIndex: 100,
         display: 'flex', alignItems: 'flex-start', justifyContent: 'center', overflowY: 'auto', padding: '6vh 16px',
         WebkitBackdropFilter: 'blur(8px)',
         backdropFilter: 'blur(8px)',
@@ -93,10 +93,10 @@ export function Modal({ title, onClose, children, wide, grow = false }: {
           onClick={onClose}
           style={{
             position: 'absolute', top: 12, right: 12, zIndex: 2,
-            background: 'rgba(255,255,255,0.9)', color: 'var(--text-secondary)', border: '1px solid rgba(0,0,0,0.06)',
+            background: 'rgba(255,255,255,0.9)', color: 'var(--text-secondary)', border: '1px solid rgba(60,25,10,0.10)',
             cursor: 'pointer', padding: 0, flexShrink: 0,
             width: 32, height: 32, fontSize: 14, fontWeight: 600, lineHeight: 1,
-            borderRadius: '50%', boxShadow: '0 2px 6px rgba(0,0,0,0.06)',
+            borderRadius: '50%', boxShadow: '0 2px 6px rgba(40,12,4,0.08)',
             display: 'inline-flex', alignItems: 'center', justifyContent: 'center',
             transition: 'background 0.15s ease',
           }}
@@ -117,11 +117,11 @@ export function toast(msg: string, kind: 'ok' | 'err' = 'ok') {
   el.textContent = msg;
   el.style.cssText = `
     position: fixed; left: 50%; bottom: 36px; transform: translateX(-50%);
-    background: ${kind === 'ok' ? 'rgba(31,41,55,0.92)' : 'rgba(220,38,38,0.92)'};
+    background: ${kind === 'ok' ? 'rgba(58,22,12,0.94)' : 'rgba(220,38,38,0.94)'};
     color: #fff;
     font-family: var(--font-body); font-weight: 500; font-size: 13px;
     padding: 12px 22px; border-radius: 999px; z-index: 999;
-    box-shadow: 0 8px 24px rgba(0,0,0,0.25);
+    box-shadow: 0 8px 24px rgba(40,12,4,0.35);
     animation: swoosh-in 0.25s ease both;
     -webkit-backdrop-filter: blur(10px);
     backdrop-filter: blur(10px);

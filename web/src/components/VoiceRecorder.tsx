@@ -205,7 +205,7 @@ export default function VoiceRecorder({ onClose, onSaved }: {
         /* 精致浅色圆钮 */
         .voice-round {
           width: 78px; height: 78px; border-radius: 50%;
-          border: 1px solid rgba(0,0,0,0.07);
+          border: 1px solid rgba(60,25,10,0.10);
           background: linear-gradient(180deg, rgba(255,255,255,0.95) 0%, #fdf1ec 100%);
           box-shadow: var(--shadow-xs), inset 0 1px 0 rgba(255,255,255,0.95), inset 0 -3px 8px rgba(60,25,10,0.06);
           color: var(--eva-red);

@@ -206,7 +206,7 @@ function KpiCard({ label, amount, accent, meta }: {
   const accentColor =
     accent === 'positive' ? 'var(--positive)' :
     accent === 'negative' ? 'var(--negative)' :
-    'var(--text)';
+    'var(--primary)';
   return (
     <div className="card card--hover" style={{ padding: '20px 24px 22px' }}>
       <div className="eyebrow">{label}</div>
