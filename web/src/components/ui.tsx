@@ -51,8 +51,8 @@ export function TypeBadge({ type }: { type: string }) {
 }
 
 // ---- Modal ----
-export function Modal({ title, onClose, children, wide }: {
-  title: string; onClose: () => void; children: ReactNode; wide?: boolean;
+export function Modal({ title, onClose, children, wide, grow = false }: {
+  title: string; onClose: () => void; children: ReactNode; wide?: boolean; grow?: boolean;
 }) {
   useEffect(() => {
     const h = (e: KeyboardEvent) => { if (e.key === 'Escape') onClose(); };
@@ -81,8 +81,8 @@ export function Modal({ title, onClose, children, wide }: {
           boxShadow: 'var(--shadow-lg)',
           border: '1px solid rgba(255,255,255,0.7)',
           width: '100%', maxWidth: wide ? 760 : 520, padding: 24, position: 'relative',
-          /* 高于视口时内部可滚，且 X 按钮固定不动 */
-          maxHeight: 'calc(100dvh - 24px)',
+          /* grow：面板高度不受限，由外层 overlay 滚动（页面向下加长）；默认高于视口时内部可滚，X 按钮固定不动 */
+          maxHeight: grow ? 'none' : 'calc(100dvh - 24px)',
           display: 'flex',
           flexDirection: 'column',
           overflow: 'hidden',
@@ -102,7 +102,7 @@ export function Modal({ title, onClose, children, wide }: {
           }}
           aria-label="关闭"
         >✕</button>
-        <div style={{ overflowY: 'auto', flex: 1, minHeight: 0, paddingRight: 4 }}>
+        <div style={{ overflowY: grow ? 'visible' : 'auto', flex: 1, minHeight: 0, paddingRight: 4 }}>
           {children}
         </div>
       </div>

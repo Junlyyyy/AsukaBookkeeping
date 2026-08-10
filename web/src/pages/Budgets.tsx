@@ -155,12 +155,12 @@ function BudgetForm({ budget, cats, onClose, onSaved }: {
   const current = options.find((o) => String(o.id) === categoryId);
 
   return (
-    <Modal title={budget ? '编辑预算 · EVA-02' : '+ 新建预算 · EVA-02'} onClose={onClose}>
+    <Modal title={budget ? '编辑预算 · EVA-02' : '+ 新建预算 · EVA-02'} onClose={onClose} grow={pickOpen}>
       <div className="stack gap-3">
         <div>
           <label className="label">分类</label>
-          {/* App 风格分类选择器（替代原生 select）：点击展开选项面板 */}
-          <div style={{ position: 'relative' }}>
+          {/* App 风格分类选择器（替代原生 select）：点击展开，面板为正常文档流 → 撑开页面整页显示 */}
+          <div style={{ position: 'relative', zIndex: 100 }}>
             {pickOpen && (
               <div
                 style={{ position: 'fixed', inset: 0, zIndex: 90 }}
@@ -185,8 +185,7 @@ function BudgetForm({ budget, cats, onClose, onSaved }: {
               <div
                 className="panel-inset"
                 style={{
-                  position: 'absolute', left: 0, right: 0, top: 'calc(100% + 6px)',
-                  zIndex: 100, overflowY: 'visible',
+                  marginTop: 8,
                   borderRadius: 'var(--radius-md)', padding: 6,
                   boxShadow: 'var(--shadow-lg)',
                 }}
