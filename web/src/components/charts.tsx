@@ -77,7 +77,7 @@ export function RankBars({ items, max, color = '#c42710' }: {
                 overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap',
               }}>
                 <span style={{ color: 'var(--text-tertiary)', marginRight: 8, fontFamily: 'var(--font-num)' }}>0{i + 1}</span>
-                {it.icon} {it.name}
+                {it.name}
               </span>
               <span
                 className="num-xl"

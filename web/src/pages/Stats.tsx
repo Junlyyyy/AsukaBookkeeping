@@ -112,8 +112,8 @@ export default function Stats() {
         />
       </section>
 
-      {/* 趋势 + 排行 */}
-      <section className="grid-2" style={{ gridTemplateColumns: 'minmax(0, 2fr) minmax(220px, 1fr)' }}>
+      {/* 趋势 + 排行（分两行：趋势独占一行，支出分类另起一行） */}
+      <section className="stack gap-6">
         <div className="card card--hover">
           <div className="row-between" style={{ marginBottom: 14 }}>
             <div>

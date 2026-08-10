@@ -321,9 +321,6 @@ function RecentTransactions({ ledgerId, bumpKey, onChanged }: { ledgerId: number
           className="list__item"
           style={i === 0 ? { borderTop: 'none', paddingTop: 0 } : {}}
         >
-          <div className="list__icon" style={{ background: t.type === 'income' ? 'rgba(7,202,107,0.14)' : 'rgba(255,255,255,0.55)' }}>
-            {t.category?.icon ?? '▣'}
-          </div>
           <div className="list__main">
             <div className="list__title">{t.note || t.category?.name || '未分类'}</div>
             <div className="list__meta">
