@@ -76,9 +76,6 @@
   /* —— 动效 —— */
   --ease-apple: cubic-bezier(0.25, 0.1, 0.25, 1);
   --dur: 0.22s;
-
-  /* 状态栏高度兜底（env() 在部分 WebView 偶发为 0）——渐变只铺状态栏这一截 */
-  --sb-h: max(24px, env(safe-area-inset-top, 24px));
 }
 
 /* —— 重置 —— */
@@ -86,7 +83,6 @@
 html, body, #root { height: 100%; }
 body {
   font-family: var(--font-body);
-  /* 背景：主题暖底 + 右上/左上暖橙淡红光晕（渐变只在 glass 状态栏区域，body 本身保持浅色） */
   background:
     radial-gradient(900px 500px at 88% -5%, rgba(230, 119, 11, 0.1), transparent 60%),
     radial-gradient(700px 420px at -5% 30%, rgba(211, 41, 15, 0.08), transparent 60%),
@@ -625,14 +621,7 @@ body::after {
    导航条
    ============================================================ */
 .glass {
-  /* 顶部 0→状态栏高度内 明日香红橙渐变（白图标可见），状态栏底边前收进浅色玻璃 */
-  background:
-    linear-gradient(180deg,
-      #a31a0c 0%,
-      #d3290f calc(var(--sb-h) * 0.5),
-      #e6770b calc(var(--sb-h) * 0.85),
-      rgba(255, 253, 252, 0.88) calc(var(--sb-h) + 8px)),
-    rgba(255, 253, 252, 0.88);
+  background: rgba(255, 253, 252, 0.88);
   -webkit-backdrop-filter: saturate(160%) blur(16px);
   backdrop-filter: saturate(160%) blur(16px);
   border-bottom: 1px solid rgba(211, 41, 15, 0.12);
