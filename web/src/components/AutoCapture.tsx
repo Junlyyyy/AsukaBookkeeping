@@ -13,7 +13,7 @@ import * as XLSX from 'xlsx';
 import AsukaCapture from '../lib/asuka-capture';
 import type { NotificationPayload } from '../lib/asuka-capture';
 import {
-  parseSmsBatch, parseNotification, parseNotificationBatch,
+  parseSms, parseNotification, parseNotificationBatch,
   type ParsedTx,
 } from '../lib/autoParse';
 import { Modal, toast, fmtMoney } from './ui';
@@ -75,14 +75,19 @@ export default function AutoCapture({ onClose, onImported }: {
     try {
       // sinceMs = 0：让 native 从 epoch 开始查询（扫描收件箱里所有短信）
       const r = await AsukaCapture.readRecentSms({ sinceMs: 0 });
-      const items = parseSmsBatch(r.items);
-      const next: CandidateItem[] = items.map((it, i) => ({
-        ...it,
-        raw: `${r.items[i]?.sender || ''} ${r.items[i]?.body || ''}`.slice(0, 80),
-        source: 'sms',
-      }));
+      // 逐条解析并一一对应 raw（不能用 parseSmsBatch 后 zip：过滤跳过的短信会导致索引错位）
+      const next: CandidateItem[] = [];
+      for (const sms of r.items) {
+        const it = parseSms(sms.sender, sms.body, sms.date);
+        if (!it || !it.amount) continue;
+        next.push({
+          ...it,
+          raw: `${sms.sender || ''} ${sms.body || ''}`.slice(0, 80),
+          source: 'sms',
+        });
+      }
       setCandidates((prev) => [...next, ...prev]);
-      toast(`扫描到 ${r.count} 条短信，识别出 ${items.length} 条消费`);
+      toast(`扫描到 ${r.count} 条短信，识别出 ${next.length} 条消费`);
       setSmsState('done');
     } catch (e) {
       toast(String((e as Error).message || '扫描失败'), 'err');
@@ -120,7 +125,15 @@ export default function AutoCapture({ onClose, onImported }: {
         if (!Array.isArray(arr)) throw new Error('根节点不是数组');
         addWechatBatch(arr, file.name);
       } else if (lower.endsWith('.csv')) {
-        const text = await file.text();
+        // 支付宝导出的 CSV 是 GBK 编码；浏览器 file.text() 默认 UTF-8 会乱码
+        // → 先用严格 UTF-8 解码，失败再退回 GBK（TextDecoder 原生支持 gbk）
+        const buf = await file.arrayBuffer();
+        let text = '';
+        try { text = new TextDecoder('utf-8', { fatal: true }).decode(buf); }
+        catch {
+          try { text = new TextDecoder('gbk').decode(buf); }
+          catch { text = await file.text(); }
+        }
         addAlipayBatch(text, file.name);
       } else {
         toast('暂不支持此格式，请用 .xlsx/.json（微信账单）或 .csv（支付宝账单）', 'err');
@@ -227,16 +240,13 @@ export default function AutoCapture({ onClose, onImported }: {
       const amt = Math.abs(normAmount(row[COL_AMT]));
       if (!Number.isFinite(amt) || amt <= 0) { skipped++; continue; }
       const occurred_at = normTime(row[COL_TIME]);
-      const parts: string[] = [];
       const cparty = String(row[COL_CPARTY ?? -1] || '').trim();
       const goods = String(row[COL_GOODS ?? -1] || '').trim();
-      const txType = String(row[COL_TYPE ?? -1] || '').trim();
       const remark = String(row[COL_REMARK ?? -1] || '').trim();
-      if (cparty && cparty !== '/') parts.push(cparty);
-      if (goods && goods !== '/') parts.push(goods);
-      if (txType && txType !== '/') parts.push(txType);
-      if (remark && remark !== '/') parts.push(remark);
-      const note = parts.join(' / ') || '微信';
+      // note 简略：交易对方优先；没有则取商品/备注（上轮反馈名称混乱 → 不再拼 4 段）
+      const note = (cparty && cparty !== '/')
+        ? cparty
+        : ((goods && goods !== '/') ? goods : (remark && remark !== '/' ? remark : '微信'));
       items.push({
         amount: Math.round(amt * 100),
         type,
@@ -316,7 +326,13 @@ export default function AutoCapture({ onClose, onImported }: {
     const need = ['交易时间', '交易对方', '商品说明', '交易分类', '收/支', '金额', '交易状态'];
     for (const k of need) if (!(k in COL)) return toast(`缺字段: ${k}`, 'err');
 
-    const mapType = (s: string): 'income' | 'expense' => s === '收入' ? 'income' : 'expense';
+    // 收/支 列：收入 / 支出 / 不计收支（充值提现/账户转存等，非真实收支，过滤）
+    const mapType = (s: string): 'income' | 'expense' | null => {
+      const v = String(s || '').trim();
+      if (v === '收入') return 'income';
+      if (v === '支出') return 'expense';
+      return null; // 不计收支 / 空 / 其他 → 跳过
+    };
 
     const items: CandidateItem[] = [];
     let skipped = 0;
@@ -324,25 +340,29 @@ export default function AutoCapture({ onClose, onImported }: {
       const line = lines[i];
       if (!line.trim()) continue;
       const row = parseRow(line);
-      if (row.length < Object.keys(COL).length) { skipped++; continue; }
+      // 列数检查放宽：支付宝账单行尾备注/商家订单号可能为空（只有 10-11 列）
+      // 只要核心列存在即可；用字段存在性而非列数兜底
+      if (row.length < 7 || COL['交易时间'] == null || COL['金额'] == null || COL['收/支'] == null) { skipped++; continue; }
+      if (row[COL['交易时间']] == null || row[COL['金额']] == null || row[COL['收/支']] == null) { skipped++; continue; }
       const status = (row[COL['交易状态']] || '').trim();
-      if (status && status !== '交易成功') { skipped++; continue; }
+      // 状态白名单：交易成功 / 支付成功 都算真实交易；交易关闭/退款失败等跳过
+      // （实测 2026 支付宝账单有「支付成功」状态的真实支出）
+      if (status && status !== '交易成功' && status !== '支付成功') { skipped++; continue; }
       const amountRaw = (row[COL['金额']] || '').trim();
       const amt = parseFloat(amountRaw);
       if (!Number.isFinite(amt) || amt <= 0) { skipped++; continue; }
       const occurred_at = (row[COL['交易时间']] || '').trim();
-      const typeRaw = (row[COL['收/支']] || '').trim();
-      const parts: string[] = [];
-      ['交易对方', '商品说明', '交易分类', '备注'].forEach((k) => {
-        const v = (row[COL[k]] || '').trim();
-        if (v && !parts.includes(v)) parts.push(v);
-      });
-      const note = parts.join(' / ') || '支付宝';
+      const type = mapType(row[COL['收/支']]);
+      if (!type) { skipped++; continue; }
+      // note 简略：只取「交易对方」（+ 商品说明做二级），不再拼 4 段（上轮反馈名称混乱）
+      const party = (row[COL['交易对方']] || '').trim();
+      const goods = (row[COL['商品说明']] || '').trim();
+      const note = (party || goods || '支付宝').slice(0, 20);
       items.push({
         amount: Math.round(amt * 100),
-        type: mapType(typeRaw),
+        type,
         occurred_at: occurred_at || new Date().toISOString().slice(0, 19).replace('T', ' '),
-        merchant: (row[COL['交易对方']] || '').trim() || undefined,
+        merchant: party || undefined,
         category: undefined,
         note,
         confidence: 0.95,
@@ -509,36 +529,12 @@ export default function AutoCapture({ onClose, onImported }: {
                     minHeight: 44,
                   }}
                 >
-                  <div
-                    className="list__icon"
-                    style={{
-                      background: c.type === 'income' ? 'rgba(7,202,107,0.14)' : 'rgba(255,255,255,0.55)',
-                      fontSize: 16,
-                      width: 32, height: 32,
-                    }}
-                  >
-                    {c.source === 'sms' ? '✉️' : c.source === 'notification' ? '🔔'
-                      : c.billSrc === 'wechat' ? '💚'
-                      : c.billSrc === 'alipay' ? '💙'
-                      : '📋'}
-                  </div>
-                  <div className="list__main" style={{ minWidth: 0 }}>
-                    <div className="list__title" style={{ display: 'flex', alignItems: 'center', gap: 6, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
-                      <span style={{ overflow: 'hidden', textOverflow: 'ellipsis' }}>{c.merchant || c.note || c.raw.slice(0, 12)}</span>
-                      {c.category && (
-                        <span className="chip chip--volt" style={{ fontSize: 10, padding: '1px 6px', flexShrink: 0 }}>{c.category}</span>
-                      )}
-                      <span style={{ fontSize: 10, color: 'var(--text-tertiary)', fontWeight: 600, flexShrink: 0 }}>
-                        {(c.confidence * 100).toFixed(0)}%
-                      </span>
+                  <div className="list__main" style={{ minWidth: 0, flex: 1 }}>
+                    <div className="list__title">
+                      {c.merchant || c.note || c.raw.slice(0, 8) || '未识别'}
                     </div>
                     <div className="list__meta" style={{ fontSize: 11 }}>
                       {(c.occurred_at || '').slice(0, 16)}
-                      {' · '}
-                      {c.source === 'sms' ? '短信' : c.source === 'notification' ? '通知'
-                        : c.billSrc === 'wechat' ? '微信账单'
-                        : c.billSrc === 'alipay' ? '支付宝账单'
-                        : '粘贴'}
                     </div>
                   </div>
                   <div className={`list__amount ${c.type === 'income' ? 'list__amount--income' : 'list__amount--expense'}`} style={{ fontSize: 13 }}>

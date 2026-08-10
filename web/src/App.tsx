@@ -4,9 +4,6 @@ import { Shell, type NavKey } from './components/Shell';
 import Dashboard from './pages/Dashboard';
 import Transactions from './pages/Transactions';
 import Stats from './pages/Stats';
-import Budgets from './pages/Budgets';
-import Categories from './pages/Categories';
-import Accounts from './pages/Accounts';
 import Settings from './pages/Settings';
 
 export default function App() {
@@ -18,9 +15,6 @@ export default function App() {
         {page === 'dashboard' && <Dashboard go={setPage} />}
         {page === 'transactions' && <Transactions />}
         {page === 'stats' && <Stats />}
-        {page === 'budgets' && <Budgets />}
-        {page === 'categories' && <Categories />}
-        {page === 'accounts' && <Accounts />}
         {page === 'settings' && <Settings />}
       </Shell>
     </AppProvider>

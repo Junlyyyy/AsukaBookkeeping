@@ -92,6 +92,7 @@ const remoteApi = {
     req<Ledger>('/ledgers', { method: 'POST', body: JSON.stringify({ name, currency }) }),
   setActiveLedger: (id: number) =>
     req<{ ok: boolean }>(`/ledgers/${id}/active`, { method: 'PUT' }),
+  deleteLedger: (id: number) => req<{ ok: boolean }>(`/ledgers/${id}`, { method: 'DELETE' }),
   ledgerStats: (id: number) => req<LedgerStats>(`/ledgers/${id}/stats`),
 
   listTransactions: (params: Record<string, string | number | undefined>) =>
@@ -194,6 +195,7 @@ export const api = {
   activeLedger() { return call<Ledger>('activeLedger', []); },
   createLedger(name: string, currency = 'CNY') { return call<Ledger>('createLedger', [name, currency]); },
   setActiveLedger(id: number) { return call<{ ok: boolean }>('setActiveLedger', [id]); },
+  deleteLedger(id: number) { return call<{ ok: boolean }>('deleteLedger', [id]); },
   ledgerStats(id: number) { return call<LedgerStats>('ledgerStats', [id]); },
 
   listTransactions(params: Record<string, string | number | undefined>) { return call<TxListResponse>('listTransactions', [params]); },

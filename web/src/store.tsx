@@ -23,12 +23,19 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
   const [tick, setTick] = useState(0);
 
   const refresh = useCallback(async () => {
+    // ledgers() 与 activeLedger() 解耦：删光账本后 activeLedger 会 reject，
+    // 若用 Promise.all 会连累 ledgers() 更新 → UI 列表不刷新（账本显示还在，实际已删）
     try {
-      const [ls, active] = await Promise.all([api.ledgers(), api.activeLedger()]);
+      const ls = await api.ledgers();
       setLedgers(ls);
-      setLedgerState(active);
     } catch {
       // 后端不可用时静默
+    }
+    try {
+      const active = await api.activeLedger();
+      setLedgerState(active);
+    } catch {
+      setLedgerState(null); // 无激活账本（如删光）→ 置空，由页面显示空状态
     }
   }, []);
 

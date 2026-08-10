@@ -152,25 +152,12 @@ export default function Transactions() {
           <div className="list">
             {items.map((t) => (
               <div key={t.id} className="list__item" style={{ paddingLeft: 18, paddingRight: 14 }}>
-                <div
-                  className="list__icon"
-                  style={{ background: t.type === 'income' ? 'rgba(7,202,107,0.14)' : 'rgba(255,255,255,0.55)' }}
-                >
-                  {t.category?.icon ?? '▣'}
-                </div>
-                <div className="list__main">
+                <div className="list__main" style={{ minWidth: 0, flex: 1 }}>
                   <div className="list__title">
                     {t.note || t.category?.name || '未分类'}
                   </div>
                   <div className="list__meta">
-                    {fmtDate(t.occurred_at)} · {t.account?.name ?? '—'}
-                    {t.tags.length > 0 && (
-                      <span style={{ marginLeft: 8 }}>
-                        {t.tags.map((tg) => (
-                          <span key={tg.id} className="chip" style={{ marginRight: 4, fontSize: 10, padding: '2px 7px', boxShadow: 'none' }}>#{tg.name}</span>
-                        ))}
-                      </span>
-                    )}
+                    {fmtDate(t.occurred_at)}
                   </div>
                 </div>
                 <div

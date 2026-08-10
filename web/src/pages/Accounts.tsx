@@ -10,7 +10,7 @@ const TYPE_ICON: Record<string, string> = {
   cash: '💵', bank: '🏦', credit_card: '💳', e_wallet: '📱', other: '🏷️',
 };
 
-export default function Accounts() {
+export default function Accounts({ embedded = false }: { embedded?: boolean }) {
   const { ledger, tick, bump } = useApp();
   const [accts, setAccts] = useState<Account[]>([]);
   const [adding, setAdding] = useState(false);
@@ -26,24 +26,24 @@ export default function Accounts() {
   return (
     <div className="nike-in stack gap-6">
 
-      <header className="card card--black" style={{ padding: '28px 32px' }}>
-        <div className="row-between" style={{ flexWrap: 'wrap', gap: 16 }}>
+      <header
+        className="card"
+        style={{ padding: embedded ? '18px 22px' : '26px 30px' }}
+      >
+        <div className="row-between" style={{ flexWrap: 'wrap', gap: 12 }}>
           <div>
-            <div className="eyebrow eyebrow--white">ACCOUNTS / 账户总余额 · EVA-02</div>
-            <h1 className="hero-num" style={{ color: 'var(--success)', marginTop: 6, fontSize: 'clamp(1.8rem, 4.5vw, 3.2rem)' }}>
+            <div className="eyebrow eyebrow--black">ACCOUNTS / 账户总余额 · EVA-02</div>
+            <h1
+              className="hero-title"
+              style={{ color: 'var(--success)', marginTop: 6, fontSize: embedded ? '1.6rem' : 'clamp(1.6rem, 3vw, 2.4rem)' }}
+            >
               {fmtMoney(total)}
             </h1>
-            <div className="row gap-3" style={{ marginTop: 10, fontSize: 12, fontWeight: 500 }}>
-              <span style={{ color: 'rgba(255,255,255,0.7)' }}>{accts.length} 个账户</span>
+            <div className="row gap-3" style={{ marginTop: 8, fontSize: 12, fontWeight: 600 }}>
+              <span style={{ color: 'var(--text-secondary)' }}>{accts.length} 个账户</span>
             </div>
           </div>
-          <button
-            className="btn"
-            style={{ background: 'var(--primary)', color: '#fff', boxShadow: '0 4px 14px rgba(0,122,255,0.35)' }}
-            onClick={() => setAdding(true)}
-          >
-            + 新建账户
-          </button>
+          <button className="btn btn--primary" onClick={() => setAdding(true)}>+ 新建账户</button>
         </div>
       </header>
 

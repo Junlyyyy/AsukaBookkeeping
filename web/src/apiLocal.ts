@@ -228,6 +228,28 @@ export const localApi = {
     save();
     return Promise.resolve({ ok: true });
   },
+  deleteLedger: (id: number): Promise<{ ok: boolean }> => {
+    const db = load();
+    const idx = db.ledgers.findIndex((l) => l.id === id);
+    if (idx < 0) return Promise.reject(new Error('账本不存在'));
+    const wasActive = db.ledgers[idx].is_active === 1;
+    // 连带删除该账本的所有关联数据（流水/账户/分类/标签/预算/标签关联）
+    const ledgerIds = new Set([id]);
+    db.transactions = db.transactions.filter((t) => !ledgerIds.has(t.ledger_id));
+    db.accounts = db.accounts.filter((a) => !ledgerIds.has(a.ledger_id));
+    db.categories = db.categories.filter((c) => !ledgerIds.has(c.ledger_id));
+    db.tags = db.tags.filter((t) => !ledgerIds.has(t.ledger_id));
+    db.budgets = db.budgets.filter((b) => !ledgerIds.has(b.ledger_id));
+    db.transaction_tags = db.transaction_tags.filter((tt) => !ledgerIds.has(tt.ledger_id));
+    db.ledgers.splice(idx, 1);
+    // 删的是当前账本 → 自动切换到第一个剩余账本（若有）
+    if (wasActive && db.ledgers.length > 0) {
+      db.ledgers[0].is_active = 1;
+      db.ledgers[0].updated_at = now();
+    }
+    save();
+    return Promise.resolve({ ok: true });
+  },
   ledgerStats: (id: number): Promise<LedgerStats> => {
     const db = load();
     const txs = db.transactions.filter((t) => t.ledger_id === id && t.status === 'active');

@@ -8,7 +8,7 @@ import { Modal, toast } from '../components/ui';
 
 const ICONS = ['🍜', '🚌', '🛍️', '🏠', '🎮', '💊', '📚', '🎁', '📱', '💰', '🎉', '📈', '✈️', '🏨', '☕', '🎬', '📦', '💄', '🐱', '🏋️', '▣'];
 
-export default function Categories() {
+export default function Categories({ embedded = false }: { embedded?: boolean }) {
   const { ledger, tick, bump } = useApp();
   const [cats, setCats] = useState<Category[]>([]);
   const [adding, setAdding] = useState(false);
@@ -26,14 +26,14 @@ export default function Categories() {
   return (
     <div className="nike-in stack gap-6">
 
-      <header className="card" style={{ padding: '26px 30px' }}>
-        <div className="row-between" style={{ flexWrap: 'wrap', gap: 16 }}>
+      <header className="card" style={{ padding: embedded ? '18px 22px' : '26px 30px' }}>
+        <div className="row-between" style={{ flexWrap: 'wrap', gap: 12 }}>
           <div>
             <div className="eyebrow eyebrow--black">CATEGORIES / 分类 · EVA-02</div>
-            <h1 className="hero-title" style={{ marginTop: 6, fontSize: 'clamp(1.6rem, 3vw, 2.4rem)' }}>
+            <h1 className="hero-title" style={{ marginTop: 6, fontSize: embedded ? '1.5rem' : 'clamp(1.6rem, 3vw, 2.4rem)' }}>
               {cats.length}<span style={{ color: 'var(--text-tertiary)' }}> / 全部</span>
             </h1>
-            <div className="row gap-3" style={{ marginTop: 10, fontSize: 12, fontWeight: 600 }}>
+            <div className="row gap-3" style={{ marginTop: 8, fontSize: 12, fontWeight: 600 }}>
               <span className="chip chip--black">支出 {expense.length}</span>
               <span className="chip chip--volt">收入 {income.length}</span>
             </div>

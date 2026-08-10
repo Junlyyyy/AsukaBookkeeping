@@ -2,9 +2,13 @@
 
 import { useState } from 'react';
 import { api } from '../api';
+import type { Ledger } from '../apiLocal';
 import { useApp } from '../store';
 import { Modal, toast } from '../components/ui';
 import NERVBadge from '../components/NERVBadge';
+import Accounts from './Accounts';
+import Categories from './Categories';
+import Budgets from './Budgets';
 import { getDashScopeKey, setDashScopeKey } from '../lib/qwenAsr';
 
 export default function Settings() {
@@ -13,6 +17,10 @@ export default function Settings() {
   const [name, setName] = useState('');
   const [asrKey, setAsrKey] = useState(getDashScopeKey());
   const [asrSaved, setAsrSaved] = useState(false);
+  /** 待删除的账本（二次确认弹窗） */
+  const [deleting, setDeleting] = useState<Ledger | null>(null);
+  /** 设置页二级 tab：账本 / 账户 / 分类 / 预算 / 语音 / 关于 */
+  const [sub, setSub] = useState<'ledgers' | 'accounts' | 'categories' | 'budgets' | 'asr' | 'about'>('ledgers');
 
   const create = async () => {
     if (!name.trim()) return toast('请输入账本名', 'err');
@@ -26,16 +34,56 @@ export default function Settings() {
     } catch (e) { toast(String((e as Error).message), 'err'); }
   };
 
+  /** 删除账本（连带流水/账户/分类/标签/预算） */
+  const confirmDelete = async () => {
+    if (!deleting) return;
+    try {
+      await api.deleteLedger(deleting.id);
+      toast(`已删除账本「${deleting.name}」`);
+      setDeleting(null);
+      await refresh();  // 重拉账本列表 + 激活账本（删的是当前账本会自动切到第一个）
+      bump();
+    } catch (e) { toast(String((e as Error).message), 'err'); }
+  };
+
   return (
     <div className="nike-in stack gap-6">
 
-      <header className="card" style={{ padding: '26px 30px' }}>
+      <header className="card" style={{ padding: '22px 26px' }}>
         <div className="eyebrow eyebrow--black">SETTINGS / 设置 · EVA-02</div>
-        <h1 className="hero-title" style={{ marginTop: 6, fontSize: 'clamp(1.6rem, 3vw, 2.4rem)' }}>
-          偏好与账本
-        </h1>
       </header>
 
+      {/* 设置页二级导航：账本 / 账户 / 分类 / 预算 / 语音 / 关于 */}
+      <div className="card" style={{ padding: 8 }}>
+        <div style={{ display: 'flex', gap: 6, flexWrap: 'wrap' }}>
+          {([
+            ['ledgers', '📒 账本'],
+            ['accounts', '💳 账户'],
+            ['categories', '🏷 分类'],
+            ['budgets', '🎯 预算'],
+            ['asr', '🎙 语音'],
+            ['about', 'ℹ 关于'],
+          ] as const).map(([k, label]) => (
+            <button
+              key={k}
+              onClick={() => setSub(k)}
+              className="btn btn--sm"
+              style={{
+                flex: 1, minWidth: 72, whiteSpace: 'nowrap',
+                background: sub === k ? 'var(--primary)' : 'transparent',
+                color: sub === k ? '#fff' : 'var(--text-secondary)',
+                boxShadow: sub === k ? 'var(--shadow-sm)' : 'none',
+                border: sub === k ? 'none' : '1px solid var(--gray-100)',
+              }}
+            >
+              {label}
+            </button>
+          ))}
+        </div>
+      </div>
+
+      {sub === 'ledgers' && (
+      <>
       {/* 账本管理 */}
       <div className="card">
         <div className="row-between" style={{ marginBottom: 14 }}>
@@ -70,11 +118,36 @@ export default function Settings() {
                   切换
                 </button>
               )}
+              <button
+                className="ledger-del-btn"
+                onClick={() => setDeleting(l)}
+                title="删除账本"
+                aria-label="删除账本"
+              >
+                🗑
+              </button>
             </div>
           ))}
         </div>
       </div>
 
+      </>
+      )}
+
+      {sub === 'accounts' && (
+        <Accounts embedded />
+      )}
+
+      {sub === 'categories' && (
+        <Categories embedded />
+      )}
+
+      {sub === 'budgets' && (
+        <Budgets embedded />
+      )}
+
+      {sub === 'asr' && (
+      <>
       {/* 语音识别配置（千问 · 仅语音识别时联网） */}
       <div className="card">
         <div className="eyebrow eyebrow--black">QWEN ASR / 千问语音识别 · EVA-02</div>
@@ -106,13 +179,18 @@ export default function Settings() {
         </div>
       </div>
 
+      </>
+      )}
+
+      {sub === 'about' && (
+      <>
       {/* 关于 — SPEC 机体档案 */}
       <div className="card card--black" style={{ padding: '20px 22px' }}>
         <div className="row gap-3" style={{ marginBottom: 12, alignItems: 'center' }}>
           <NERVBadge size={42} />
           <div>
             <div className="eyebrow eyebrow--white">SPEC / 机体档案 · EVA-02</div>
-            <h3 className="section-title" style={{ marginTop: 2, fontSize: 18 }}>Asuka记账 v1.3.3</h3>
+            <h3 className="section-title" style={{ marginTop: 2, fontSize: 18 }}>Asuka记账 v1.3.7</h3>
           </div>
         </div>
 
@@ -130,7 +208,7 @@ export default function Settings() {
 
         {/* 规格表 — 多行内容 label 顶端对齐，行间距随行高自适应 */}
         <div style={{ display: 'grid', gridTemplateColumns: '64px 1fr', columnGap: 14, rowGap: 10, fontSize: 12, color: 'rgba(255,255,255,0.88)', fontWeight: 500 }}>
-          <Spec k="版本">Asuka记账 v1.3.3</Spec>
+          <Spec k="版本">Asuka记账 v1.3.7</Spec>
           <Spec k="主题">明日香 · Bento × EVA-02（红橙配色）</Spec>
           <Spec k="驾驶员">惣流・アスカ・ラングレー · EVA-02 PILOT</Spec>
           <Spec k="前端">React + TypeScript + Vite · JetBrains Mono</Spec>
@@ -139,6 +217,9 @@ export default function Settings() {
           <Spec k="语音">千问 ASR（仅识别联网，其余完全离线）</Spec>
         </div>
       </div>
+
+      </>
+      )}
 
       {adding && (
         <Modal title="+ 新建账本 · EVA-02" onClose={() => setAdding(false)}>
@@ -157,6 +238,33 @@ export default function Settings() {
             <div className="row" style={{ justifyContent: 'flex-end', gap: 10 }}>
               <button className="btn btn--ghost" onClick={() => setAdding(false)}>取消</button>
               <button className="btn btn--primary" onClick={create}>创建</button>
+            </div>
+          </div>
+        </Modal>
+      )}
+
+      {deleting && (
+        <Modal title={`删除账本 · ${deleting.name}`} onClose={() => setDeleting(null)}>
+          <div className="stack gap-3">
+            <div style={{ fontSize: 13, lineHeight: 1.7, color: 'var(--text-secondary)' }}>
+              ⚠️ 删除账本「<b style={{ color: 'var(--text)' }}>{deleting.name}</b>」将<b style={{ color: 'var(--danger)' }}>永久删除</b>该账本下的全部数据：
+              <div style={{ marginTop: 6, display: 'flex', flexWrap: 'wrap', gap: 6 }}>
+                <span className="chip">💸 {deleting.tx_count ?? 0} 笔流水</span>
+                <span className="chip">🏦 {deleting.account_count ?? 0} 个账户</span>
+                <span className="chip">🏷 {deleting.category_count ?? 0} 个分类</span>
+                <span className="chip">预算 / 标签</span>
+              </div>
+              <div style={{ marginTop: 8, fontSize: 12, color: 'var(--danger)' }}>此操作不可撤销，请确认。</div>
+            </div>
+            <div className="row" style={{ justifyContent: 'flex-end', gap: 10 }}>
+              <button className="btn btn--ghost" onClick={() => setDeleting(null)}>取消</button>
+              <button
+                className="btn"
+                style={{ background: 'var(--danger)', color: '#fff' }}
+                onClick={() => void confirmDelete()}
+              >
+                确认删除
+              </button>
             </div>
           </div>
         </Modal>

@@ -4,15 +4,12 @@ import Swoosh from './Swoosh';
 import NERVBadge from './NERVBadge';
 import type { ReactNode } from 'react';
 
-export type NavKey = 'dashboard' | 'transactions' | 'stats' | 'budgets' | 'categories' | 'accounts' | 'settings';
+export type NavKey = 'dashboard' | 'transactions' | 'stats' | 'settings';
 
 const NAV: { key: NavKey; label: string }[] = [
   { key: 'dashboard', label: '概览' },
   { key: 'transactions', label: '流水' },
   { key: 'stats', label: '分析' },
-  { key: 'budgets', label: '预算' },
-  { key: 'categories', label: '分类' },
-  { key: 'accounts', label: '账户' },
   { key: 'settings', label: '设置' },
 ];
 

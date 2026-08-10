@@ -7,7 +7,7 @@ import type { Budget, Category } from '../types';
 import { Donut } from '../components/charts';
 import { Modal, toast, fmtMoney } from '../components/ui';
 
-export default function Budgets() {
+export default function Budgets({ embedded = false }: { embedded?: boolean }) {
   const { ledger, tick, bump } = useApp();
   const [budgets, setBudgets] = useState<Budget[]>([]);
   const [cats, setCats] = useState<Category[]>([]);
@@ -39,14 +39,14 @@ export default function Budgets() {
     <div className="nike-in stack gap-6">
 
       {/* HEADER */}
-      <header className="card" style={{ padding: '26px 30px' }}>
-        <div className="row-between" style={{ flexWrap: 'wrap', gap: 16 }}>
+      <header className="card" style={{ padding: embedded ? '18px 22px' : '26px 30px' }}>
+        <div className="row-between" style={{ flexWrap: 'wrap', gap: 12 }}>
           <div>
             <div className="eyebrow eyebrow--black">BUDGETS / 预算 · EVA-02 · {monthLabel}</div>
-            <h1 className="hero-title" style={{ marginTop: 6, fontSize: 'clamp(1.6rem, 3vw, 2.4rem)' }}>
+            <h1 className="hero-title" style={{ marginTop: 6, fontSize: embedded ? '1.5rem' : 'clamp(1.6rem, 3vw, 2.4rem)' }}>
               {fmtMoney(totalBudget)}
             </h1>
-            <div className="row gap-3" style={{ marginTop: 10, fontSize: 12, fontWeight: 600 }}>
+            <div className="row gap-3" style={{ marginTop: 8, fontSize: 12, fontWeight: 600 }}>
               <span className="chip">已用 {fmtMoney(totalSpent)}</span>
               <span className={`chip ${totalProgress >= 100 ? 'chip--orange' : 'chip--volt'}`}>{Math.round(totalProgress)}%</span>
             </div>
@@ -56,7 +56,7 @@ export default function Budgets() {
           </button>
         </div>
         {/* 总进度条 */}
-        <div className="bar" style={{ marginTop: 20 }}>
+        <div className="bar" style={{ marginTop: 14 }}>
           <div
             className={`bar__fill ${totalProgress >= 100 ? 'bar__fill--orange' : 'bar__fill--volt'}`}
             style={{ width: `${Math.min(totalProgress, 100)}%` }}

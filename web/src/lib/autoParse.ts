@@ -36,6 +36,49 @@ const BANK_SENDER_PREFIXES = [
   '95588', '95555', '95566', '95559', '95500', '95501', '95528', // 工商/招行/建行/中信/农行等
 ];
 
+/** 非银行发件人黑名单 —— 验证码平台 / 营销短信 / 106/121/171 号段等，根本不是消费记录，直接拒。
+ * 银行号段（955xx/100xx/123xx 等）已在 BANK_SENDER_PREFIXES 白名单精确匹配，不进黑名单。 */
+const NON_BANK_SENDER_PREFIXES = [
+  '106', // 三大运营商短信端口号段（验证码、营销）
+  '121', // 短信端口
+  '171', // 短信端口
+];
+
+/** 短信解析专用 —— 单笔合理上限 10 万。短信里出现 ≥10 万通常是把电话号码/时间戳/图片 ID 等当成了金额 */
+const SMS_AMOUNT_MAX = 100_000;
+
+/** 验证码 / 一次性口令类短信特征 —— 命中直接跳过（不是交易记录） */
+const OTP_PATTERNS = /验证码|动态码|校验码|安全码|登录码|注册码|短信验证|一次性密码|OTP|一次有效|请在\s*\d+\s*(?:分钟|秒)|分钟内有效|有效期|不要泄露|请勿泄露|请勿转发/;
+
+/** 交易动词 —— 金额必须紧跟其后才算交易金额（避免验证码/余额误判） */
+const TX_VERB_RE = /(消费|支出|支付|付款|扣款|转账|转出|提现|收款|收入|入账|退款|返款|退回|买入|卖出|充值|缴费)\s*(?:人民币|RMB|rmb)?\s*[¥￥]?\s*(\d+(?:\.\d{1,2})?)\s*(?:元|块)?/gi;
+
+/** 数字附近的账户信息语境 —— 这些数字不是交易金额 */
+const NON_AMT_CONTEXT = /余额|可用|限额|额度|上限|下限|有效期|尾号|剩余|积分|总计|总额|信用卡额度|取现额度/;
+
+/** 短信商家提取 — 多模式正则集合（参考 XUranus/sms-filter 的银行短信规则）。
+ *  命中后取第一个非空捕获组，按下面顺序尝试：
+ *  1) 【XX】方括号标签（电商平台、银行商户名常用）
+ *  2) 商户:/商家:/收款方:/付款方:/付款给:（明示标签）
+ *  3) 于/在/消费于/付款给/支付给（自然语序）
+ *  4) 备注: 后置描述
+ */
+const MERCHANT_PATTERNS: RegExp[] = [
+  /(?:商户|商家|收款方|付款方|付款给|收款人|对方|对方户名|付款账户名)[\s:：]+([^\s,，。\-\_]{2,20})/,
+  /(?:向|在|于|消费于|付款给|支付给)[\s:：]*([^\s,，。\-\_【】]{2,20})(?:付款|支付|消费|支出|扣款|转账|转出)/,
+  /【([^【】\n]{2,20})】/,
+  /备注[\s:：]+([^\s,，。]{2,30})/,
+];
+
+function cleanSmsBody(body: string): string {
+  return String(body || '')
+    .replace(/【[^【】]{1,30}】/g, '')            // 去掉【XX】标签
+    .replace(/\d{4}[年-]\d{1,2}[月-]\d{1,2}/g, '') // 去掉 2026年07月12日 / 2026-07-12
+    .replace(/\d{1,2}时\d{1,2}分(?:\d{1,2}秒)?/g, '') // 去掉 13时14分
+    .replace(/[\s,，。]+/g, ' ')
+    .trim();
+}
+
 /* ==================== 工具 ==================== */
 function toYuan(fen: number): number { return Math.round(fen) / 100; }
 function pad2(n: number): string { return n < 10 ? `0${n}` : String(n); }
@@ -45,25 +88,46 @@ function formatDate(d: Date): string {
 
 /**
  * 把任意字符串中的金额数字全部抽取出来。返回单位为分的整数（"38.5" → 3850）。
- * 同时处理 ¥ ￥ 元 人民币 等符号。
  *
- * 要求至少一个金额相关 token（¥/￥/RMB/人民币/元/块），避免把银行客服号
- * （95588 / 95566 这种 5 位数）误识别成金额。
+ * 策略（参考 upi_sms_parser 的 5-gate 模型 + 交易动词锚定）：
+ *  - strongOnly=true ：只找「交易动词 + 金额」（转账5000元 / 消费38.5元）——
+ *    银行交易确认短信即使含验证码（「验证码6719，用于转账5000元」）也识别
+ *  - strongOnly=false：先强锚定；没有时退到 ¥/￥/元/块 弱锚定，
+ *    但排除「余额/限额/额度/有效期」语境（Gate1/2：钱要真的动了）
  */
-function extractAmounts(text: string): number[] {
+function extractAmounts(text: string, strongOnly = false): number[] {
   if (!text) return [];
   const cleaned = text.replace(/[,，]/g, '');
-  // 必须有 ¥/￥/RMB/人民币/元/块 之一锚定
-  const re = /(?:¥|￥|RMB|人民币)\s*(\d+(?:\.\d{1,2})?)|(\d+(?:\.\d{1,2})?)\s*(?:元|块)/gi;
   const out: number[] = [];
+  const push = (v: number) => {
+    if (Number.isFinite(v) && v > 0 && v < SMS_AMOUNT_MAX) out.push(Math.round(v * 100));
+  };
+  // 强锚定：交易动词 + 金额
   let m: RegExpExecArray | null;
-  while ((m = re.exec(cleaned)) !== null) {
+  while ((m = TX_VERB_RE.exec(cleaned)) !== null) push(parseFloat(m[2]));
+  if (strongOnly || out.length > 0) return out;
+  // 弱锚定：¥/￥/RMB/人民币/元/块，排除账户信息语境
+  const weakRe = /(?:¥|￥|RMB|人民币)\s*(\d+(?:\.\d{1,2})?)|(\d+(?:\.\d{1,2})?)\s*(?:元|块)/gi;
+  while ((m = weakRe.exec(cleaned)) !== null) {
     const v = parseFloat(m[1] || m[2]);
-    if (Number.isFinite(v) && v > 0 && v < 1_000_000) {
-      out.push(Math.round(v * 100));
-    }
+    if (!Number.isFinite(v) || v <= 0 || v >= 1_000_000) continue;
+    const ctx = cleaned.slice(Math.max(0, (m.index || 0) - 20), (m.index || 0) + (m[0]?.length || 0) + 6);
+    if (NON_AMT_CONTEXT.test(ctx)) continue; // 余额/限额/有效期等 → 跳过
+    out.push(Math.round(v * 100));
   }
   return out;
+}
+
+/**
+ * 判断短信是否纯验证码（Gate-4）：无交易动词锚定的金额 + 含 OTP 特征 → 跳过；
+ * 有交易动词（转账/消费等）的银行交易确认短信即使带验证码也算交易。
+ */
+function extractSmsAmounts(text: string): number[] | null {
+  const hasOtp = OTP_PATTERNS.test(text);
+  const strong = extractAmounts(text, true);
+  if (strong.length > 0) return strong;      // 交易确认短信（含验证码也算）
+  if (hasOtp) return null;                    // 纯验证码 → 跳过
+  return extractAmounts(text, false);         // 普通弱锚定
 }
 
 /**
@@ -102,7 +166,20 @@ export function parseSms(sender: string, body: string, smsTs?: number): ParsedTx
   if (!text) return null;
 
   const hints: string[] = [];
-  const amts = extractAmounts(text);
+
+  // 非银行发件人黑名单（验证码/营销短信端口）—— 直接拒，避免把验证码短信里的数字当成金额
+  if (NON_BANK_SENDER_PREFIXES.some((p) => sender.startsWith(p))) {
+    hints.push('non_bank_sender');
+    return { confidence: 0, source: 'sms', hints, occurred_at: formatDate(pickTime(smsTs)) };
+  }
+
+  // 验证码 / 非交易短信：只有「纯验证码（无交易动词锚定）」才跳过；
+  // 「验证码6719，用于转账5000元」这类银行交易确认短信照常识别
+  const amts = extractSmsAmounts(text);
+  if (!amts) {
+    hints.push('otp_skipped');
+    return { confidence: 0, source: 'sms', hints, occurred_at: formatDate(pickTime(smsTs)) };
+  }
   if (amts.length === 0) {
     hints.push('no_amount');
     return { confidence: 0, source: 'sms', hints, occurred_at: formatDate(pickTime(smsTs)) };
@@ -117,11 +194,19 @@ export function parseSms(sender: string, body: string, smsTs?: number): ParsedTx
   else if (TX_TYPE_EXPENSE_WORDS.some((w) => text.includes(w))) type = 'expense';
   hints.push(`type=${type}`);
 
-  // 商家：去掉金额/类型词/银行前缀后剩下的尾部
+  // 商家：按多模式正则依次尝试，取第一个有意义的命中（参考 XUranus/sms-filter）
   let merchant = '';
-  const tail = body.replace(/\s+/g, ' ').trim();
-  const merchantMatch = tail.match(/(?:于|在|消费于|付款给|支付给|商户|商家)[\s:：]*([^\s,，。.\-_]{2,20})/);
-  if (merchantMatch) merchant = merchantMatch[1];
+  for (const re of MERCHANT_PATTERNS) {
+    const m = body.match(re);
+    if (m && m[1]) {
+      const cand = m[1].trim();
+      // 排除明显不是商家的：纯数字、单字、含金额字符
+      if (cand.length >= 2 && !/^\d+$/.test(cand) && !/[¥￥元]/.test(cand)) {
+        merchant = cand;
+        break;
+      }
+    }
+  }
   hints.push(`merchant_guess=${merchant || 'n/a'}`);
 
   const category = guessCategory(text);
@@ -134,7 +219,12 @@ export function parseSms(sender: string, body: string, smsTs?: number): ParsedTx
   if (merchant) confidence += 0.2;
   confidence = Math.min(1, confidence);
 
-  const note = merchant || guessNoteFromSender(sender, body) || tail.slice(0, 24);
+  // note：merchant 优先（最简洁）；否则取清理后的短信前 6 字（用户要求「简略显示」）
+  const cleaned = cleanSmsBody(body);
+  const note = merchant
+    || body.match(/(?:转账|消费|支付|付款|收入|入账|退款|充值|缴费)[^,，。\s]{0,8}/)?.[0]
+    || (cleaned ? cleaned.slice(0, 6) : '')
+    || guessNoteFromSender(sender, body);
 
   return {
     amount: amountFen,
@@ -155,7 +245,12 @@ export function parseNotification(pkg: string, title: string, text: string, post
 
   const hints: string[] = [`pkg=${pkg}`];
 
-  const amts = extractAmounts(body);
+  // 验证码类通知：同样「纯验证码才跳过」，交易确认通知照常识别
+  const amts = extractSmsAmounts(body);
+  if (!amts) {
+    hints.push('otp_skipped');
+    return { confidence: 0, source: 'notification', hints, occurred_at: formatDate(new Date(postedAt)) };
+  }
   if (amts.length === 0) {
     hints.push('no_amount');
     return { confidence: 0, source: 'notification', hints, occurred_at: formatDate(new Date(postedAt)) };
@@ -168,13 +263,13 @@ export function parseNotification(pkg: string, title: string, text: string, post
   if (/(收款|到账|入账|红包|退款)/.test(body)) type = 'income';
   hints.push(`type=${type}`);
 
-  // 商家/对方：标题里常有 "微信支付 · 星巴克"
+  // 商家/对方：标题里常有 "微信支付 · 星巴克"；纯数字（电话/单号）不当作商家
   let merchant = '';
   const merchantMatch = body.match(/(?:微信支付|支付宝支付|付款给|收款来自|来自|to|向)\s*[·\.·]?\s*([\u4e00-\u9fff\w]{2,16})/);
-  if (merchantMatch) merchant = merchantMatch[1];
+  if (merchantMatch && !/^\d{4,}$/.test(merchantMatch[1])) merchant = merchantMatch[1];
   if (!merchant) {
-    // 退路：标题可能就是商家名
-    if (title && title.length <= 16 && /[\u4e00-\u9fff]/.test(title)) merchant = title;
+    // 退路：标题可能就是商家名（排除纯数字/含号码的标题）
+    if (title && title.length <= 16 && /[\u4e00-\u9fff]/.test(title) && !/\d{4,}/.test(title)) merchant = title;
   }
   hints.push(`merchant_guess=${merchant || 'n/a'}`);
 

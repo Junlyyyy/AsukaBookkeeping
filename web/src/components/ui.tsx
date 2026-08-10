@@ -1,6 +1,7 @@
 // 通用 UI 小件：格式化、Modal、Toast — Bento × EVA-02 明日香
 
 import { useEffect } from 'react';
+import { createPortal } from 'react-dom';
 import type { ReactNode } from 'react';
 
 export function fmtMoney(n: number): string {
@@ -59,7 +60,7 @@ export function Modal({ title, onClose, children, wide }: {
     return () => window.removeEventListener('keydown', h);
   }, [onClose]);
 
-  return (
+  return createPortal(
     <div
       onClick={onClose}
       style={{
@@ -105,7 +106,8 @@ export function Modal({ title, onClose, children, wide }: {
           {children}
         </div>
       </div>
-    </div>
+    </div>,
+    document.body
   );
 }
 
