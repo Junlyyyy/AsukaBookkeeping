@@ -190,7 +190,7 @@ export default function Settings() {
           <NERVBadge size={42} />
           <div>
             <div className="eyebrow">SPEC / 机体档案 · EVA-02</div>
-            <h3 className="section-title" style={{ marginTop: 2, fontSize: 18 }}>Asuka记账 v1.3.7</h3>
+            <h3 className="section-title" style={{ marginTop: 2, fontSize: 18 }}>Asuka记账 v1.3.8</h3>
           </div>
         </div>
 
@@ -208,7 +208,7 @@ export default function Settings() {
 
         {/* 规格表 — 多行内容 label 顶端对齐，行间距随行高自适应 */}
         <div style={{ display: 'grid', gridTemplateColumns: '64px 1fr', columnGap: 14, rowGap: 10, fontSize: 12, color: 'var(--text-secondary)', fontWeight: 500 }}>
-          <Spec k="版本">Asuka记账 v1.3.7</Spec>
+          <Spec k="版本">Asuka记账 v1.3.8</Spec>
           <Spec k="主题">明日香 · Bento × EVA-02（红橙配色）</Spec>
           <Spec k="驾驶员">惣流・アスカ・ラングレー · EVA-02 PILOT</Spec>
           <Spec k="前端">React + TypeScript + Vite · JetBrains Mono</Spec>
