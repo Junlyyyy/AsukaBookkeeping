@@ -149,7 +149,7 @@ function BudgetForm({ budget, cats, onClose, onSaved }: {
 
   // 「全部支出」固定置顶 + 支出分类；选中的展示值
   const options: { id: number; name: string; icon?: string }[] = [
-    { id: 0, name: '全部支出（所有支出分类合计）', icon: '📊' },
+    { id: 0, name: '全部支出', icon: '📊' },
     ...cats.map((c) => ({ id: c.id, name: c.name, icon: c.icon })),
   ];
   const current = options.find((o) => String(o.id) === categoryId);
@@ -186,7 +186,7 @@ function BudgetForm({ budget, cats, onClose, onSaved }: {
                 className="panel-inset"
                 style={{
                   position: 'absolute', left: 0, right: 0, top: 'calc(100% + 6px)',
-                  zIndex: 100, maxHeight: 260, overflowY: 'auto',
+                  zIndex: 100, overflowY: 'visible',
                   borderRadius: 'var(--radius-md)', padding: 6,
                   boxShadow: 'var(--shadow-lg)',
                 }}
