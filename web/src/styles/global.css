@@ -291,18 +291,18 @@ body::after {
   box-shadow: var(--shadow-md);
 }
 .card--black {
-  /* 明日香机体暗红褐 + 红橙光晕 */
+  /* 浅色明日香卡：浅红→奶油渐变 + 淡红橙光晕（浅色调，非深色） */
   background:
-    radial-gradient(120% 80% at 90% 0%, rgba(230, 119, 11, 0.20), transparent 55%),
-    radial-gradient(100% 70% at 0% 100%, rgba(211, 41, 15, 0.25), transparent 55%),
-    linear-gradient(145deg, var(--eva-dark), var(--eva-dark-2));
-  color: #fff;
-  box-shadow: var(--shadow-md);
+    radial-gradient(120% 80% at 90% 0%, rgba(230, 119, 11, 0.14), transparent 55%),
+    radial-gradient(100% 70% at 0% 100%, rgba(211, 41, 15, 0.10), transparent 55%),
+    linear-gradient(145deg, var(--eva-red-tint), var(--card-bg));
+  color: var(--text);
+  box-shadow: var(--shadow-sm);
 }
-.card--black .section-title,
+.card--black .section-title { color: var(--text); }
 .card--volt .section-title,
 .card--orange .section-title { color: #fff; }
-.card--black .eyebrow,
+.card--black .eyebrow { color: var(--text-secondary); }
 .card--volt .eyebrow,
 .card--orange .eyebrow { color: rgba(255,255,255,0.85); }
 .card--gray { background: var(--surface-soft); box-shadow: var(--shadow-xs); }
@@ -412,7 +412,7 @@ body::after {
   border: none;
   box-shadow: none;
 }
-.chip--black { background: var(--eva-dark); color: #fff; }
+.chip--black { background: var(--eva-red-tint); color: var(--primary); }
 .chip--volt { background: var(--eva-red-tint); color: var(--eva-red); }
 .chip--orange { background: var(--eva-orange-tint); color: #b45309; }
 .chip--ghost { background: transparent; color: var(--text-secondary); }

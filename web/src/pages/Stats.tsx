@@ -142,19 +142,19 @@ export default function Stats() {
         </div>
         <div className="card card--black card--hover">
           <div className="row gap-2" style={{ marginBottom: 12, alignItems: 'center' }}>
-            <span className="eva-headband" style={{ filter: 'brightness(0.9)' }} aria-label="明日香发带" />
-            <div className="eyebrow eyebrow--white">INSIGHT / 洞察 · EVA-02</div>
+            <span className="eva-headband" style={{ filter: 'brightness(1.05)' }} aria-label="明日香发带" />
+            <div className="eyebrow">INSIGHT / 洞察 · EVA-02</div>
           </div>
           <h3 className="section-title" style={{ marginBottom: 14 }}>本月建议</h3>
           {data && (
-            <div className="stack gap-2" style={{ fontSize: 14, color: 'rgba(255,255,255,0.8)', fontWeight: 500 }}>
+            <div className="stack gap-2" style={{ fontSize: 14, color: 'var(--text-secondary)', fontWeight: 500 }}>
               <Insight>共 {data.tx_count} 笔交易</Insight>
               <Insight>支出最高：{data.top_expense[0] ? `${data.top_expense[0].icon} ${data.top_expense[0].name}（${fmtMoney(data.top_expense[0].amount)}）` : '—'}</Insight>
               <Insight>支出占收入比：{data.income > 0 ? Math.round((data.expense / data.income) * 100) : 0}%</Insight>
               <Insight bold color={data.balance >= 0 ? 'var(--success)' : 'var(--warning)'}>
                 {data.balance >= 0 ? '结余为正，继续保持 ✓' : '结余为负，注意控制支出 ⚠'}
               </Insight>
-              <div style={{ marginTop: 8, padding: '10px 12px', borderRadius: 'var(--radius-md)', background: 'rgba(255,255,255,0.08)', fontSize: 12, fontWeight: 700, color: '#ffb3a3', letterSpacing: '0.02em' }}>
+              <div style={{ marginTop: 8, padding: '10px 12px', borderRadius: 'var(--radius-md)', background: 'var(--eva-red-tint)', fontSize: 12, fontWeight: 700, color: 'var(--primary)', letterSpacing: '0.02em' }}>
                 「あんたバカ？花钱之前先看看预算呀！」 — 明日香
               </div>
             </div>

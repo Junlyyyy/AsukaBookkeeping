@@ -117,15 +117,15 @@ export function toast(msg: string, kind: 'ok' | 'err' = 'ok') {
   el.textContent = msg;
   el.style.cssText = `
     position: fixed; left: 50%; bottom: 36px; transform: translateX(-50%);
-    background: ${kind === 'ok' ? 'rgba(58,22,12,0.94)' : 'rgba(220,38,38,0.94)'};
-    color: #fff;
+    background: ${kind === 'ok' ? 'rgba(255,252,249,0.97)' : 'rgba(255,238,232,0.97)'};
+    color: ${kind === 'ok' ? '#3a2418' : 'var(--danger)'};
+    border: 1px solid ${kind === 'ok' ? 'rgba(211,41,15,0.22)' : 'rgba(220,38,38,0.35)'};
     font-family: var(--font-body); font-weight: 500; font-size: 13px;
     padding: 12px 22px; border-radius: 999px; z-index: 999;
-    box-shadow: 0 8px 24px rgba(40,12,4,0.35);
+    box-shadow: 0 8px 24px rgba(60,25,10,0.22);
     animation: swoosh-in 0.25s ease both;
     -webkit-backdrop-filter: blur(10px);
     backdrop-filter: blur(10px);
-    border: 1px solid rgba(255,255,255,0.2);
   `;
   document.body.appendChild(el);
   setTimeout(() => el.remove(), 2400);

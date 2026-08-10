@@ -189,7 +189,7 @@ export default function Settings() {
         <div className="row gap-3" style={{ marginBottom: 12, alignItems: 'center' }}>
           <NERVBadge size={42} />
           <div>
-            <div className="eyebrow eyebrow--white">SPEC / 机体档案 · EVA-02</div>
+            <div className="eyebrow">SPEC / 机体档案 · EVA-02</div>
             <h3 className="section-title" style={{ marginTop: 2, fontSize: 18 }}>Asuka记账 v1.3.7</h3>
           </div>
         </div>
@@ -200,14 +200,14 @@ export default function Settings() {
           <span className="chip chip--volt">AT 力场 稳定</span>
           <span className="chip chip--volt">同步率 100%</span>
           <span className="chip chip--volt">LCL 正常</span>
-          <span className="chip" style={{ background: 'rgba(255,255,255,0.12)', color: '#fff' }}>A.T. FIELD</span>
+          <span className="chip" style={{ background: 'var(--eva-orange-tint)', color: 'var(--secondary)' }}>A.T. FIELD</span>
         </div>
 
         {/* 分割线 */}
-        <div style={{ height: 1, background: 'rgba(255,255,255,0.1)', marginBottom: 12 }} />
+        <div style={{ height: 1, background: 'var(--border)', marginBottom: 12 }} />
 
         {/* 规格表 — 多行内容 label 顶端对齐，行间距随行高自适应 */}
-        <div style={{ display: 'grid', gridTemplateColumns: '64px 1fr', columnGap: 14, rowGap: 10, fontSize: 12, color: 'rgba(255,255,255,0.88)', fontWeight: 500 }}>
+        <div style={{ display: 'grid', gridTemplateColumns: '64px 1fr', columnGap: 14, rowGap: 10, fontSize: 12, color: 'var(--text-secondary)', fontWeight: 500 }}>
           <Spec k="版本">Asuka记账 v1.3.7</Spec>
           <Spec k="主题">明日香 · Bento × EVA-02（红橙配色）</Spec>
           <Spec k="驾驶员">惣流・アスカ・ラングレー · EVA-02 PILOT</Spec>
@@ -285,7 +285,7 @@ function Spec({ k, children }: { k: string; children: React.ReactNode }) {
       >
         {k}
       </span>
-      <span style={{ color: 'rgba(255,255,255,0.92)', lineHeight: 1.5 }}>{children}</span>
+      <span style={{ color: 'var(--text)', lineHeight: 1.5 }}>{children}</span>
     </>
   );
 }
