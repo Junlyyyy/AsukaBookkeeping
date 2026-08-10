@@ -1,6 +1,6 @@
 // 预算页 — Bento × EVA-02 明日香：模块总览卡 + 进度条 + 新增/编辑
 
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { api } from '../api';
 import { useApp } from '../store';
 import type { Budget, Category } from '../types';
@@ -129,6 +129,17 @@ function BudgetForm({ budget, cats, onClose, onSaved }: {
   const [categoryId, setCategoryId] = useState(budget ? String(budget.category_id) : '');
   const [amount, setAmount] = useState(budget ? String(budget.amount) : '');
   const [pickOpen, setPickOpen] = useState(false);
+  const pickRef = useRef<HTMLDivElement>(null);
+
+  // 点字段外部任意处（含 Modal 其他区域/输入框）→ 收起选项面板；不再用全屏遮罩（会盖住输入框/误关 Modal）
+  useEffect(() => {
+    if (!pickOpen) return;
+    const h = (e: MouseEvent) => {
+      if (pickRef.current && !pickRef.current.contains(e.target as Node)) setPickOpen(false);
+    };
+    document.addEventListener('click', h);
+    return () => document.removeEventListener('click', h);
+  }, [pickOpen]);
 
   const save = async () => {
     const amt = Number(amount);
@@ -160,18 +171,12 @@ function BudgetForm({ budget, cats, onClose, onSaved }: {
         <div>
           <label className="label">分类</label>
           {/* App 风格分类选择器（替代原生 select）：点击展开，面板为正常文档流 → 撑开页面整页显示 */}
-          <div style={{ position: 'relative', zIndex: 100 }}>
-            {pickOpen && (
-              <div
-                style={{ position: 'fixed', inset: 0, zIndex: 90 }}
-                onClick={() => setPickOpen(false)}
-              />
-            )}
+          <div ref={pickRef} style={{ position: 'relative', zIndex: 100 }}>
             <button
               type="button"
               className="select"
               style={{
-                display: 'flex', alignItems: 'center', justifyContent: 'space-between',
+                display: 'flex', alignItems: 'center',
                 textAlign: 'left', cursor: 'pointer', width: '100%',
               }}
               onClick={() => setPickOpen((o) => !o)}
@@ -179,7 +184,6 @@ function BudgetForm({ budget, cats, onClose, onSaved }: {
               <span style={{ fontWeight: current ? 600 : 400, color: current ? 'var(--text)' : 'var(--text-tertiary)', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
                 {current ? `${current.icon ?? ''} ${current.name}` : '选择支出分类…'}
               </span>
-              <span style={{ color: 'var(--text-tertiary)', fontSize: 12, transform: pickOpen ? 'rotate(180deg)' : 'none', transition: 'transform 0.18s' }}>▼</span>
             </button>
             {pickOpen && (
               <div
