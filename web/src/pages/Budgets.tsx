@@ -128,6 +128,7 @@ function BudgetForm({ budget, cats, onClose, onSaved }: {
   const { ledger } = useApp();
   const [categoryId, setCategoryId] = useState(budget ? String(budget.category_id) : '');
   const [amount, setAmount] = useState(budget ? String(budget.amount) : '');
+  const [pickOpen, setPickOpen] = useState(false);
 
   const save = async () => {
     const amt = Number(amount);
@@ -146,16 +147,77 @@ function BudgetForm({ budget, cats, onClose, onSaved }: {
     } catch (e) { toast(String((e as Error).message), 'err'); }
   };
 
+  // 「全部支出」固定置顶 + 支出分类；选中的展示值
+  const options: { id: number; name: string; icon?: string }[] = [
+    { id: 0, name: '全部支出（所有支出分类合计）', icon: '📊' },
+    ...cats.map((c) => ({ id: c.id, name: c.name, icon: c.icon })),
+  ];
+  const current = options.find((o) => String(o.id) === categoryId);
+
   return (
     <Modal title={budget ? '编辑预算 · EVA-02' : '+ 新建预算 · EVA-02'} onClose={onClose}>
       <div className="stack gap-3">
         <div>
           <label className="label">分类</label>
-          <select className="select" value={categoryId} onChange={(e) => setCategoryId(e.target.value)}>
-            <option value="">选择支出分类…</option>
-            <option value="0">📊 全部支出（所有支出分类合计）</option>
-            {cats.map((c) => <option key={c.id} value={c.id}>{c.icon} {c.name}</option>)}
-          </select>
+          {/* App 风格分类选择器（替代原生 select）：点击展开选项面板 */}
+          <div style={{ position: 'relative' }}>
+            {pickOpen && (
+              <div
+                style={{ position: 'fixed', inset: 0, zIndex: 90 }}
+                onClick={() => setPickOpen(false)}
+              />
+            )}
+            <button
+              type="button"
+              className="select"
+              style={{
+                display: 'flex', alignItems: 'center', justifyContent: 'space-between',
+                textAlign: 'left', cursor: 'pointer', width: '100%',
+              }}
+              onClick={() => setPickOpen((o) => !o)}
+            >
+              <span style={{ fontWeight: current ? 600 : 400, color: current ? 'var(--text)' : 'var(--text-tertiary)', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
+                {current ? `${current.icon ?? ''} ${current.name}` : '选择支出分类…'}
+              </span>
+              <span style={{ color: 'var(--text-tertiary)', fontSize: 12, transform: pickOpen ? 'rotate(180deg)' : 'none', transition: 'transform 0.18s' }}>▼</span>
+            </button>
+            {pickOpen && (
+              <div
+                className="panel-inset"
+                style={{
+                  position: 'absolute', left: 0, right: 0, top: 'calc(100% + 6px)',
+                  zIndex: 100, maxHeight: 260, overflowY: 'auto',
+                  borderRadius: 'var(--radius-md)', padding: 6,
+                  boxShadow: 'var(--shadow-lg)',
+                }}
+              >
+                {options.map((o) => {
+                  const active = String(o.id) === categoryId;
+                  return (
+                    <button
+                      key={o.id}
+                      type="button"
+                      className="btn"
+                      style={{
+                        display: 'flex', alignItems: 'center', gap: 8, width: '100%',
+                        justifyContent: 'flex-start', padding: '9px 10px', fontSize: 13,
+                        borderRadius: 'var(--radius-sm)',
+                        background: active ? 'var(--eva-red-tint)' : 'transparent',
+                        color: active ? 'var(--primary)' : 'var(--text)',
+                        fontWeight: active ? 700 : 500,
+                        boxShadow: 'none',
+                      }}
+                      onClick={() => { setCategoryId(String(o.id)); setPickOpen(false); }}
+                    >
+                      <span style={{ fontSize: 15, flexShrink: 0 }}>{o.icon ?? '▣'}</span>
+                      <span style={{ overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{o.name}</span>
+                      {active && <span style={{ marginLeft: 'auto', color: 'var(--primary)', fontSize: 12 }}>✓</span>}
+                    </button>
+                  );
+                })}
+              </div>
+            )}
+          </div>
         </div>
         <div>
           <label className="label">月度预算（元）</label>
