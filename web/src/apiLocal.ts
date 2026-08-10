@@ -516,14 +516,18 @@ export const localApi = {
     let items = [...db.budgets];
     if (ledger_id) items = items.filter((b) => b.ledger_id === ledger_id);
     const out = items.map((b) => {
-      const cat = db.categories.find((c) => c.id === b.category_id);
+      // category_id = 0/null → 「全部支出」预算：统计当月所有支出（不按分类过滤）
+      const isAll = !b.category_id || b.category_id === 0;
+      const cat = b.category_id ? db.categories.find((c) => c.id === b.category_id) : undefined;
       const spent = db.transactions
-        .filter((t) => t.category_id === b.category_id && t.type === 'expense' && t.status === 'active'
-          && String(t.occurred_at).startsWith(key))
+        .filter((t) => t.type === 'expense' && t.status === 'active'
+          && String(t.occurred_at).startsWith(key)
+          && (isAll ? true : t.category_id === b.category_id))
         .reduce((s, t) => s + t.amount, 0);
       const s = spent / 100, a = b.amount / 100;
       return {
-        ...b, category_name: cat?.name, category_icon: cat?.icon, category_type: cat?.type,
+        ...b, category_name: isAll ? '全部支出' : cat?.name,
+        category_icon: isAll ? '📊' : cat?.icon, category_type: isAll ? 'expense' : cat?.type,
         amount: Number(a.toFixed(2)), spent: Number(s.toFixed(2)),
         progress: a > 0 ? Math.min(Math.round((s / a) * 100), 999) : 0,
         remaining: Number((a - s).toFixed(2)),
@@ -544,8 +548,13 @@ export const localApi = {
   },
   createBudget: (body: Record<string, unknown>): Promise<Budget> => {
     const db = load();
+    const cid = body.category_id == null ? 0 : Number(body.category_id);
+    // 「全部支出」预算（category_id=0）每个账本只允许一个
+    if (cid === 0 && db.budgets.some((x) => x.ledger_id === Number(body.ledger_id) && (!x.category_id || x.category_id === 0))) {
+      return Promise.reject(new Error('已存在「全部支出」预算，可直接编辑它'));
+    }
     const b: any = {
-      id: nextId(db), ledger_id: Number(body.ledger_id), category_id: Number(body.category_id),
+      id: nextId(db), ledger_id: Number(body.ledger_id), category_id: cid,
       amount: cents(Number(body.amount)), period: 'monthly',
       year: Number(body.year) || new Date().getFullYear(), month: body.month || new Date().getMonth() + 1,
       created_at: now(), updated_at: now(),

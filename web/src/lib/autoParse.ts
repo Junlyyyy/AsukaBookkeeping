@@ -29,7 +29,8 @@ export interface ParsedTx {
 }
 
 /* ==================== 关键字配置 ==================== */
-const TX_TYPE_EXPENSE_WORDS = ['消费', '支出', '付款', '支付', '扣款', '取现', '提现', '转账', '转账支出', '快捷支付'];
+const TX_TYPE_EXPENSE_WORDS = ['消费', '支出', '付款', '支付', '扣款', '取现', '提现', '转账', '转账支出', '快捷支付', '汇款', '汇出'];
+// 注意：不要放「到账」——「需收款人关注到账情况」是中性提示语，会误判支出短信为收入
 const TX_TYPE_INCOME_WORDS  = ['收入', '入账', '收到', '转入', '退款', '返款', '红包', '退还'];
 
 const BANK_SENDER_PREFIXES = [
@@ -50,8 +51,10 @@ const SMS_AMOUNT_MAX = 100_000;
 /** 验证码 / 一次性口令类短信特征 —— 命中直接跳过（不是交易记录） */
 const OTP_PATTERNS = /验证码|动态码|校验码|安全码|登录码|注册码|短信验证|一次性密码|OTP|一次有效|请在\s*\d+\s*(?:分钟|秒)|分钟内有效|有效期|不要泄露|请勿泄露|请勿转发/;
 
-/** 交易动词 —— 金额必须紧跟其后才算交易金额（避免验证码/余额误判） */
-const TX_VERB_RE = /(消费|支出|支付|付款|扣款|转账|转出|提现|收款|收入|入账|退款|返款|退回|买入|卖出|充值|缴费)\s*(?:人民币|RMB|rmb)?\s*[¥￥]?\s*(\d+(?:\.\d{1,2})?)\s*(?:元|块)?/gi;
+/** 交易动词 —— 金额必须紧跟其后才算交易金额（避免验证码/余额误判）。
+ *  支持括号包裹：汇款 (10000人民币) 已汇出 → 汇款 + ( 10000 人民币 )
+ *  数字后允许 人民币/元/块（"10000人民币" 这种银行短信常见写法） */
+const TX_VERB_RE = /(消费|支出|支付|付款|扣款|转账|转出|汇款|汇出|转入|提现|收款|收入|入账|退款|返款|退回|买入|卖出|充值|缴费)\s*(?:人民币|RMB|rmb)?\s*[¥￥]?\s*[（(]?\s*(\d+(?:\.\d{1,2})?)\s*(?:人民币|元|块)?\s*[）)]?/gi;
 
 /** 数字附近的账户信息语境 —— 这些数字不是交易金额 */
 const NON_AMT_CONTEXT = /余额|可用|限额|额度|上限|下限|有效期|尾号|剩余|积分|总计|总额|信用卡额度|取现额度/;
@@ -74,6 +77,7 @@ function cleanSmsBody(body: string): string {
   return String(body || '')
     .replace(/【[^【】]{1,30}】/g, '')            // 去掉【XX】标签
     .replace(/\d{4}[年-]\d{1,2}[月-]\d{1,2}/g, '') // 去掉 2026年07月12日 / 2026-07-12
+    .replace(/\d{8}/g, '')                        // 去掉 20260713（8位连写日期）
     .replace(/\d{1,2}时\d{1,2}分(?:\d{1,2}秒)?/g, '') // 去掉 13时14分
     .replace(/[\s,，。]+/g, ' ')
     .trim();
@@ -106,10 +110,10 @@ function extractAmounts(text: string, strongOnly = false): number[] {
   let m: RegExpExecArray | null;
   while ((m = TX_VERB_RE.exec(cleaned)) !== null) push(parseFloat(m[2]));
   if (strongOnly || out.length > 0) return out;
-  // 弱锚定：¥/￥/RMB/人民币/元/块，排除账户信息语境
-  const weakRe = /(?:¥|￥|RMB|人民币)\s*(\d+(?:\.\d{1,2})?)|(\d+(?:\.\d{1,2})?)\s*(?:元|块)/gi;
+  // 弱锚定：¥/￥/RMB/人民币/元/块（含"10000人民币"这种无元后缀的银行短信写法），排除账户信息语境
+  const weakRe = /(?:¥|￥|RMB|人民币)\s*(\d+(?:\.\d{1,2})?)|(\d+(?:\.\d{1,2})?)\s*(?:元|块)|(\d+(?:\.\d{1,2})?)\s*人民币/gi;
   while ((m = weakRe.exec(cleaned)) !== null) {
-    const v = parseFloat(m[1] || m[2]);
+    const v = parseFloat(m[1] || m[2] || m[3]);
     if (!Number.isFinite(v) || v <= 0 || v >= 1_000_000) continue;
     const ctx = cleaned.slice(Math.max(0, (m.index || 0) - 20), (m.index || 0) + (m[0]?.length || 0) + 6);
     if (NON_AMT_CONTEXT.test(ctx)) continue; // 余额/限额/有效期等 → 跳过
@@ -200,8 +204,8 @@ export function parseSms(sender: string, body: string, smsTs?: number): ParsedTx
     const m = body.match(re);
     if (m && m[1]) {
       const cand = m[1].trim();
-      // 排除明显不是商家的：纯数字、单字、含金额字符
-      if (cand.length >= 2 && !/^\d+$/.test(cand) && !/[¥￥元]/.test(cand)) {
+      // 排除明显不是商家的：纯数字、含 6+ 连续数字（日期/账号）、单字、含金额字符
+      if (cand.length >= 2 && !/^\d+$/.test(cand) && !/\d{6,}/.test(cand) && !/[¥￥元]/.test(cand)) {
         merchant = cand;
         break;
       }

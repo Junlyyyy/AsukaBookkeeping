@@ -153,6 +153,7 @@ function BudgetForm({ budget, cats, onClose, onSaved }: {
           <label className="label">分类</label>
           <select className="select" value={categoryId} onChange={(e) => setCategoryId(e.target.value)}>
             <option value="">选择支出分类…</option>
+            <option value="0">📊 全部支出（所有支出分类合计）</option>
             {cats.map((c) => <option key={c.id} value={c.id}>{c.icon} {c.name}</option>)}
           </select>
         </div>
