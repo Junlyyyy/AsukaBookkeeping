@@ -217,8 +217,11 @@ export async function stopVoice(): Promise<string> {
   return finalBuf.trim();
 }
 
-/** 清理监听（组件卸载时调用） */
+/** 清理监听（组件卸载时调用）——必须清空模块级识别结果，否则重开「记一笔」会恢复上次文字 */
 export function clearVoice() {
   listeners.clear();
+  finalBuf = '';
+  interimBuf = '';
+  errorMsg = null;
   stopRecording();
 }
