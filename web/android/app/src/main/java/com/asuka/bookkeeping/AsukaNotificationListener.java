@@ -54,7 +54,8 @@ public class AsukaNotificationListener extends NotificationListenerService {
         "com.boc.bocsoft", "boc",      // 中行
         "com.ccb", "ccb",              // 建行
         "com.abc", "abc",              // 农行
-        "cmb", "com.cmbchina"          // 招行
+        "cmb", "com.cmbchina",         // 招行
+        "com.android.shell"            // 模拟器调试：cmd notification post 以 shell 身份发通知
     ));
 
     @Override
