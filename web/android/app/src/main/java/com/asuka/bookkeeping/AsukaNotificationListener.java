@@ -78,10 +78,13 @@ public class AsukaNotificationListener extends NotificationListenerService {
             if (t != null) title = t.toString();
             if (x != null) text = x.toString();
 
-            // 微信支付消息通常在 BIG_TEXT 里
-            if (text.isEmpty()) {
-                CharSequence bt = n.extras.getCharSequence(android.app.Notification.EXTRA_BIG_TEXT);
-                if (bt != null) text = bt.toString();
+            // 微信/支付宝的完整消息通常在 BIG_TEXT 里（金额/商户），必须合并——
+            // 否则 EXTRA_TEXT 只有摘要（如「微信支付-星巴克」），金额丢失导致前端解析不出
+            CharSequence bt = n.extras.getCharSequence(android.app.Notification.EXTRA_BIG_TEXT);
+            if (bt != null) {
+                String bts = bt.toString();
+                if (text.isEmpty()) text = bts;
+                else if (!text.contains(bts)) text = text + " " + bts;
             }
         }
 
