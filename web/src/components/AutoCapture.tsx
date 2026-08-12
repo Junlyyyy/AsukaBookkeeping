@@ -8,7 +8,7 @@
 // 三路产物统一映射为 { amount, category, type, occurred_at, note, source, raw } 候选，
 // 一次性入账到本地 SQLite。
 
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import * as XLSX from 'xlsx';
 import AsukaCapture from '../lib/asuka-capture';
 import type { NotificationPayload } from '../lib/asuka-capture';
@@ -40,6 +40,8 @@ export default function AutoCapture({ onClose, onImported }: {
   const [billFile, setBillFile] = useState<{ name: string; count: number; skipped: number } | null>(null);
   const [candidates, setCandidates] = useState<CandidateItem[]>([]);
   const [removing, setRemoving] = useState<Set<number>>(new Set());
+  // 通知去重：同一通知（key）短时间重复 posted 只入账一次
+  const recentNotifKeys = useRef<Set<string>>(new Set());
 
   // 启动时查询通知权限现状
   useEffect(() => {
@@ -50,7 +52,32 @@ export default function AutoCapture({ onClose, onImported }: {
     return () => { alive = false; };
   }, []);
 
-  // 订阅通知监听事件（实时追加到候选）
+  // 通知直达入账：解析成功 → 直接 createTransactions，无需人工确认
+  const autoBook = async (key: string, r: ParsedTx, raw: string) => {
+    if (!ledger) return;
+    if (recentNotifKeys.current.has(key)) return; // 去重
+    recentNotifKeys.current.add(key);
+    setTimeout(() => recentNotifKeys.current.delete(key), 15000);
+    try {
+      const res = await api.createTransactions([{
+        ledger_id: ledger.id,
+        type: r.type || 'expense',
+        amount: (r.amount as number) / 100, // 解析结果是分，createTransactions 期望元
+        note: r.note || r.merchant || raw.slice(0, 24),
+        category_id: null as number | null,
+        account_id: null as number | null,
+        occurred_at: r.occurred_at || new Date().toISOString().slice(0, 19).replace('T', ' '),
+      }]);
+      if (res.created > 0) {
+        toast(`已自动入账：¥${fmtMoney(r.amount as number).replace('¥', '')}${r.category ? ` · ${r.category}` : ''}`);
+        onImported?.(res.created);
+      }
+    } catch (e) {
+      toast(`自动入账失败: ${(e as Error).message}`, 'err');
+    }
+  };
+
+  // 订阅通知监听事件（通知直达入账，不再进候选列表）
   useEffect(() => {
     let detach: (() => Promise<void>) | null = null;
     let alive = true;
@@ -59,14 +86,12 @@ export default function AutoCapture({ onClose, onImported }: {
       const arr = parseNotificationBatch([payload]);
       const r = arr[0];
       if (r && r.amount) {
-        setCandidates((prev) => [
-          { ...r, raw: payload.body, source: 'notification' } as CandidateItem,
-          ...prev,
-        ]);
+        void autoBook(payload.key, r, payload.body);
       }
     }).then((h) => { if (alive) detach = h.remove; }).catch(() => {});
     return () => { alive = false; if (detach) void detach(); };
-  }, []);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [ledger]);
 
   /* =============== 一次性扫描所有短信 =============== */
   const onScanSms = async () => {
@@ -385,7 +410,7 @@ export default function AutoCapture({ onClose, onImported }: {
     const body = valid.map((c) => ({
       ledger_id: ledger.id,
       type: c.type || 'expense',
-      amount: c.amount as number,
+      amount: (c.amount as number) / 100, // 解析结果是分，createTransactions 期望元
       note: c.note || c.merchant || c.raw,
       category_id: null as number | null,
       account_id: null as number | null,
@@ -430,7 +455,7 @@ export default function AutoCapture({ onClose, onImported }: {
         {tab === 'notification' && (
           <div>
             <p style={{ fontSize: 12, color: 'var(--text-secondary)', margin: '0 0 10px', lineHeight: 1.5 }}>
-              自动监听来自微信支付、支付宝、各银行 App 的付款/收款通知，并可一次性扫描收件箱里所有短信的消费信息。
+              自动监听来自微信支付、支付宝、各银行 App 的付款/收款通知——<b style={{ color: 'var(--primary)' }}>通知直达入账，无需确认</b>；亦可一次性扫描收件箱里所有短信的消费信息（短信需确认）。
             </p>
 
             {/* 通知使用权 */}
